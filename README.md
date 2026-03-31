@@ -16,10 +16,10 @@ This implementation uses plain HTML, CSS, and JavaScript so it can run without a
 
 Features included:
 
-- starter kanji deck with 12 cards
+- starter kanji deck with 24 cards
 - CSV import panel for adding more cards
 - active recall input for each kanji
-- answer reveal with accepted meanings and readings
+- answer reveal with accepted meanings, readings, and two example sentences
 - review scheduling options:
   - Again
   - In 10 minutes
@@ -91,13 +91,17 @@ Expected columns:
 - `kanji`
 - `meanings`
 - `readings`
+- `example1_jp`
+- `example1_en`
+- `example2_jp`
+- `example2_en`
 
 Example:
 
 ```csv
-kanji,meanings,readings
-語,"language|word","On: ゴ, Kun: かた.る"
-森,forest,"On: シン, Kun: もり"
+kanji,meanings,readings,example1_jp,example1_en,example2_jp,example2_en
+語,"language|word","On: ゴ, Kun: かた.る",日本語を勉強しています。,"I am studying Japanese.",彼はやさしい言葉で話した。,"He spoke in gentle words."
+森,forest,"On: シン, Kun: もり",森の中はとても静かだ。,"It is very quiet inside the forest.",朝の森を歩くのが好きです。,"I like walking in the forest in the morning."
 ```
 
 Notes:
@@ -105,6 +109,7 @@ Notes:
 - keep the header row
 - use `|` inside the `meanings` column when a card should accept multiple English meanings
 - quote fields when they contain commas
+- each imported row should contain two Japanese example sentences and two English translations
 - imported cards are stored in browser `localStorage`, just like the review schedule
 - importing the same kanji with the same primary meaning updates the existing imported card instead of duplicating it
 

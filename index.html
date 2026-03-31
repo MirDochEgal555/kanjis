@@ -67,6 +67,11 @@
               <p id="reading-text" class="reading-text"></p>
             </div>
 
+            <div id="examples-panel" class="examples-panel hidden">
+              <p class="feedback-label">Example sentences</p>
+              <ul id="examples-list" class="examples-list"></ul>
+            </div>
+
             <div class="schedule-panel">
               <p class="feedback-label">When should this card return?</p>
               <div id="schedule-options" class="schedule-options"></div>
@@ -99,12 +104,13 @@
         <section class="sidebar-card">
           <p class="panel-label">Import CSV</p>
           <p class="sidebar-copy">
-            Use the columns <code>kanji</code>, <code>meanings</code>, and <code>readings</code>.
+            Use the columns <code>kanji</code>, <code>meanings</code>, <code>readings</code>,
+            <code>example1_jp</code>, <code>example1_en</code>, <code>example2_jp</code>, and <code>example2_en</code>.
             Separate multiple English meanings inside the <code>meanings</code> cell with <code>|</code>.
           </p>
-          <pre class="csv-example">kanji,meanings,readings
-語,"language|word","On: ゴ, Kun: かた.る"
-森,forest,"On: シン, Kun: もり"</pre>
+          <pre class="csv-example">kanji,meanings,readings,example1_jp,example1_en,example2_jp,example2_en
+語,"language|word","On: ゴ, Kun: かた.る",日本語を勉強しています。,"I am studying Japanese.",彼はやさしい言葉で話した。,"He spoke in gentle words."
+森,forest,"On: シン, Kun: もり",森の中はとても静かだ。,"It is very quiet inside the forest.",朝の森を歩くのが好きです。,"I like walking in the forest in the morning."</pre>
           <form id="import-form" class="import-form">
             <label class="sr-only" for="csv-input">Paste CSV data</label>
             <textarea

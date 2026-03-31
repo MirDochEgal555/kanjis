@@ -218,6 +218,42 @@ textarea {
   margin-bottom: 6px;
 }
 
+.examples-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.examples-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.examples-list li {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #f8ede4;
+  border: 1px solid rgba(182, 73, 38, 0.12);
+}
+
+.example-jp,
+.example-en {
+  display: block;
+  line-height: 1.5;
+}
+
+.example-jp {
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.example-en {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
 .schedule-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));

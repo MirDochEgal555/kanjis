@@ -10,18 +10,256 @@ const DEFAULT_INTERVALS = [
 ];
 
 const STARTER_DECK = [
-  { id: "sun", kanji: "日", meanings: ["sun", "day"], readings: "On: ニチ / ジツ, Kun: ひ / -び / -か" },
-  { id: "moon", kanji: "月", meanings: ["moon", "month"], readings: "On: ゲツ / ガツ, Kun: つき" },
-  { id: "fire", kanji: "火", meanings: ["fire"], readings: "On: カ, Kun: ひ / -び / ほ-" },
-  { id: "water", kanji: "水", meanings: ["water"], readings: "On: スイ, Kun: みず" },
-  { id: "tree", kanji: "木", meanings: ["tree", "wood"], readings: "On: モク / ボク, Kun: き / こ-" },
-  { id: "person", kanji: "人", meanings: ["person", "human"], readings: "On: ジン / ニン, Kun: ひと" },
-  { id: "mountain", kanji: "山", meanings: ["mountain"], readings: "On: サン, Kun: やま" },
-  { id: "river", kanji: "川", meanings: ["river"], readings: "On: セン, Kun: かわ" },
-  { id: "mouth", kanji: "口", meanings: ["mouth"], readings: "On: コウ / ク, Kun: くち" },
-  { id: "school", kanji: "学", meanings: ["study", "learning"], readings: "On: ガク, Kun: まな.ぶ" },
-  { id: "big", kanji: "大", meanings: ["big", "large"], readings: "On: ダイ / タイ, Kun: おお-" },
-  { id: "small", kanji: "小", meanings: ["small"], readings: "On: ショウ, Kun: ちい.さい / こ- / お-" }
+  {
+    id: "sun",
+    kanji: "日",
+    meanings: ["sun", "day"],
+    readings: "On: ニチ / ジツ, Kun: ひ / -び / -か",
+    examples: [
+      { jp: "今日はいい日です。", en: "Today is a good day." },
+      { jp: "朝日が山の上に見える。", en: "The morning sun can be seen above the mountain." }
+    ]
+  },
+  {
+    id: "moon",
+    kanji: "月",
+    meanings: ["moon", "month"],
+    readings: "On: ゲツ / ガツ, Kun: つき",
+    examples: [
+      { jp: "今月はとても忙しいです。", en: "This month is very busy." },
+      { jp: "今夜は月が明るい。", en: "The moon is bright tonight." }
+    ]
+  },
+  {
+    id: "fire",
+    kanji: "火",
+    meanings: ["fire"],
+    readings: "On: カ, Kun: ひ / -び / ほ-",
+    examples: [
+      { jp: "火を消してください。", en: "Please put out the fire." },
+      { jp: "火曜日に会いましょう。", en: "Let's meet on Tuesday." }
+    ]
+  },
+  {
+    id: "water",
+    kanji: "水",
+    meanings: ["water"],
+    readings: "On: スイ, Kun: みず",
+    examples: [
+      { jp: "冷たい水を飲みたい。", en: "I want to drink cold water." },
+      { jp: "この川の水はきれいです。", en: "The water in this river is clean." }
+    ]
+  },
+  {
+    id: "tree",
+    kanji: "木",
+    meanings: ["tree", "wood"],
+    readings: "On: モク / ボク, Kun: き / こ-",
+    examples: [
+      { jp: "大きい木の下で休んだ。", en: "I rested under a big tree." },
+      { jp: "木の机を買いました。", en: "I bought a wooden desk." }
+    ]
+  },
+  {
+    id: "person",
+    kanji: "人",
+    meanings: ["person", "human"],
+    readings: "On: ジン / ニン, Kun: ひと",
+    examples: [
+      { jp: "あの人は先生です。", en: "That person is a teacher." },
+      { jp: "駅に人がたくさんいる。", en: "There are many people at the station." }
+    ]
+  },
+  {
+    id: "mountain",
+    kanji: "山",
+    meanings: ["mountain"],
+    readings: "On: サン, Kun: やま",
+    examples: [
+      { jp: "夏に山へ登ります。", en: "I climb the mountain in summer." },
+      { jp: "山の空気は気持ちいい。", en: "The mountain air feels good." }
+    ]
+  },
+  {
+    id: "river",
+    kanji: "川",
+    meanings: ["river"],
+    readings: "On: セン, Kun: かわ",
+    examples: [
+      { jp: "川で魚を見ました。", en: "I saw fish in the river." },
+      { jp: "この町の近くに大きい川がある。", en: "There is a big river near this town." }
+    ]
+  },
+  {
+    id: "mouth",
+    kanji: "口",
+    meanings: ["mouth"],
+    readings: "On: コウ / ク, Kun: くち",
+    examples: [
+      { jp: "口を大きく開けてください。", en: "Please open your mouth wide." },
+      { jp: "入口はあちらです。", en: "The entrance is over there." }
+    ]
+  },
+  {
+    id: "school",
+    kanji: "学",
+    meanings: ["study", "learning"],
+    readings: "On: ガク, Kun: まな.ぶ",
+    examples: [
+      { jp: "日本の歴史を学んでいます。", en: "I am studying Japanese history." },
+      { jp: "大学で音楽を勉強した。", en: "I studied music at university." }
+    ]
+  },
+  {
+    id: "big",
+    kanji: "大",
+    meanings: ["big", "large"],
+    readings: "On: ダイ / タイ, Kun: おお-",
+    examples: [
+      { jp: "大きい犬が走っている。", en: "A big dog is running." },
+      { jp: "その町はとても大きい。", en: "That town is very large." }
+    ]
+  },
+  {
+    id: "small",
+    kanji: "小",
+    meanings: ["small"],
+    readings: "On: ショウ, Kun: ちい.さい / こ- / お-",
+    examples: [
+      { jp: "小さい花が咲いている。", en: "A small flower is blooming." },
+      { jp: "この店は小さいですが人気です。", en: "This shop is small, but popular." }
+    ]
+  },
+  {
+    id: "gold",
+    kanji: "金",
+    meanings: ["gold", "money"],
+    readings: "On: キン / コン, Kun: かね / かな-",
+    examples: [
+      { jp: "金曜日に友だちと会います。", en: "I will meet my friend on Friday." },
+      { jp: "旅行のためにお金をためています。", en: "I am saving money for a trip." }
+    ]
+  },
+  {
+    id: "earth",
+    kanji: "土",
+    meanings: ["earth", "soil"],
+    readings: "On: ド / ト, Kun: つち",
+    examples: [
+      { jp: "庭の土が雨でぬれた。", en: "The garden soil got wet from the rain." },
+      { jp: "土曜日は家で休みます。", en: "I rest at home on Saturday." }
+    ]
+  },
+  {
+    id: "book",
+    kanji: "本",
+    meanings: ["book", "origin"],
+    readings: "On: ホン, Kun: もと",
+    examples: [
+      { jp: "この本はとてもおもしろい。", en: "This book is very interesting." },
+      { jp: "日本は私のふるさとです。", en: "Japan is my homeland." }
+    ]
+  },
+  {
+    id: "middle",
+    kanji: "中",
+    meanings: ["middle", "inside"],
+    readings: "On: チュウ, Kun: なか",
+    examples: [
+      { jp: "かばんの中に鍵があります。", en: "The key is inside the bag." },
+      { jp: "会議は今まだ進行中です。", en: "The meeting is still in progress now." }
+    ]
+  },
+  {
+    id: "up",
+    kanji: "上",
+    meanings: ["up", "above"],
+    readings: "On: ジョウ, Kun: うえ / あ.がる / のぼ.る",
+    examples: [
+      { jp: "机の上にノートがあります。", en: "There is a notebook on the desk." },
+      { jp: "階段を上がってください。", en: "Please go up the stairs." }
+    ]
+  },
+  {
+    id: "down",
+    kanji: "下",
+    meanings: ["down", "below"],
+    readings: "On: カ / ゲ, Kun: した / さ.がる / くだ.る",
+    examples: [
+      { jp: "この下に名前を書いてください。", en: "Please write your name below this." },
+      { jp: "駅まで坂を下ります。", en: "I go down the hill to the station." }
+    ]
+  },
+  {
+    id: "left",
+    kanji: "左",
+    meanings: ["left"],
+    readings: "On: サ, Kun: ひだり",
+    examples: [
+      { jp: "次の角を左に曲がってください。", en: "Please turn left at the next corner." },
+      { jp: "左の手でドアを開けた。", en: "I opened the door with my left hand." }
+    ]
+  },
+  {
+    id: "right",
+    kanji: "右",
+    meanings: ["right"],
+    readings: "On: ウ / ユウ, Kun: みぎ",
+    examples: [
+      { jp: "右の席が空いています。", en: "The seat on the right is empty." },
+      { jp: "信号の後で右へ行きます。", en: "I go right after the traffic light." }
+    ]
+  },
+  {
+    id: "ahead",
+    kanji: "先",
+    meanings: ["ahead", "previous"],
+    readings: "On: セン, Kun: さき",
+    examples: [
+      { jp: "先に昼ご飯を食べましょう。", en: "Let's eat lunch first." },
+      { jp: "この先に駅があります。", en: "There is a station ahead." }
+    ]
+  },
+  {
+    id: "life",
+    kanji: "生",
+    meanings: ["life", "birth", "live"],
+    readings: "On: セイ / ショウ, Kun: い.きる / う.まれる / なま",
+    examples: [
+      { jp: "彼は外国で生まれました。", en: "He was born in a foreign country." },
+      { jp: "新しい生活が始まった。", en: "A new life has begun." }
+    ]
+  },
+  {
+    id: "see",
+    kanji: "見",
+    meanings: ["see", "look"],
+    readings: "On: ケン, Kun: み.る / み.える",
+    examples: [
+      { jp: "窓から海が見えます。", en: "You can see the sea from the window." },
+      { jp: "映画を見に行きませんか。", en: "Would you like to go watch a movie?" }
+    ]
+  },
+  {
+    id: "eat",
+    kanji: "食",
+    meanings: ["eat", "food"],
+    readings: "On: ショク, Kun: た.べる / く.う",
+    examples: [
+      { jp: "毎朝パンを食べます。", en: "I eat bread every morning." },
+      { jp: "日本の食べ物が好きです。", en: "I like Japanese food." }
+    ]
+  },
+  {
+    id: "car",
+    kanji: "車",
+    meanings: ["car", "vehicle"],
+    readings: "On: シャ, Kun: くるま",
+    examples: [
+      { jp: "車で会社へ行きます。", en: "I go to the office by car." },
+      { jp: "駅の前に白い車が止まっている。", en: "A white car is parked in front of the station." }
+    ]
+  }
 ];
 
 const elements = {
@@ -36,6 +274,8 @@ const elements = {
   correctAnswer: document.getElementById("correct-answer"),
   answerEvaluation: document.getElementById("answer-evaluation"),
   readingText: document.getElementById("reading-text"),
+  examplesPanel: document.getElementById("examples-panel"),
+  examplesList: document.getElementById("examples-list"),
   scheduleOptions: document.getElementById("schedule-options"),
   reviewCard: document.getElementById("review-card"),
   emptyState: document.getElementById("empty-state"),
@@ -70,6 +310,7 @@ elements.answerForm.addEventListener("submit", (event) => {
   elements.feedbackPanel.classList.remove("hidden");
   elements.correctAnswer.textContent = card.meanings.join(" / ");
   elements.readingText.textContent = getReadingText(card);
+  renderExamples(card);
   elements.answerEvaluation.textContent = answer
     ? isCorrect
       ? "Your answer matches one of the accepted meanings."
@@ -180,6 +421,8 @@ function render() {
   elements.reviewCard.classList.remove("hidden");
   elements.emptyState.classList.add("hidden");
   elements.feedbackPanel.classList.add("hidden");
+  elements.examplesPanel.classList.add("hidden");
+  elements.examplesList.innerHTML = "";
   elements.scheduleOptions.innerHTML = "";
   elements.answerForm.reset();
 
@@ -351,6 +594,34 @@ function getReadingText(card) {
   return card.readings || "No readings provided.";
 }
 
+function renderExamples(card) {
+  const examples = getExamples(card);
+
+  elements.examplesList.innerHTML = "";
+
+  if (!examples.length) {
+    elements.examplesPanel.classList.add("hidden");
+    return;
+  }
+
+  examples.forEach((example) => {
+    const item = document.createElement("li");
+    const jp = document.createElement("span");
+    const en = document.createElement("span");
+
+    jp.className = "example-jp";
+    en.className = "example-en";
+    jp.textContent = example.jp;
+    en.textContent = example.en;
+
+    item.appendChild(jp);
+    item.appendChild(en);
+    elements.examplesList.appendChild(item);
+  });
+
+  elements.examplesPanel.classList.remove("hidden");
+}
+
 function buildCardStateMap(deck, savedCards = {}, now = Date.now()) {
   return Object.fromEntries(
     deck.map((card) => {
@@ -412,7 +683,8 @@ function sanitizeImportedCard(rawCard) {
     id,
     kanji,
     meanings,
-    readings
+    readings,
+    examples: sanitizeExamples(rawCard.examples)
   };
 }
 
@@ -464,7 +736,7 @@ function parseImportedCardsFromCsv(csvText) {
   }
 
   const headers = rows[0].map(normalizeHeader);
-  const requiredHeaders = ["kanji", "meanings", "readings"];
+  const requiredHeaders = ["kanji", "meanings", "readings", "example1_jp", "example1_en", "example2_jp", "example2_en"];
   const missingHeaders = requiredHeaders.filter((header) => !headers.includes(header));
 
   if (missingHeaders.length) {
@@ -485,6 +757,10 @@ function parseImportedCardsFromCsv(csvText) {
     const kanji = record.kanji.trim();
     const meanings = splitMeanings(record.meanings);
     const readings = record.readings.trim();
+    const examples = sanitizeExamples([
+      { jp: record.example1_jp, en: record.example1_en },
+      { jp: record.example2_jp, en: record.example2_en }
+    ]);
 
     if (!kanji) {
       throw new Error(`Row ${index + 2} is missing a kanji value.`);
@@ -494,11 +770,16 @@ function parseImportedCardsFromCsv(csvText) {
       throw new Error(`Row ${index + 2} is missing meanings. Use | between multiple meanings.`);
     }
 
+    if (examples.length !== 2) {
+      throw new Error(`Row ${index + 2} must include two example sentences with Japanese and English text.`);
+    }
+
     return {
       id: createImportedCardId(kanji, meanings),
       kanji,
       meanings,
-      readings
+      readings,
+      examples
     };
   });
 }
@@ -609,4 +890,21 @@ function setImportFeedback(message, isError = false) {
 
 function clearImportFeedback() {
   setImportFeedback("", false);
+}
+
+function getExamples(card) {
+  return sanitizeExamples(card.examples).slice(0, 2);
+}
+
+function sanitizeExamples(rawExamples) {
+  if (!Array.isArray(rawExamples)) {
+    return [];
+  }
+
+  return rawExamples
+    .map((example) => ({
+      jp: typeof example?.jp === "string" ? example.jp.trim() : "",
+      en: typeof example?.en === "string" ? example.en.trim() : ""
+    }))
+    .filter((example) => example.jp && example.en);
 }
