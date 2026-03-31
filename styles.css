@@ -69,6 +69,35 @@ textarea {
   line-height: 1.6;
 }
 
+.hero-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.layout-toggle {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(91, 70, 46, 0.08);
+  border: 1px solid rgba(91, 70, 46, 0.1);
+}
+
+.toggle-button {
+  border: 0;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.toggle-button.is-active {
+  background: var(--accent);
+  color: #fff7f2;
+}
+
 .status-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -100,6 +129,10 @@ textarea {
   grid-template-columns: minmax(0, 1.7fr) minmax(290px, 0.9fr);
   gap: 20px;
   align-items: start;
+}
+
+.workspace > * {
+  min-width: 0;
 }
 
 .card-panel,
@@ -300,10 +333,12 @@ textarea {
 .sidebar {
   display: grid;
   gap: 20px;
+  min-width: 0;
 }
 
 .sidebar-card {
   padding: 22px;
+  min-width: 0;
 }
 
 .flow-list,
@@ -348,6 +383,8 @@ textarea {
 
 .csv-example {
   margin: 16px 0 0;
+  max-width: 100%;
+  min-width: 0;
   padding: 14px;
   overflow-x: auto;
   border-radius: 18px;
@@ -363,6 +400,7 @@ textarea {
   display: grid;
   gap: 12px;
   margin-top: 16px;
+  min-width: 0;
 }
 
 .import-form textarea {
@@ -425,42 +463,172 @@ textarea {
   border: 0;
 }
 
-@media (max-width: 900px) {
-  .workspace {
-    grid-template-columns: 1fr;
-  }
-
-  .status-grid {
-    grid-template-columns: 1fr;
-  }
+.mobile-layout .app-shell {
+  width: min(100% - 16px, 480px);
+  padding: 16px 0 calc(24px + env(safe-area-inset-bottom, 0px));
 }
 
-@media (max-width: 640px) {
-  .app-shell {
-    width: min(100% - 20px, 1180px);
-    padding-top: 24px;
-  }
+.mobile-layout .hero {
+  gap: 16px;
+  margin-bottom: 18px;
+}
 
-  .card-panel,
-  .sidebar-card,
-  .review-card {
-    padding: 18px;
-  }
+.mobile-layout .hero-toolbar {
+  justify-content: stretch;
+}
 
-  .panel-head,
-  .answer-form {
-    grid-template-columns: 1fr;
-    display: grid;
-  }
+.mobile-layout .layout-toggle {
+  width: 100%;
+}
 
-  .import-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.mobile-layout .toggle-button {
+  flex: 1;
+}
 
-  .primary-button,
-  .ghost-button,
-  .file-input {
-    min-height: 48px;
-  }
+.mobile-layout .hero-copy h1 {
+  max-width: none;
+  font-size: clamp(1.95rem, 10vw, 3rem);
+}
+
+.mobile-layout .hero-copy p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.mobile-layout .status-grid {
+  gap: 8px;
+}
+
+.mobile-layout .status-card {
+  padding: 12px 10px;
+  border-radius: 16px;
+}
+
+.mobile-layout .status-card strong {
+  margin-top: 6px;
+  font-size: 1.35rem;
+}
+
+.mobile-layout .status-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+}
+
+.mobile-layout .workspace {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.mobile-layout .card-panel,
+.mobile-layout .sidebar-card,
+.mobile-layout .review-card {
+  padding: 16px;
+  border-radius: 20px;
+}
+
+.mobile-layout .panel-head,
+.mobile-layout .answer-form {
+  grid-template-columns: 1fr;
+  display: grid;
+}
+
+.mobile-layout .panel-head {
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.mobile-layout .panel-head h2 {
+  font-size: 1.2rem;
+}
+
+.mobile-layout .ghost-button {
+  width: 100%;
+}
+
+.mobile-layout .review-card {
+  border-radius: 18px;
+}
+
+.mobile-layout .kanji-glyph {
+  font-size: clamp(4rem, 24vw, 5.6rem);
+}
+
+.mobile-layout .kanji-meta {
+  margin: 10px 0 18px;
+  font-size: 0.95rem;
+}
+
+.mobile-layout .feedback-panel {
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+.mobile-layout .feedback-copy h3 {
+  font-size: 1.5rem;
+}
+
+.mobile-layout .examples-list li {
+  padding: 10px 12px;
+}
+
+.mobile-layout .schedule-options {
+  grid-template-columns: 1fr;
+}
+
+.mobile-layout .schedule-button {
+  min-height: 64px;
+}
+
+.mobile-layout .sidebar {
+  gap: 12px;
+}
+
+.mobile-layout .sidebar-card {
+  padding: 16px;
+}
+
+.mobile-layout .flow-list,
+.mobile-layout .interval-list,
+.mobile-layout .history-list,
+.mobile-layout .sidebar-copy,
+.mobile-layout .csv-example {
+  margin-top: 12px;
+}
+
+.mobile-layout .flow-list,
+.mobile-layout .interval-list,
+.mobile-layout .history-list {
+  line-height: 1.5;
+}
+
+.mobile-layout .csv-example {
+  font-size: 0.8rem;
+  max-height: 180px;
+}
+
+.mobile-layout .import-form {
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.mobile-layout .import-form textarea {
+  min-height: 120px;
+  padding: 13px 14px;
+}
+
+.mobile-layout .import-actions {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mobile-layout .primary-button,
+.mobile-layout .ghost-button,
+.mobile-layout .file-input {
+  min-height: 48px;
+}
+
+.mobile-layout .answer-form input,
+.mobile-layout .import-form textarea {
+  padding-inline: 14px;
 }

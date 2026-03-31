@@ -1,5 +1,6 @@
 const STORAGE_KEY = "kanji-learning-app-state-v2";
 const LEGACY_STORAGE_KEYS = ["kanji-learning-app-state-v1"];
+const LAYOUT_STORAGE_KEY = "kanji-learning-layout-v1";
 
 const DEFAULT_INTERVALS = [
   { key: "again", label: "Again", minutes: 5, description: "Bring it back almost immediately." },
@@ -263,6 +264,8 @@ const STARTER_DECK = [
 ];
 
 const elements = {
+  desktopLayoutToggle: document.getElementById("desktop-layout-toggle"),
+  mobileLayoutToggle: document.getElementById("mobile-layout-toggle"),
   dueCount: document.getElementById("due-count"),
   studiedToday: document.getElementById("studied-today"),
   totalCount: document.getElementById("total-count"),
@@ -293,8 +296,19 @@ const elements = {
 let state = loadState();
 let currentCardId = null;
 
+applyLayoutMode(loadLayoutMode());
 renderIntervalLegend();
 render();
+
+elements.desktopLayoutToggle.addEventListener("click", () => {
+  applyLayoutMode("desktop");
+  saveLayoutMode("desktop");
+});
+
+elements.mobileLayoutToggle.addEventListener("click", () => {
+  applyLayoutMode("mobile");
+  saveLayoutMode("mobile");
+});
 
 elements.answerForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -907,4 +921,22 @@ function sanitizeExamples(rawExamples) {
       en: typeof example?.en === "string" ? example.en.trim() : ""
     }))
     .filter((example) => example.jp && example.en);
+}
+
+function loadLayoutMode() {
+  const savedMode = localStorage.getItem(LAYOUT_STORAGE_KEY);
+  return savedMode === "mobile" ? "mobile" : "desktop";
+}
+
+function saveLayoutMode(mode) {
+  localStorage.setItem(LAYOUT_STORAGE_KEY, mode);
+}
+
+function applyLayoutMode(mode) {
+  const isMobileLayout = mode === "mobile";
+  document.body.classList.toggle("mobile-layout", isMobileLayout);
+  elements.desktopLayoutToggle.classList.toggle("is-active", !isMobileLayout);
+  elements.mobileLayoutToggle.classList.toggle("is-active", isMobileLayout);
+  elements.desktopLayoutToggle.setAttribute("aria-pressed", String(!isMobileLayout));
+  elements.mobileLayoutToggle.setAttribute("aria-pressed", String(isMobileLayout));
 }
