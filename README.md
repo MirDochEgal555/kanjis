@@ -1,90 +1,116 @@
 # Kanji Learning App
 
-A simple web application for learning kanji with active recall and spaced repetition.
+A small browser-based kanji trainer built as a static single-page app.
 
-## Idea
+It implements the MVP described in this repo:
 
-The app shows a kanji and asks the user for its translation.  
-After submitting an answer, the correct solution is revealed.  
-The user can then decide when the kanji should appear again, depending on how well they knew it.
+- show one kanji at a time
+- let the user type an English meaning
+- reveal the stored answer
+- let the user choose the next review time
+- save progress locally in the browser
 
-This creates a lightweight review system where difficult kanji return sooner and easy kanji can be postponed further into the future.
+## What Was Built
 
-## Core Features
+This implementation uses plain HTML, CSS, and JavaScript so it can run without a build step.
 
-- Show a kanji to the user
-- Ask for the translation
-- Reveal the correct answer after submission
-- Let the user choose when the kanji should be shown again
-- Store review intervals for each kanji
-- Repeat kanji based on the selected schedule
+Features included:
+
+- starter kanji deck with 12 cards
+- active recall input for each kanji
+- answer reveal with accepted meanings and readings
+- review scheduling options:
+  - Again
+  - In 10 minutes
+  - Tomorrow
+  - In 3 days
+  - In 1 week
+- local persistence through `localStorage`
+- due-card queue based on saved review times
+- basic stats:
+  - due now
+  - studied today
+  - total cards
+- recent review history
+- reset button to clear saved progress
+
+## Files
+
+- `index.html` - app structure
+- `styles.css` - layout and styling
+- `app.js` - kanji deck, review flow, scheduling, and persistence
+
+## How To Run
+
+Because this is a static app, there are two straightforward ways to use it.
+
+### Option 1: Open It Directly
+
+Open `index.html` in a browser.
+
+This is enough for the app to work in most browsers.
+
+### Option 2: Serve It Locally
+
+If you prefer running it through a local web server, start one in this folder.
+
+Using Python:
+
+```bash
+python -m http.server 8000
+```
+
+Then open:
+
+```text
+http://localhost:8000
+```
+
+Using Node's `serve` package:
+
+```bash
+npx serve .
+```
 
 ## Learning Flow
 
-1. A kanji is displayed
-2. The user types the translation
-3. The app reveals the correct answer
-4. The user selects a review option such as:
-   - Again
-   - Soon
-   - Later
-   - Easy
-5. The kanji is scheduled for its next appearance based on that choice
+1. A due kanji card is shown.
+2. Type the meaning you remember.
+3. Click `Reveal answer`.
+4. Review the accepted answer and readings.
+5. Choose the next interval.
+6. The app stores the next due time and moves to the next due card.
 
-## Example Review Options
+## Storage
 
-Possible interval choices after seeing the correct solution:
+The app stores progress in the browser with `localStorage` under a single application key.
 
-- **Again** → show very soon
-- **In 10 minutes**
-- **Tomorrow**
-- **In 3 days**
-- **In 1 week**
+That means:
 
-The exact intervals can be adjusted later.
+- progress is saved between page reloads
+- progress is local to the browser profile
+- clearing browser storage removes review history and schedule data
 
-## Goal
+## Current Scheduling Model
 
-The goal of the app is to make kanji learning fast, simple, and effective by combining:
+The review timing is intentionally simple and user-controlled:
 
-- active recall
-- immediate feedback
-- user-controlled repetition timing
+- `Again` = 5 minutes
+- `In 10 minutes` = 10 minutes
+- `Tomorrow` = 1 day
+- `In 3 days` = 3 days
+- `In 1 week` = 7 days
 
-## Possible Tech Stack
-
-- **Frontend:** React / Next.js / plain JavaScript
-- **Styling:** Tailwind CSS / CSS
-- **Storage:** LocalStorage, SQLite, or database backend
-- **Deployment:** Vercel, Netlify, or GitHub Pages
+This is not a full automatic SRS algorithm yet. The user explicitly chooses the next interval after every reveal.
 
 ## Future Enhancements
 
-- Multiple accepted translations
-- Kana readings (onyomi / kunyomi)
-- Example words and sentences
-- Difficulty statistics
-- Progress tracking
-- Built-in spaced repetition algorithm
-- Import kanji decks by JLPT level
-
-## Project Vision
-
-This project is meant to be a focused kanji trainer, not a bloated language platform.  
-The main experience should stay extremely simple:
-
-**See kanji → answer → reveal solution → choose next review time**
-
-## MVP
-
-The first version should support:
-
-- a kanji dataset
-- one review card at a time
-- text input for translation
-- answer reveal
-- review-time selection
-- saving the next review date for each kanji
+- multiple accepted translations per card beyond the current small set
+- JLPT-based deck imports
+- example vocabulary and sentences
+- automatic difficulty scoring
+- larger study statistics dashboard
+- editing or importing custom decks
 
 ## License
 

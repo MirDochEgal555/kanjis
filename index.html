@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanji Learning App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <p class="eyebrow">Focused Kanji Trainer</p>
+      <div class="hero-copy">
+        <h1>See kanji. Recall the meaning. Decide the next review.</h1>
+        <p>
+          A lightweight spaced repetition app that keeps difficult kanji close
+          and pushes easy ones further out.
+        </p>
+      </div>
+      <div class="status-grid">
+        <article class="status-card">
+          <span class="status-label">Due now</span>
+          <strong id="due-count">0</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">Studied today</span>
+          <strong id="studied-today">0</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">Total cards</span>
+          <strong id="total-count">0</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="card-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Current review</p>
+            <h2 id="card-prompt">Translation</h2>
+          </div>
+          <button id="reset-progress" class="ghost-button" type="button">Reset progress</button>
+        </div>
+
+        <div id="review-card" class="review-card">
+          <p class="kanji-glyph" id="kanji-character">日</p>
+          <p class="kanji-meta" id="kanji-hint">Think of the most common meaning first.</p>
+
+          <form id="answer-form" class="answer-form">
+            <label class="sr-only" for="answer-input">Type the translation</label>
+            <input
+              id="answer-input"
+              name="answer"
+              type="text"
+              autocomplete="off"
+              placeholder="Type the translation"
+            >
+            <button type="submit" class="primary-button">Reveal answer</button>
+          </form>
+
+          <div id="feedback-panel" class="feedback-panel hidden" aria-live="polite">
+            <div class="feedback-copy">
+              <p class="feedback-label">Correct answer</p>
+              <h3 id="correct-answer">sun / day</h3>
+              <p id="answer-evaluation" class="answer-evaluation"></p>
+              <p id="reading-text" class="reading-text"></p>
+            </div>
+
+            <div class="schedule-panel">
+              <p class="feedback-label">When should this card return?</p>
+              <div id="schedule-options" class="schedule-options"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty-state hidden">
+          <h3>No cards are due right now.</h3>
+          <p>Come back later or reset progress to review the starter deck again.</p>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <section class="sidebar-card">
+          <p class="panel-label">How it works</p>
+          <ol class="flow-list">
+            <li>Look at the kanji.</li>
+            <li>Type the meaning you remember.</li>
+            <li>Reveal the stored answer.</li>
+            <li>Choose the next review time.</li>
+          </ol>
+        </section>
+
+        <section class="sidebar-card">
+          <p class="panel-label">Next intervals</p>
+          <ul id="interval-list" class="interval-list"></ul>
+        </section>
+
+        <section class="sidebar-card">
+          <p class="panel-label">Recent reviews</p>
+          <ul id="history-list" class="history-list"></ul>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <template id="schedule-option-template">
+    <button class="schedule-button" type="button"></button>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
