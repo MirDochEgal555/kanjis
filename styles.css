@@ -32,9 +32,9 @@ textarea {
 }
 
 .app-shell {
-  width: min(1180px, calc(100% - 24px));
+  width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 32px 0 calc(40px + env(safe-area-inset-bottom, 0px));
+  padding: 40px 0 48px;
 }
 
 .hero {
@@ -98,7 +98,7 @@ textarea {
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(290px, 0.9fr);
-  gap: 16px;
+  gap: 20px;
   align-items: start;
 }
 
@@ -108,7 +108,7 @@ textarea {
 }
 
 .card-panel {
-  padding: 22px;
+  padding: 24px;
 }
 
 .panel-head {
@@ -256,7 +256,7 @@ textarea {
 
 .schedule-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 10px;
   margin-top: 12px;
 }
@@ -426,162 +426,31 @@ textarea {
 }
 
 @media (max-width: 900px) {
-  .app-shell {
-    width: min(100% - 20px, 1180px);
-    padding-top: 24px;
-  }
-
   .workspace {
     grid-template-columns: 1fr;
   }
 
   .status-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .sidebar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
   .app-shell {
-    width: min(100% - 16px, 1180px);
-    padding-top: 16px;
-    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .hero {
-    gap: 16px;
-    margin-bottom: 18px;
-  }
-
-  .hero-copy h1 {
-    max-width: none;
-    font-size: clamp(1.95rem, 10vw, 3rem);
-  }
-
-  .hero-copy p {
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-
-  .status-grid {
-    gap: 8px;
-  }
-
-  .status-card {
-    padding: 12px 10px;
-    border-radius: 16px;
-  }
-
-  .status-card strong {
-    margin-top: 6px;
-    font-size: 1.35rem;
-  }
-
-  .status-label {
-    font-size: 0.68rem;
-    letter-spacing: 0.09em;
+    width: min(100% - 20px, 1180px);
+    padding-top: 24px;
   }
 
   .card-panel,
   .sidebar-card,
   .review-card {
-    padding: 16px;
-    border-radius: 20px;
+    padding: 18px;
   }
 
   .panel-head,
   .answer-form {
     grid-template-columns: 1fr;
     display: grid;
-  }
-
-  .panel-head {
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .panel-head h2 {
-    font-size: 1.2rem;
-  }
-
-  .ghost-button {
-    width: 100%;
-  }
-
-  .review-card {
-    border-radius: 18px;
-  }
-
-  .kanji-glyph {
-    font-size: clamp(4rem, 24vw, 5.6rem);
-  }
-
-  .kanji-meta {
-    margin: 10px 0 18px;
-    font-size: 0.95rem;
-  }
-
-  .feedback-panel {
-    gap: 16px;
-    margin-top: 18px;
-    padding-top: 18px;
-  }
-
-  .feedback-copy h3 {
-    font-size: 1.5rem;
-  }
-
-  .examples-list li {
-    padding: 10px 12px;
-  }
-
-  .schedule-options {
-    grid-template-columns: 1fr;
-  }
-
-  .schedule-button {
-    min-height: 64px;
-  }
-
-  .sidebar {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .sidebar-card {
-    padding: 16px;
-  }
-
-  .flow-list,
-  .interval-list,
-  .history-list,
-  .sidebar-copy,
-  .csv-example {
-    margin-top: 12px;
-  }
-
-  .flow-list,
-  .interval-list,
-  .history-list {
-    line-height: 1.5;
-  }
-
-  .csv-example {
-    font-size: 0.8rem;
-    max-height: 180px;
-  }
-
-  .import-form {
-    gap: 10px;
-    margin-top: 12px;
-  }
-
-  .import-form textarea {
-    min-height: 120px;
-    padding: 13px 14px;
   }
 
   .import-actions {
@@ -593,25 +462,5 @@ textarea {
   .ghost-button,
   .file-input {
     min-height: 48px;
-  }
-}
-
-@media (max-width: 420px) {
-  .status-card {
-    padding: 11px 9px;
-  }
-
-  .status-card strong {
-    font-size: 1.2rem;
-  }
-
-  .status-label {
-    font-size: 0.62rem;
-    letter-spacing: 0.07em;
-  }
-
-  .answer-form input,
-  .import-form textarea {
-    padding-inline: 14px;
   }
 }
