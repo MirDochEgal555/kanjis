@@ -97,6 +97,34 @@
         </section>
 
         <section class="sidebar-card">
+          <p class="panel-label">Import CSV</p>
+          <p class="sidebar-copy">
+            Use the columns <code>kanji</code>, <code>meanings</code>, and <code>readings</code>.
+            Separate multiple English meanings inside the <code>meanings</code> cell with <code>|</code>.
+          </p>
+          <pre class="csv-example">kanji,meanings,readings
+語,"language|word","On: ゴ, Kun: かた.る"
+森,forest,"On: シン, Kun: もり"</pre>
+          <form id="import-form" class="import-form">
+            <label class="sr-only" for="csv-input">Paste CSV data</label>
+            <textarea
+              id="csv-input"
+              name="csv"
+              rows="7"
+              placeholder="Paste CSV here"
+            ></textarea>
+            <div class="import-actions">
+              <label class="file-input">
+                <span>Load file</span>
+                <input id="csv-file" type="file" accept=".csv,text/csv">
+              </label>
+              <button type="submit" class="primary-button">Import cards</button>
+            </div>
+            <p id="import-feedback" class="import-feedback" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="sidebar-card">
           <p class="panel-label">Recent reviews</p>
           <ul id="history-list" class="history-list"></ul>
         </section>

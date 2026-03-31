@@ -17,6 +17,7 @@ This implementation uses plain HTML, CSS, and JavaScript so it can run without a
 Features included:
 
 - starter kanji deck with 12 cards
+- CSV import panel for adding more cards
 - active recall input for each kanji
 - answer reveal with accepted meanings and readings
 - review scheduling options:
@@ -38,7 +39,7 @@ Features included:
 
 - `index.html` - app structure
 - `styles.css` - layout and styling
-- `app.js` - kanji deck, review flow, scheduling, and persistence
+- `app.js` - kanji deck, review flow, CSV import, scheduling, and persistence
 
 ## How To Run
 
@@ -80,6 +81,32 @@ npx serve .
 4. Review the accepted answer and readings.
 5. Choose the next interval.
 6. The app stores the next due time and moves to the next due card.
+
+## Importing More Kanjis
+
+The sidebar contains a CSV import panel for adding more cards without changing code.
+
+Expected columns:
+
+- `kanji`
+- `meanings`
+- `readings`
+
+Example:
+
+```csv
+kanji,meanings,readings
+語,"language|word","On: ゴ, Kun: かた.る"
+森,forest,"On: シン, Kun: もり"
+```
+
+Notes:
+
+- keep the header row
+- use `|` inside the `meanings` column when a card should accept multiple English meanings
+- quote fields when they contain commas
+- imported cards are stored in browser `localStorage`, just like the review schedule
+- importing the same kanji with the same primary meaning updates the existing imported card instead of duplicating it
 
 ## Storage
 

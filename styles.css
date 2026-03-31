@@ -26,7 +26,8 @@ body {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -148,7 +149,8 @@ input {
   gap: 12px;
 }
 
-.answer-form input {
+.answer-form input,
+.import-form textarea {
   width: 100%;
   border: 1px solid rgba(91, 70, 46, 0.18);
   border-radius: 16px;
@@ -157,7 +159,8 @@ input {
   color: var(--text);
 }
 
-.answer-form input:focus {
+.answer-form input:focus,
+.import-form textarea:focus {
   outline: 2px solid rgba(182, 73, 38, 0.28);
   border-color: rgba(182, 73, 38, 0.34);
 }
@@ -180,7 +183,8 @@ input {
 
 .primary-button:hover,
 .schedule-button:hover,
-.ghost-button:hover {
+.ghost-button:hover,
+.file-input:hover {
   transform: translateY(-1px);
 }
 
@@ -275,6 +279,12 @@ input {
   line-height: 1.6;
 }
 
+.sidebar-copy {
+  margin: 16px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .interval-list,
 .history-list {
   padding-left: 0;
@@ -298,6 +308,69 @@ input {
   display: block;
   color: var(--text);
   margin-bottom: 4px;
+}
+
+.csv-example {
+  margin: 16px 0 0;
+  padding: 14px;
+  overflow-x: auto;
+  border-radius: 18px;
+  background: #f8ede4;
+  border: 1px solid rgba(182, 73, 38, 0.12);
+  color: var(--text);
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.import-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.import-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.import-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.file-input {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 16px;
+  background: rgba(182, 73, 38, 0.08);
+  color: var(--accent-strong);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.file-input input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.import-feedback {
+  min-height: 1.4em;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.import-feedback.is-error {
+  color: var(--accent-strong);
 }
 
 .hidden {
@@ -344,8 +417,14 @@ input {
     display: grid;
   }
 
+  .import-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .primary-button,
-  .ghost-button {
+  .ghost-button,
+  .file-input {
     min-height: 48px;
   }
 }
