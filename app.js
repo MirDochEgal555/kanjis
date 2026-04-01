@@ -1,6 +1,12 @@
 const STORAGE_KEY = "kanji-learning-app-state-v2";
 const LEGACY_STORAGE_KEYS = ["kanji-learning-app-state-v1"];
 const LAYOUT_STORAGE_KEY = "kanji-learning-layout-v1";
+const SELECTION_STORAGE_KEY = "kanji-learning-selection-v1";
+const DEFAULT_SELECTION = {
+  language: "japanese",
+  deck: "kanji"
+};
+const DEFAULT_DECK_KEY = "japanese:kanji";
 
 const DEFAULT_INTERVALS = [
   { key: "again", label: "Again", minutes: 5, description: "Bring it back almost immediately." },
@@ -263,117 +269,352 @@ const STARTER_DECK = [
   }
 ];
 
-const elements = {
-  desktopLayoutToggle: document.getElementById("desktop-layout-toggle"),
-  mobileLayoutToggle: document.getElementById("mobile-layout-toggle"),
-  dueCount: document.getElementById("due-count"),
-  studiedToday: document.getElementById("studied-today"),
-  totalCount: document.getElementById("total-count"),
-  kanjiCharacter: document.getElementById("kanji-character"),
-  kanjiHint: document.getElementById("kanji-hint"),
-  answerForm: document.getElementById("answer-form"),
-  answerInput: document.getElementById("answer-input"),
-  feedbackPanel: document.getElementById("feedback-panel"),
-  correctAnswer: document.getElementById("correct-answer"),
-  answerEvaluation: document.getElementById("answer-evaluation"),
-  readingText: document.getElementById("reading-text"),
-  examplesPanel: document.getElementById("examples-panel"),
-  examplesList: document.getElementById("examples-list"),
-  scheduleOptions: document.getElementById("schedule-options"),
-  reviewCard: document.getElementById("review-card"),
-  emptyState: document.getElementById("empty-state"),
-  resetProgress: document.getElementById("reset-progress"),
-  historyList: document.getElementById("history-list"),
-  cardPrompt: document.getElementById("card-prompt"),
-  scheduleOptionTemplate: document.getElementById("schedule-option-template"),
-  importForm: document.getElementById("import-form"),
-  csvInput: document.getElementById("csv-input"),
-  csvFile: document.getElementById("csv-file"),
-  importFeedback: document.getElementById("import-feedback")
+const SPANISH_ENGLISH_DECK = [
+  {
+    id: "house",
+    front: "casa",
+    meanings: ["house", "home"],
+    examples: [
+      { jp: "La casa es blanca.", en: "The house is white." },
+      { jp: "Llegamos a casa tarde.", en: "We arrived home late." }
+    ]
+  },
+  {
+    id: "dog",
+    front: "perro",
+    meanings: ["dog"],
+    examples: [
+      { jp: "El perro corre por el parque.", en: "The dog runs through the park." },
+      { jp: "Mi perro duerme mucho.", en: "My dog sleeps a lot." }
+    ]
+  },
+  {
+    id: "car",
+    front: "coche",
+    meanings: ["car"],
+    examples: [
+      { jp: "El coche está en la calle.", en: "The car is on the street." },
+      { jp: "Compramos un coche nuevo.", en: "We bought a new car." }
+    ]
+  },
+  {
+    id: "window",
+    front: "ventana",
+    meanings: ["window"],
+    examples: [
+      { jp: "La ventana está abierta.", en: "The window is open." },
+      { jp: "Mira por la ventana.", en: "Look through the window." }
+    ]
+  },
+  {
+    id: "work",
+    front: "trabajo",
+    meanings: ["work", "job"],
+    examples: [
+      { jp: "Tengo mucho trabajo hoy.", en: "I have a lot of work today." },
+      { jp: "Busca trabajo en la ciudad.", en: "He is looking for work in the city." }
+    ]
+  },
+  {
+    id: "street",
+    front: "calle",
+    meanings: ["street"],
+    examples: [
+      { jp: "La calle está vacía.", en: "The street is empty." },
+      { jp: "Vivimos en esta calle.", en: "We live on this street." }
+    ]
+  },
+  {
+    id: "key",
+    front: "llave",
+    meanings: ["key"],
+    examples: [
+      { jp: "No encuentro la llave.", en: "I can't find the key." },
+      { jp: "La llave está sobre la mesa.", en: "The key is on the table." }
+    ]
+  },
+  {
+    id: "left",
+    front: "izquierda",
+    meanings: ["left"],
+    examples: [
+      { jp: "Gira a la izquierda.", en: "Turn left." },
+      { jp: "La tienda está a la izquierda.", en: "The shop is on the left." }
+    ]
+  },
+  {
+    id: "morning",
+    front: "mañana",
+    meanings: ["morning", "tomorrow"],
+    examples: [
+      { jp: "Cada mañana camino al trabajo.", en: "Every morning I walk to work." },
+      { jp: "La mañana está tranquila.", en: "The morning is calm." }
+    ]
+  },
+  {
+    id: "book",
+    front: "libro",
+    meanings: ["book"],
+    examples: [
+      { jp: "El libro está en la mochila.", en: "The book is in the backpack." },
+      { jp: "Leo un libro corto.", en: "I am reading a short book." }
+    ]
+  },
+  {
+    id: "city",
+    front: "ciudad",
+    meanings: ["city"],
+    examples: [
+      { jp: "La ciudad nunca duerme.", en: "The city never sleeps." },
+      { jp: "Visitamos la ciudad antigua.", en: "We visited the old city." }
+    ]
+  },
+  {
+    id: "school",
+    front: "escuela",
+    meanings: ["school"],
+    examples: [
+      { jp: "La escuela abre temprano.", en: "The school opens early." },
+      { jp: "Los niños salen de la escuela.", en: "The children leave school." }
+    ]
+  }
+];
+
+const DECK_CONFIGS = {
+  "japanese:kanji": {
+    language: "japanese",
+    deck: "kanji",
+    languageLabel: "Japanese",
+    deckLabel: "Kanji",
+    selectionDescription: "Review core kanji one card at a time, reveal the answer, and schedule the next appearance.",
+    heroTitle: "See kanji. Recall the meaning. Decide the next review.",
+    heroDescription: "A lightweight spaced repetition app that keeps difficult kanji close and pushes easy ones further out.",
+    inputLabel: "Type the translation",
+    inputPlaceholder: "Type the translation",
+    submitLabel: "Reveal answer",
+    prompt: (cardFront) => `What does ${cardFront} mean?`,
+    emptyHint: "New card. Try the most common English meaning first.",
+    flowSteps: [
+      "Look at the kanji.",
+      "Type the meaning you remember.",
+      "Reveal the stored answer.",
+      "Choose the next review time."
+    ],
+    starterDeck: STARTER_DECK,
+    supportsImport: true
+  },
+  "spanish:english": {
+    language: "spanish",
+    deck: "english",
+    languageLabel: "Spanish",
+    deckLabel: "English",
+    selectionDescription: "See a Spanish word, type the English translation, then schedule when it should return.",
+    heroTitle: "See Spanish. Recall the English translation. Decide the next review.",
+    heroDescription: "A bilingual vocabulary deck for fast Spanish-to-English recall with the same manual scheduling flow.",
+    inputLabel: "Type the English translation",
+    inputPlaceholder: "Type the English translation",
+    submitLabel: "Reveal answer",
+    prompt: (cardFront) => `What is the English translation of ${cardFront}?`,
+    emptyHint: "New card. Start with the most common English translation.",
+    flowSteps: [
+      "Look at the Spanish word.",
+      "Type the English translation you remember.",
+      "Reveal the stored answer.",
+      "Choose the next review time."
+    ],
+    starterDeck: SPANISH_ENGLISH_DECK,
+    supportsImport: false
+  }
 };
 
-let state = loadState();
+const page = document.body.dataset.page ?? "deck";
+const elements = page === "deck"
+  ? {
+      desktopLayoutToggle: document.getElementById("desktop-layout-toggle"),
+      mobileLayoutToggle: document.getElementById("mobile-layout-toggle"),
+      dueCount: document.getElementById("due-count"),
+      studiedToday: document.getElementById("studied-today"),
+      totalCount: document.getElementById("total-count"),
+      kanjiCharacter: document.getElementById("kanji-character"),
+      kanjiHint: document.getElementById("kanji-hint"),
+      answerForm: document.getElementById("answer-form"),
+      answerInput: document.getElementById("answer-input"),
+      feedbackPanel: document.getElementById("feedback-panel"),
+      correctAnswer: document.getElementById("correct-answer"),
+      answerEvaluation: document.getElementById("answer-evaluation"),
+      readingText: document.getElementById("reading-text"),
+      examplesPanel: document.getElementById("examples-panel"),
+      examplesList: document.getElementById("examples-list"),
+      scheduleOptions: document.getElementById("schedule-options"),
+      reviewCard: document.getElementById("review-card"),
+      emptyState: document.getElementById("empty-state"),
+      resetProgress: document.getElementById("reset-progress"),
+      historyList: document.getElementById("history-list"),
+      cardPrompt: document.getElementById("card-prompt"),
+      scheduleOptionTemplate: document.getElementById("schedule-option-template"),
+      importForm: document.getElementById("import-form"),
+      csvInput: document.getElementById("csv-input"),
+      csvFile: document.getElementById("csv-file"),
+      importFeedback: document.getElementById("import-feedback"),
+      importSection: document.getElementById("import-section"),
+      selectedLanguage: document.getElementById("selected-language"),
+      selectedDeckType: document.getElementById("selected-deck-type"),
+      selectedDeckTitle: document.getElementById("selected-deck-title"),
+      selectedDeckDescription: document.getElementById("selected-deck-description"),
+      answerInputLabel: document.getElementById("answer-input-label"),
+      answerSubmit: document.getElementById("answer-submit"),
+      howItWorksList: document.getElementById("how-it-works-list")
+    }
+  : null;
+const selectionElements = page === "selection"
+  ? {
+      startSelectedDeck: document.getElementById("start-selected-deck"),
+      selectionTitle: document.getElementById("selection-title"),
+      selectionDescription: document.getElementById("selection-description"),
+      summaryLanguage: document.getElementById("summary-language"),
+      summaryDeck: document.getElementById("summary-deck"),
+      optionButtons: [...document.querySelectorAll("[data-selection-group][data-value]")]
+    }
+  : null;
+
+let state = null;
 let currentCardId = null;
+let currentSelection = { ...DEFAULT_SELECTION };
+let currentDeckConfig = DECK_CONFIGS[DEFAULT_DECK_KEY];
 
-applyLayoutMode(loadLayoutMode());
-render();
+if (page === "selection") {
+  initSelectionPage();
+}
 
-elements.desktopLayoutToggle.addEventListener("click", () => {
-  applyLayoutMode("desktop");
-  saveLayoutMode("desktop");
-});
+if (page === "deck") {
+  initDeckPage();
+}
 
-elements.mobileLayoutToggle.addEventListener("click", () => {
-  applyLayoutMode("mobile");
-  saveLayoutMode("mobile");
-});
+function initSelectionPage() {
+  const selection = loadSelection();
 
-elements.answerForm.addEventListener("submit", (event) => {
-  event.preventDefault();
+  selectionElements.optionButtons.forEach((button) => {
+    const group = button.dataset.selectionGroup;
+    const value = button.dataset.value;
+    const isSelected = selection[group] === value;
 
-  if (!currentCardId) {
-    return;
-  }
+    button.classList.toggle("is-selected", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+    button.addEventListener("click", () => {
+      const nextSelection = getSelectionForChoice(group, value);
 
-  const card = getCardById(currentCardId);
-  const answer = elements.answerInput.value.trim();
-  const isCorrect = evaluateAnswer(answer, card.meanings);
+      saveSelection(nextSelection);
+      updateSelectionSummary(nextSelection);
+    });
+  });
 
-  elements.feedbackPanel.classList.remove("hidden");
-  elements.correctAnswer.textContent = card.meanings.join(" / ");
-  elements.readingText.textContent = getReadingText(card);
-  renderExamples(card);
-  elements.answerEvaluation.textContent = answer
-    ? isCorrect
-      ? "Your answer matches one of the accepted meanings."
-      : `You answered "${answer}". Use the revealed answer to decide the next interval.`
-    : "No answer entered. Review the meaning, then choose the next interval.";
+  updateSelectionSummary(selection);
+}
 
-  renderScheduleOptions(card, answer, isCorrect);
-});
+function initDeckPage() {
+  const selection = getSelectionFromUrl();
 
-elements.resetProgress.addEventListener("click", () => {
-  localStorage.removeItem(STORAGE_KEY);
-  LEGACY_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
-  state = loadState(true);
-  currentCardId = null;
-  clearImportFeedback();
-  elements.csvInput.value = "";
-  elements.csvFile.value = "";
+  currentSelection = selection;
+  currentDeckConfig = getDeckConfig(selection);
+  saveSelection(selection);
+  applyDeckSelectionCopy(selection);
+  state = loadState();
+
+  applyLayoutMode(loadLayoutMode());
   render();
-});
 
-elements.csvFile.addEventListener("change", async (event) => {
-  const [file] = event.target.files ?? [];
+  elements.desktopLayoutToggle.addEventListener("click", () => {
+    applyLayoutMode("desktop");
+    saveLayoutMode("desktop");
+  });
 
-  if (!file) {
-    return;
+  elements.mobileLayoutToggle.addEventListener("click", () => {
+    applyLayoutMode("mobile");
+    saveLayoutMode("mobile");
+  });
+
+  elements.answerForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (!currentCardId) {
+      return;
+    }
+
+    const card = getCardById(currentCardId);
+    const answer = elements.answerInput.value.trim();
+    const isCorrect = evaluateAnswer(answer, card.meanings);
+    const readingText = getReadingText(card);
+
+    elements.feedbackPanel.classList.remove("hidden");
+    elements.correctAnswer.textContent = card.meanings.join(" / ");
+    elements.readingText.textContent = readingText;
+    elements.readingText.classList.toggle("hidden", !readingText);
+    renderExamples(card);
+    elements.answerEvaluation.textContent = answer
+      ? isCorrect
+        ? "Your answer matches one of the accepted meanings."
+        : `You answered "${answer}". Use the revealed answer to decide the next interval.`
+      : "No answer entered. Review the meaning, then choose the next interval.";
+
+    renderScheduleOptions(card, answer, isCorrect);
+  });
+
+  elements.resetProgress.addEventListener("click", () => {
+    localStorage.removeItem(getStateStorageKey());
+
+    if (getSelectionKey() === DEFAULT_DECK_KEY) {
+      LEGACY_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+    }
+
+    state = loadState(true);
+    currentCardId = null;
+    clearImportFeedback();
+
+    if (elements.csvInput) {
+      elements.csvInput.value = "";
+    }
+
+    if (elements.csvFile) {
+      elements.csvFile.value = "";
+    }
+
+    render();
+  });
+
+  if (currentDeckConfig.supportsImport) {
+    elements.csvFile.addEventListener("change", async (event) => {
+      const [file] = event.target.files ?? [];
+
+      if (!file) {
+        return;
+      }
+
+      try {
+        elements.csvInput.value = await file.text();
+        setImportFeedback(`Loaded ${file.name}. Review the CSV and import when ready.`);
+      } catch (error) {
+        setImportFeedback("Unable to read the selected file.", true);
+      }
+    });
+
+    elements.importForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      try {
+        const result = importCardsFromCsv(elements.csvInput.value);
+        elements.csvInput.value = "";
+        elements.csvFile.value = "";
+        setImportFeedback(`Imported ${result.total} card(s): ${result.added} new, ${result.updated} updated.`);
+      } catch (error) {
+        setImportFeedback(error.message, true);
+      }
+    });
   }
-
-  try {
-    elements.csvInput.value = await file.text();
-    setImportFeedback(`Loaded ${file.name}. Review the CSV and import when ready.`);
-  } catch (error) {
-    setImportFeedback("Unable to read the selected file.", true);
-  }
-});
-
-elements.importForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  try {
-    const result = importCardsFromCsv(elements.csvInput.value);
-    elements.csvInput.value = "";
-    elements.csvFile.value = "";
-    setImportFeedback(`Imported ${result.total} card(s): ${result.added} new, ${result.updated} updated.`);
-  } catch (error) {
-    setImportFeedback(error.message, true);
-  }
-});
+}
 
 function loadState(forceFresh = false) {
   if (!forceFresh) {
-    const raw = localStorage.getItem(STORAGE_KEY) ?? loadLegacyState();
+    const raw = localStorage.getItem(getStateStorageKey()) ?? loadLegacyState();
 
     if (raw) {
       try {
@@ -397,7 +638,7 @@ function loadState(forceFresh = false) {
 }
 
 function sanitizeState(rawState) {
-  const importedCards = sanitizeImportedCards(rawState.importedCards);
+  const importedCards = currentDeckConfig.supportsImport ? sanitizeImportedCards(rawState.importedCards) : [];
   const deck = [...getStarterDeck(), ...importedCards];
   const cards = buildCardStateMap(deck, rawState.cards ?? {});
   const history = Array.isArray(rawState.history)
@@ -410,7 +651,7 @@ function sanitizeState(rawState) {
 }
 
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem(getStateStorageKey(), JSON.stringify(state));
 }
 
 function render() {
@@ -438,9 +679,9 @@ function render() {
   elements.scheduleOptions.innerHTML = "";
   elements.answerForm.reset();
 
-  elements.kanjiCharacter.textContent = nextCard.kanji;
+  elements.kanjiCharacter.textContent = getCardFront(nextCard);
   elements.kanjiHint.textContent = buildHint(nextCard);
-  elements.cardPrompt.textContent = `What does ${nextCard.kanji} mean?`;
+  elements.cardPrompt.textContent = currentDeckConfig.prompt(getCardFront(nextCard));
   elements.answerInput.focus();
 }
 
@@ -475,7 +716,7 @@ function renderHistory() {
     const interval = DEFAULT_INTERVALS.find((option) => option.key === entry.intervalKey);
     const item = document.createElement("li");
     const answerStatus = entry.isCorrect ? "Accepted" : "Needs work";
-    item.innerHTML = `<strong>${card.kanji} - ${card.meanings.join(" / ")}</strong>${answerStatus} | ${interval?.label ?? "Scheduled"} | ${formatRelativeDate(entry.reviewedAt)}`;
+    item.innerHTML = `<strong>${getCardFront(card)} - ${card.meanings.join(" / ")}</strong>${answerStatus} | ${interval?.label ?? "Scheduled"} | ${formatRelativeDate(entry.reviewedAt)}`;
     elements.historyList.appendChild(item);
   });
 
@@ -534,7 +775,7 @@ function buildHint(card) {
   const cardState = state.cards[card.id];
 
   if (!cardState?.lastIntervalKey) {
-    return "New card. Try the most common English meaning first.";
+    return currentDeckConfig.emptyHint;
   }
 
   const lastInterval = DEFAULT_INTERVALS.find((option) => option.key === cardState.lastIntervalKey);
@@ -543,6 +784,10 @@ function buildHint(card) {
 
 function getCardById(cardId) {
   return getDeck().find((card) => card.id === cardId);
+}
+
+function getCardFront(card) {
+  return card.front || card.kanji || "";
 }
 
 function evaluateAnswer(answer, acceptedMeanings) {
@@ -560,6 +805,8 @@ function evaluateAnswer(answer, acceptedMeanings) {
 
 function normalizeText(value) {
   return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .trim()
     .toLowerCase()
     .replace(/\b(a|an|the)\s+/g, "")
@@ -585,7 +832,7 @@ function formatRelativeDate(timestamp) {
 }
 
 function getStarterDeck() {
-  return STARTER_DECK;
+  return currentDeckConfig.starterDeck;
 }
 
 function getDeck() {
@@ -593,7 +840,7 @@ function getDeck() {
 }
 
 function getReadingText(card) {
-  return card.readings || "No readings provided.";
+  return card.readings || "";
 }
 
 function renderExamples(card) {
@@ -663,6 +910,10 @@ function sanitizeImportedCards(rawImportedCards) {
 }
 
 function sanitizeImportedCard(rawCard) {
+  if (!currentDeckConfig.supportsImport) {
+    return null;
+  }
+
   if (!rawCard || typeof rawCard !== "object") {
     return null;
   }
@@ -691,6 +942,10 @@ function sanitizeImportedCard(rawCard) {
 }
 
 function importCardsFromCsv(csvText) {
+  if (!currentDeckConfig.supportsImport) {
+    throw new Error("CSV import is only available for the Japanese Kanji deck.");
+  }
+
   const importedCards = parseImportedCardsFromCsv(csvText);
   const existingCards = new Map(state.importedCards.map((card) => [card.id, card]));
   const now = Date.now();
@@ -874,6 +1129,10 @@ function normalizeHeader(value) {
 }
 
 function loadLegacyState() {
+  if (getSelectionKey() !== DEFAULT_DECK_KEY) {
+    return null;
+  }
+
   for (const key of LEGACY_STORAGE_KEYS) {
     const raw = localStorage.getItem(key);
 
@@ -886,12 +1145,143 @@ function loadLegacyState() {
 }
 
 function setImportFeedback(message, isError = false) {
+  if (!elements?.importFeedback) {
+    return;
+  }
+
   elements.importFeedback.textContent = message;
   elements.importFeedback.classList.toggle("is-error", isError);
 }
 
 function clearImportFeedback() {
   setImportFeedback("", false);
+}
+
+function loadSelection() {
+  try {
+    const raw = localStorage.getItem(SELECTION_STORAGE_KEY);
+
+    if (!raw) {
+      return { ...DEFAULT_SELECTION };
+    }
+
+    return sanitizeSelection(JSON.parse(raw));
+  } catch (error) {
+    return { ...DEFAULT_SELECTION };
+  }
+}
+
+function saveSelection(selection) {
+  localStorage.setItem(SELECTION_STORAGE_KEY, JSON.stringify(sanitizeSelection(selection)));
+}
+
+function sanitizeSelection(selection) {
+  if (selection?.language === "spanish" && selection?.deck === "english") {
+    return {
+      language: "spanish",
+      deck: "english"
+    };
+  }
+
+  return {
+    language: "japanese",
+    deck: "kanji"
+  };
+}
+
+function getSelectionFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const savedSelection = loadSelection();
+
+  return sanitizeSelection({
+    language: params.get("language") ?? savedSelection.language,
+    deck: params.get("deck") ?? savedSelection.deck
+  });
+}
+
+function getSelectionForChoice(group, value) {
+  if ((group === "language" && value === "spanish") || (group === "deck" && value === "english")) {
+    return {
+      language: "spanish",
+      deck: "english"
+    };
+  }
+
+  return {
+    language: "japanese",
+    deck: "kanji"
+  };
+}
+
+function updateSelectionSummary(selection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const deckConfig = getDeckConfig(normalizedSelection);
+
+  selectionElements.optionButtons.forEach((button) => {
+    const isSelected = normalizedSelection[button.dataset.selectionGroup] === button.dataset.value;
+    button.classList.toggle("is-selected", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+
+  selectionElements.selectionTitle.textContent = `${deckConfig.languageLabel} ${deckConfig.deckLabel} Deck`;
+  selectionElements.selectionDescription.textContent = deckConfig.selectionDescription;
+  selectionElements.summaryLanguage.textContent = deckConfig.languageLabel;
+  selectionElements.summaryDeck.textContent = deckConfig.deckLabel;
+  selectionElements.startSelectedDeck.href = getDeckPageUrl(normalizedSelection);
+}
+
+function getDeckPageUrl(selection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const params = new URLSearchParams(normalizedSelection);
+  return `deck.html?${params.toString()}`;
+}
+
+function applyDeckSelectionCopy(selection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const deckConfig = getDeckConfig(normalizedSelection);
+
+  elements.selectedLanguage.textContent = deckConfig.languageLabel;
+  elements.selectedDeckType.textContent = deckConfig.deckLabel;
+  elements.selectedDeckTitle.textContent = deckConfig.heroTitle;
+  elements.selectedDeckDescription.textContent = deckConfig.heroDescription;
+  elements.answerInputLabel.textContent = deckConfig.inputLabel;
+  elements.answerInput.placeholder = deckConfig.inputPlaceholder;
+  elements.answerSubmit.textContent = deckConfig.submitLabel;
+  renderHowItWorks(deckConfig.flowSteps);
+
+  if (elements.importSection) {
+    elements.importSection.classList.toggle("hidden", !deckConfig.supportsImport);
+  }
+}
+
+function formatSelectionLabel(value) {
+  return String(value).charAt(0).toUpperCase() + String(value).slice(1);
+}
+
+function renderHowItWorks(steps) {
+  elements.howItWorksList.innerHTML = "";
+
+  steps.forEach((step) => {
+    const item = document.createElement("li");
+    item.textContent = step;
+    elements.howItWorksList.appendChild(item);
+  });
+}
+
+function getSelectionKey(selection = currentSelection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  return `${normalizedSelection.language}:${normalizedSelection.deck}`;
+}
+
+function getDeckConfig(selection = currentSelection) {
+  return DECK_CONFIGS[getSelectionKey(selection)] ?? DECK_CONFIGS[DEFAULT_DECK_KEY];
+}
+
+function getStateStorageKey(selection = currentSelection) {
+  const selectionKey = getSelectionKey(selection);
+  return selectionKey === DEFAULT_DECK_KEY
+    ? STORAGE_KEY
+    : `${STORAGE_KEY}:${selectionKey}`;
 }
 
 function getExamples(card) {
@@ -921,6 +1311,10 @@ function saveLayoutMode(mode) {
 }
 
 function applyLayoutMode(mode) {
+  if (!elements?.desktopLayoutToggle || !elements?.mobileLayoutToggle) {
+    return;
+  }
+
   const isMobileLayout = mode === "mobile";
   document.body.classList.toggle("mobile-layout", isMobileLayout);
   elements.desktopLayoutToggle.classList.toggle("is-active", !isMobileLayout);

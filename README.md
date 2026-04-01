@@ -1,6 +1,6 @@
 # Kanji Learning App
 
-A small browser-based kanji trainer built as a static single-page app.
+A small browser-based study trainer built as a static two-page app.
 
 It implements the MVP described in this repo:
 
@@ -16,9 +16,10 @@ This implementation uses plain HTML, CSS, and JavaScript so it can run without a
 
 Features included:
 
-- starter kanji deck with 24 cards
+- Japanese -> Kanji starter deck
+- Spanish -> English starter deck
 - CSV import panel for adding more cards
-- active recall input for each kanji
+- active recall input for each card
 - answer reveal with accepted meanings, readings, and two example sentences
 - review scheduling options:
   - Again
@@ -37,9 +38,10 @@ Features included:
 
 ## Files
 
-- `index.html` - app structure
+- `index.html` - language and deck selection screen
+- `deck.html` - review deck screen
 - `styles.css` - layout and styling
-- `app.js` - kanji deck, review flow, CSV import, scheduling, and persistence
+- `app.js` - page initialization, deck selection flow, review logic, CSV import, scheduling, and persistence
 
 ## How To Run
 
@@ -47,7 +49,7 @@ Because this is a static app, there are two straightforward ways to use it.
 
 ### Option 1: Open It Directly
 
-Open `index.html` in a browser.
+Open `index.html` in a browser, choose a deck, and continue to the review page.
 
 This is enough for the app to work in most browsers.
 
@@ -75,8 +77,8 @@ npx serve .
 
 ## Learning Flow
 
-1. A due kanji card is shown.
-2. Type the meaning you remember.
+1. A due card is shown.
+2. Type the translation you remember.
 3. Click `Reveal answer`.
 4. Review the accepted answer and readings.
 5. Choose the next interval.
@@ -85,6 +87,8 @@ npx serve .
 ## Importing More Kanjis
 
 The sidebar contains a CSV import panel for adding more cards without changing code.
+
+Right now CSV import is available for the Japanese -> Kanji deck.
 
 Expected columns:
 

@@ -6,142 +6,94 @@
   <title>Kanji Learning App</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <main class="app-shell">
-    <section class="hero">
-      <p class="eyebrow">Focused Kanji Trainer</p>
-      <div class="hero-copy">
-        <h1>See kanji. Recall the meaning. Decide the next review.</h1>
+<body data-page="selection">
+  <main class="app-shell selection-shell">
+    <section class="selection-hero">
+      <p class="eyebrow">Study Deck Selection</p>
+      <div class="selection-hero-copy">
+        <h1>Choose a language, pick a deck, then enter review mode.</h1>
         <p>
-          A lightweight spaced repetition app that keeps difficult kanji close
-          and pushes easy ones further out.
+          Two study paths are live now: <strong>Japanese -> Kanji</strong> and
+          <strong>Spanish -> English</strong>.
         </p>
       </div>
-      <div class="hero-toolbar">
-        <div class="layout-toggle" role="group" aria-label="Layout mode">
-          <button id="desktop-layout-toggle" class="toggle-button is-active" type="button">Desktop</button>
-          <button id="mobile-layout-toggle" class="toggle-button" type="button">Mobile</button>
-        </div>
-      </div>
-      <div class="status-grid">
-        <article class="status-card">
-          <span class="status-label">Due now</span>
-          <strong id="due-count">0</strong>
-        </article>
-        <article class="status-card">
-          <span class="status-label">Studied today</span>
-          <strong id="studied-today">0</strong>
-        </article>
-        <article class="status-card">
-          <span class="status-label">Total cards</span>
-          <strong id="total-count">0</strong>
-        </article>
-      </div>
+      <a id="start-selected-deck" class="primary-button launch-button" href="deck.html?language=japanese&amp;deck=kanji">
+        Open selected deck
+      </a>
     </section>
 
-    <section class="workspace">
-      <div class="card-panel">
-        <div class="panel-head">
+    <section class="selection-grid" aria-label="Deck setup">
+      <article class="selection-panel">
+        <div class="selection-panel-head">
+          <p class="panel-label">Step 1</p>
+          <h2>Choose a language</h2>
+        </div>
+
+        <div id="language-options" class="option-grid" role="radiogroup" aria-label="Language selection">
+          <button class="option-card is-selected" type="button" data-selection-group="language" data-value="japanese" aria-pressed="true">
+            <span class="option-card-label">Japanese</span>
+            <span class="option-card-meta">Pairs with Kanji</span>
+          </button>
+          <button class="option-card" type="button" data-selection-group="language" data-value="spanish" aria-pressed="false">
+            <span class="option-card-label">Spanish</span>
+            <span class="option-card-meta">Pairs with English</span>
+          </button>
+          <button class="option-card is-disabled" type="button" disabled>
+            <span class="option-card-label">Chinese</span>
+            <span class="option-card-meta">Coming later</span>
+          </button>
+          <button class="option-card is-disabled" type="button" disabled>
+            <span class="option-card-label">Korean</span>
+            <span class="option-card-meta">Coming later</span>
+          </button>
+        </div>
+      </article>
+
+      <article class="selection-panel">
+        <div class="selection-panel-head">
+          <p class="panel-label">Step 2</p>
+          <h2>Choose a deck</h2>
+        </div>
+
+        <div id="deck-options" class="option-grid" role="radiogroup" aria-label="Deck selection">
+          <button class="option-card is-selected" type="button" data-selection-group="deck" data-value="kanji" aria-pressed="true">
+            <span class="option-card-label">Kanji</span>
+            <span class="option-card-meta">Japanese character review</span>
+          </button>
+          <button class="option-card" type="button" data-selection-group="deck" data-value="english" aria-pressed="false">
+            <span class="option-card-label">English</span>
+            <span class="option-card-meta">Translate from Spanish</span>
+          </button>
+          <button class="option-card is-disabled" type="button" disabled>
+            <span class="option-card-label">Vocabulary</span>
+            <span class="option-card-meta">Coming later</span>
+          </button>
+          <button class="option-card is-disabled" type="button" disabled>
+            <span class="option-card-label">Grammar</span>
+            <span class="option-card-meta">Coming later</span>
+          </button>
+        </div>
+      </article>
+
+      <article class="selection-summary">
+        <p class="panel-label">Selection summary</p>
+        <h2 id="selection-title">Japanese Kanji Deck</h2>
+        <p id="selection-description" class="selection-summary-copy">
+          Review core kanji one card at a time, reveal the answer, and schedule the next appearance.
+        </p>
+        <dl class="selection-meta">
           <div>
-            <p class="panel-label">Current review</p>
-            <h2 id="card-prompt">Translation</h2>
+            <dt>Language</dt>
+            <dd id="summary-language">Japanese</dd>
           </div>
-          <button id="reset-progress" class="ghost-button" type="button">Reset progress</button>
-        </div>
-
-        <div id="review-card" class="review-card">
-          <p class="kanji-glyph" id="kanji-character">日</p>
-          <p class="kanji-meta" id="kanji-hint">Think of the most common meaning first.</p>
-
-          <form id="answer-form" class="answer-form">
-            <label class="sr-only" for="answer-input">Type the translation</label>
-            <input
-              id="answer-input"
-              name="answer"
-              type="text"
-              autocomplete="off"
-              placeholder="Type the translation"
-            >
-            <button type="submit" class="primary-button">Reveal answer</button>
-          </form>
-
-          <div id="feedback-panel" class="feedback-panel hidden" aria-live="polite">
-            <div class="feedback-copy">
-              <p class="feedback-label">Correct answer</p>
-              <h3 id="correct-answer">sun / day</h3>
-              <p id="answer-evaluation" class="answer-evaluation"></p>
-              <p id="reading-text" class="reading-text"></p>
-            </div>
-
-            <div class="schedule-panel">
-              <p class="feedback-label">When should this card return?</p>
-              <div id="schedule-options" class="schedule-options"></div>
-            </div>
-
-            <div id="examples-panel" class="examples-panel hidden">
-              <p class="feedback-label">Example sentences</p>
-              <ul id="examples-list" class="examples-list"></ul>
-            </div>
+          <div>
+            <dt>Deck</dt>
+            <dd id="summary-deck">Kanji</dd>
           </div>
-        </div>
-
-        <div id="empty-state" class="empty-state hidden">
-          <h3>No cards are due right now.</h3>
-          <p>Come back later or reset progress to review the starter deck again.</p>
-        </div>
-      </div>
-
-      <aside class="sidebar">
-        <section class="sidebar-card">
-          <p class="panel-label">How it works</p>
-          <ol class="flow-list">
-            <li>Look at the kanji.</li>
-            <li>Type the meaning you remember.</li>
-            <li>Reveal the stored answer.</li>
-            <li>Choose the next review time.</li>
-          </ol>
-        </section>
-
-        <section class="sidebar-card">
-          <p class="panel-label">Recent reviews</p>
-          <ul id="history-list" class="history-list"></ul>
-        </section>
-
-        <section class="sidebar-card">
-          <p class="panel-label">Import CSV</p>
-          <p class="sidebar-copy">
-            Use the columns <code>kanji</code>, <code>meanings</code>, <code>readings</code>,
-            <code>example1_jp</code>, <code>example1_en</code>, <code>example2_jp</code>, and <code>example2_en</code>.
-            Separate multiple English meanings inside the <code>meanings</code> cell with <code>|</code>.
-          </p>
-          <pre class="csv-example">kanji,meanings,readings,example1_jp,example1_en,example2_jp,example2_en
-語,"language|word","On: ゴ, Kun: かた.る",日本語を勉強しています。,"I am studying Japanese.",彼はやさしい言葉で話した。,"He spoke in gentle words."
-森,forest,"On: シン, Kun: もり",森の中はとても静かだ。,"It is very quiet inside the forest.",朝の森を歩くのが好きです。,"I like walking in the forest in the morning."</pre>
-          <form id="import-form" class="import-form">
-            <label class="sr-only" for="csv-input">Paste CSV data</label>
-            <textarea
-              id="csv-input"
-              name="csv"
-              rows="7"
-              placeholder="Paste CSV here"
-            ></textarea>
-            <div class="import-actions">
-              <label class="file-input">
-                <span>Load file</span>
-                <input id="csv-file" type="file" accept=".csv,text/csv">
-              </label>
-              <button type="submit" class="primary-button">Import cards</button>
-            </div>
-            <p id="import-feedback" class="import-feedback" aria-live="polite"></p>
-          </form>
-        </section>
-      </aside>
+        </dl>
+      </article>
     </section>
   </main>
-
-  <template id="schedule-option-template">
-    <button class="schedule-button" type="button"></button>
-  </template>
 
   <script src="app.js"></script>
 </body>

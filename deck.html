@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanji Learning App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="deck">
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-topbar">
+        <a class="back-link" href="index.html">Back to selection</a>
+        <div class="hero-toolbar">
+          <div class="layout-toggle" role="group" aria-label="Layout mode">
+            <button id="desktop-layout-toggle" class="toggle-button is-active" type="button">Desktop</button>
+            <button id="mobile-layout-toggle" class="toggle-button" type="button">Mobile</button>
+          </div>
+        </div>
+      </div>
+      <p class="eyebrow">Focused Study Deck</p>
+      <div class="hero-copy">
+        <div class="deck-badge-row">
+          <span id="selected-language" class="deck-badge">Japanese</span>
+          <span id="selected-deck-type" class="deck-badge">Kanji</span>
+        </div>
+        <h1 id="selected-deck-title">See kanji. Recall the meaning. Decide the next review.</h1>
+        <p id="selected-deck-description">
+          A lightweight spaced repetition app that keeps difficult kanji close
+          and pushes easy ones further out.
+        </p>
+      </div>
+      <div class="status-grid">
+        <article class="status-card">
+          <span class="status-label">Due now</span>
+          <strong id="due-count">0</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">Studied today</span>
+          <strong id="studied-today">0</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">Total cards</span>
+          <strong id="total-count">0</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="card-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Current review</p>
+            <h2 id="card-prompt">Translation</h2>
+          </div>
+          <button id="reset-progress" class="ghost-button" type="button">Reset progress</button>
+        </div>
+
+        <div id="review-card" class="review-card">
+          <p class="kanji-glyph" id="kanji-character">æ—¥</p>
+          <p class="kanji-meta" id="kanji-hint">Think of the most common meaning first.</p>
+
+          <form id="answer-form" class="answer-form">
+            <label id="answer-input-label" class="sr-only" for="answer-input">Type the translation</label>
+            <input
+              id="answer-input"
+              name="answer"
+              type="text"
+              autocomplete="off"
+              placeholder="Type the translation"
+            >
+            <button id="answer-submit" type="submit" class="primary-button">Reveal answer</button>
+          </form>
+
+          <div id="feedback-panel" class="feedback-panel hidden" aria-live="polite">
+            <div class="feedback-copy">
+              <p class="feedback-label">Correct answer</p>
+              <h3 id="correct-answer">sun / day</h3>
+              <p id="answer-evaluation" class="answer-evaluation"></p>
+              <p id="reading-text" class="reading-text"></p>
+            </div>
+
+            <div class="schedule-panel">
+              <p class="feedback-label">When should this card return?</p>
+              <div id="schedule-options" class="schedule-options"></div>
+            </div>
+
+            <div id="examples-panel" class="examples-panel hidden">
+              <p class="feedback-label">Example sentences</p>
+              <ul id="examples-list" class="examples-list"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty-state hidden">
+          <h3>No cards are due right now.</h3>
+          <p>Come back later or reset progress to review the starter deck again.</p>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <section class="sidebar-card">
+          <p class="panel-label">How it works</p>
+          <ol id="how-it-works-list" class="flow-list"></ol>
+        </section>
+
+        <section class="sidebar-card">
+          <p class="panel-label">Recent reviews</p>
+          <ul id="history-list" class="history-list"></ul>
+        </section>
+
+        <section id="import-section" class="sidebar-card">
+          <p class="panel-label">Import CSV</p>
+          <p class="sidebar-copy">
+            Use the columns <code>kanji</code>, <code>meanings</code>, <code>readings</code>,
+            <code>example1_jp</code>, <code>example1_en</code>, <code>example2_jp</code>, and <code>example2_en</code>.
+            Separate multiple English meanings inside the <code>meanings</code> cell with <code>|</code>.
+          </p>
+          <pre class="csv-example">kanji,meanings,readings,example1_jp,example1_en,example2_jp,example2_en
+èªž,"language|word","On: ã‚´, Kun: ã‹ãŸ.ã‚‹",æ—¥æœ¬èªžã‚’å‹‰å¼·ã—ã¦ã„ã¾ã™ã€‚,"I am studying Japanese.",å½¼ã¯ã‚„ã•ã—ã„è¨€è‘‰ã§è©±ã—ãŸã€‚,"He spoke in gentle words."
+æ£®,forest,"On: ã‚·ãƒ³, Kun: ã‚‚ã‚Š",æ£®ã®ä¸­ã¯ã¨ã¦ã‚‚é™ã‹ã ã€‚,"It is very quiet inside the forest.",æœã®æ£®ã‚’æ­©ãã®ãŒå¥½ãã§ã™ã€‚,"I like walking in the forest in the morning."</pre>
+          <form id="import-form" class="import-form">
+            <label class="sr-only" for="csv-input">Paste CSV data</label>
+            <textarea
+              id="csv-input"
+              name="csv"
+              rows="7"
+              placeholder="Paste CSV here"
+            ></textarea>
+            <div class="import-actions">
+              <label class="file-input">
+                <span>Load file</span>
+                <input id="csv-file" type="file" accept=".csv,text/csv">
+              </label>
+              <button type="submit" class="primary-button">Import cards</button>
+            </div>
+            <p id="import-feedback" class="import-feedback" aria-live="polite"></p>
+          </form>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <template id="schedule-option-template">
+    <button class="schedule-button" type="button"></button>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
