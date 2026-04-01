@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>sidequest</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1115;
+      --panel: rgba(20, 24, 30, 0.92);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f2f4f7;
+      --muted: #96a0ae;
+      --accent: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 26%),
+        linear-gradient(180deg, #101318 0%, #0a0c10 100%);
+      color: var(--text);
+      font-family: "Aptos", "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .quest-panel {
+      width: min(760px, 100%);
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+    }
+
+    .eyebrow,
+    .quest-meta {
+      margin: 0;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.76rem;
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      font-size: clamp(2.1rem, 7vw, 4rem);
+      line-height: 0.95;
+    }
+
+    .quest-summary,
+    .quest-instructions {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1.02rem;
+    }
+
+    .quest-card {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .quest-title {
+      margin: 0 0 12px;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      line-height: 1.05;
+    }
+
+    .quest-line {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .quest-line strong {
+      color: var(--accent);
+    }
+
+    .quest-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .quest-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.9rem;
+    }
+
+    .quest-note {
+      margin-top: 18px;
+      color: rgba(255, 255, 255, 0.24);
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
+
+      .quest-panel {
+        padding: 20px;
+        border-radius: 22px;
+      }
+
+      .quest-card {
+        padding: 18px;
+        border-radius: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="quest-panel">
+    <p class="eyebrow">Archived Sidequest Feed</p>
+    <h1>One quest. No map.</h1>
+    <p class="quest-summary">
+      This page keeps a vault of 100 hand-written sidequests. Each visit reveals only one.
+    </p>
+
+    <section class="quest-card" aria-live="polite">
+      <p id="quest-meta" class="quest-meta"></p>
+      <h2 id="quest-title" class="quest-title"></h2>
+      <p id="quest-line" class="quest-line"></p>
+      <div class="quest-footer">
+        <span id="quest-reward" class="quest-chip"></span>
+        <span id="quest-risk" class="quest-chip"></span>
+      </div>
+    </section>
+
+    <p class="quest-note">No link points here.</p>
+  </main>
+
+  <script>
+    const archive = [
+      { id: "001", title: "Return The Library Key", meta: "Old Town Library / before opening", line: "Slip the brass key back into the history return box before the head librarian notices it is missing.", reward: "Reward: a stamped note of gratitude", risk: "Risk: the security gate opens in eight minutes" },
+      { id: "002", title: "Wake The Rooftop Garden", meta: "Apartment Block C / sunrise", line: "Water every planter on the east roof before the first resident comes up for coffee.", reward: "Reward: a packet of rare basil seeds", risk: "Risk: one cracked pipe floods the corner tiles" },
+      { id: "003", title: "Carry Soup Across The Alley", meta: "Market District / lunch rush", line: "Bring a still-hot pot of soup from stall 12 to the tailor two doors down without spilling a drop.", reward: "Reward: free lunch from the cook", risk: "Risk: the alley is packed with couriers" },
+      { id: "004", title: "Find The Missing Bell Clapper", meta: "Harbor Chapel / high noon", line: "Search the bell tower and recover the missing clapper so the noon ring can sound on time.", reward: "Reward: a quiet seat in the tower", risk: "Risk: loose steps on the upper ladder" },
+      { id: "005", title: "Photograph The Empty Platform", meta: "North Station / last train", line: "Take one clear photo of platform 4 at the exact moment the departure board flickers blank.", reward: "Reward: a clean print for your wall", risk: "Risk: station guards dislike lingering after midnight" },
+      { id: "006", title: "Deliver Fresh Chalk", meta: "Riverside School / dawn", line: "Get a box of white chalk to classroom 2B before the teacher arrives from the ferry.", reward: "Reward: a note excusing one small mistake", risk: "Risk: the front gate remains locked until seven" },
+      { id: "007", title: "Tune The Broken Radio", meta: "Corner Repair Shop / late afternoon", line: "Coax the old shop radio back to life and find the baseball score before the owner closes up.", reward: "Reward: a repaired pocket flashlight", risk: "Risk: the dial slips out of alignment easily" },
+      { id: "008", title: "Rescue The Stray Ledger Page", meta: "Town Hall Steps / windy evening", line: "Catch the loose ledger page blowing across the square and return it to the clerk who dropped it.", reward: "Reward: your name cleared from a small fee", risk: "Risk: rain starts as soon as the page lifts" },
+      { id: "009", title: "Escort The Cake Safely", meta: "South Bakery / wedding hour", line: "Walk a three-tier cake through the pedestrian street to the registry office without smudging the icing.", reward: "Reward: the first cut slice", risk: "Risk: children are chasing pigeons in the lane" },
+      { id: "010", title: "Collect The Lanterns", meta: "Canal Bridge / after dusk", line: "Retrieve all five paper lanterns before the current carries them beneath the bridge arches.", reward: "Reward: one lantern kept for yourself", risk: "Risk: the stones are slick with moss" },
+      { id: "011", title: "Mend The Violin String", meta: "Music Hall Basement / matinee break", line: "Replace the snapped E string on the student violin before the rehearsal resumes upstairs.", reward: "Reward: two balcony tickets", risk: "Risk: the spare strings are mixed in the wrong cases" },
+      { id: "012", title: "Bring Tea To The Night Guard", meta: "Museum Annex / 02:00", line: "Carry a thermos of jasmine tea to the guard at the fossil wing before his round reaches the east door.", reward: "Reward: ten minutes alone in the moonlit atrium", risk: "Risk: motion sensors blink red in the corridor" },
+      { id: "013", title: "Write The Chalkboard Menu", meta: "Cafe Marrow / pre-lunch", line: "Letter today's specials on the sidewalk board with steady hands before the first office crowd arrives.", reward: "Reward: a free pastry and coffee", risk: "Risk: one sudden gust can smear the chalk" },
+      { id: "014", title: "Recover The Kite From The Elm", meta: "Hill Park / breezy noon", line: "Climb just far enough to free the red kite and bring it back intact to the waiting child.", reward: "Reward: a hand-drawn thank you card", risk: "Risk: the branch above the path bends sharply" },
+      { id: "015", title: "Sort The Coins By Candlelight", meta: "Antique Shop / power outage", line: "Separate the silver tram tokens from the ordinary change before the owner lights the final candle.", reward: "Reward: one token kept as a charm", risk: "Risk: the candle wax is dripping on the desk" },
+      { id: "016", title: "Repaint The Stage Mark", meta: "Community Theater / early morning", line: "Refresh the faded white mark at center stage so the lead actor stops missing his final cue.", reward: "Reward: a seat in the front row", risk: "Risk: the paint dries slowly in cold air" },
+      { id: "017", title: "Trade Jam For Tomatoes", meta: "Saturday Market / 09:00", line: "Swap two jars of plum jam for a basket of ripe tomatoes before the produce sellers run out.", reward: "Reward: enough ingredients for dinner", risk: "Risk: the best stall only bargains once" },
+      { id: "018", title: "Deliver The Unsent Postcard", meta: "Beach Promenade / late morning", line: "Find the traveler described on the card and hand over the postcard she forgot to mail.", reward: "Reward: a story from another coastline", risk: "Risk: the crowd changes with every arriving bus" },
+      { id: "019", title: "Reset The Clock Above The Gate", meta: "West Gate Arch / sunset", line: "Wind the old station clock and set it to the correct minute before the watchman notices the drift.", reward: "Reward: a view over the whole district", risk: "Risk: pigeons have nested behind the face" },
+      { id: "020", title: "Sweep The Glasshouse Path", meta: "Botanic Conservatory / opening hour", line: "Clear every fallen petal from the central path before the first tour group steps inside.", reward: "Reward: a cutting from the lemon tree", risk: "Risk: condensation makes the tiles treacherous" },
+      { id: "021", title: "Win Back The Chess Clock", meta: "Riverfront Cafe / rainy evening", line: "Beat the retired ferry captain at a five-minute game and reclaim the borrowed chess clock.", reward: "Reward: the clock and his respect", risk: "Risk: he never blunders the endgame twice" },
+      { id: "022", title: "Carry The Banner Upstairs", meta: "Union Hall / dawn", line: "Move the folded parade banner to the attic without letting the painted edges scrape the walls.", reward: "Reward: your initials sewn into the hem", risk: "Risk: the stair turn is tighter than it looks" },
+      { id: "023", title: "Catch The Escaped Recipe", meta: "Test Kitchen / vent fan on", line: "Retrieve the handwritten recipe sheet before the draft sends it into the flour bins.", reward: "Reward: first bite of the finished tart", risk: "Risk: the page tears easily at the folds" },
+      { id: "024", title: "Replace The Street Poet's Pen", meta: "Clock Square / blue hour", line: "Bring a working fountain pen to the poet on the fountain steps before his paying customers arrive.", reward: "Reward: a poem written for you alone", risk: "Risk: he refuses any pen that scratches" },
+      { id: "025", title: "Unlock The Bicycle Chain", meta: "South Arcade / after work", line: "Free the courier's bike from a jammed chain lock before the evening deliveries start backing up.", reward: "Reward: a shortcut map of the city lanes", risk: "Risk: the lock pin snaps if forced" },
+      { id: "026", title: "Gather Shells For The Window Display", meta: "Seaside Curio Shop / morning tide", line: "Collect twelve unbroken white shells before the shopkeeper opens the shutters.", reward: "Reward: a polished sea-glass pendant", risk: "Risk: the tide turns faster near the rocks" },
+      { id: "027", title: "Wake The Bakery Starter", meta: "Rose Street Bakery / 04:30", line: "Stir the sourdough starter at the exact right hour so the morning loaves rise on schedule.", reward: "Reward: the first warm loaf", risk: "Risk: too much water ruins the batch" },
+      { id: "028", title: "Sort The Film Reels", meta: "Cinema Projection Booth / one hour to showtime", line: "Put the three unlabeled reels in the right order before the audience takes their seats.", reward: "Reward: free tickets for a week", risk: "Risk: reel two looks almost identical to reel three" },
+      { id: "029", title: "Find The Lost Debate Notes", meta: "College Courtyard / noon", line: "Locate the folded speaking notes somewhere between the elm bench and the lecture hall doors.", reward: "Reward: a public thank you from the speaker", risk: "Risk: the wind keeps changing direction" },
+      { id: "030", title: "Deliver Milk To The Painter", meta: "Warehouse Studio / first light", line: "Bring fresh milk and clean rags to the muralist before she begins the final layer.", reward: "Reward: your silhouette hidden in the mural", risk: "Risk: wet paint blocks the shortest route" },
+      { id: "031", title: "Restring The Courtyard Lights", meta: "Inn Courtyard / before dinner", line: "Replace the snapped line of hanging bulbs before the musicians arrive for the courtyard set.", reward: "Reward: dinner under the lights", risk: "Risk: one ladder foot sinks into soft gravel" },
+      { id: "032", title: "Fetch The Spare Oar", meta: "Boat House / overcast morning", line: "Retrieve the spare oar from the loft before the rowing pair misses the tide window.", reward: "Reward: a ride across the bay", risk: "Risk: gulls are nesting in the rafters" },
+      { id: "033", title: "Deliver Quiet Shoes", meta: "Hospital Ward / night shift", line: "Bring the soft-soled shoes to the nurse on Ward C before the next medication round.", reward: "Reward: one name moved to the top of the visiting list", risk: "Risk: squeaky floorboards betray every hurry" },
+      { id: "034", title: "Rehang The Observatory Curtain", meta: "Hill Observatory / sunset", line: "Secure the blackout curtain over the west window before the telescope session begins.", reward: "Reward: first look through the main lens", risk: "Risk: the curtain ring near the top is cracked" },
+      { id: "035", title: "Carry Ice To The Fishmonger", meta: "Harbor Market / dawn", line: "Get two sacks of ice from the cold room to the fish counter before the catch goes soft.", reward: "Reward: the best cut of the day", risk: "Risk: the dock boards are uneven" },
+      { id: "036", title: "Retrieve The Mayor's Hat", meta: "Council Chamber / fifteen minutes to ceremony", line: "Find the missing navy hat before the procession forms on the front steps.", reward: "Reward: a seat inside the ceremony ropes", risk: "Risk: everyone is blaming everyone else" },
+      { id: "037", title: "Sharpen The Carpenter's Pencil", meta: "Workshop Lane / early afternoon", line: "Prepare six precise pencil points before the cabinetmaker starts cutting the walnut panels.", reward: "Reward: a small box made from the offcuts", risk: "Risk: the blade bites if rushed" },
+      { id: "038", title: "Carry The Message Across The Footbridge", meta: "Mill Creek / foggy morning", line: "Take the sealed message to the grain buyer across the footbridge before the mill whistle sounds.", reward: "Reward: a sack of warm rolls", risk: "Risk: the bridge planks sweat in the fog" },
+      { id: "039", title: "Find The Cat In The Costume Loft", meta: "Opera House / rehearsal break", line: "Locate the stage manager's cat somewhere in the costume loft and coax it down before intermission ends.", reward: "Reward: backstage access for one night", risk: "Risk: silk costumes snag at the slightest claw" },
+      { id: "040", title: "Repair The Broken Umbrella Stand", meta: "Hotel Foyer / storm front", line: "Fix the split umbrella stand before the lobby fills with dripping guests.", reward: "Reward: a dry room and late checkout", risk: "Risk: the repair glue sets in under a minute" },
+      { id: "041", title: "Bring Fresh Ink To The Scribe", meta: "Archive Room / just after dawn", line: "Deliver black ink and a clean nib to the scribe before he finishes the title page.", reward: "Reward: your name copied in perfect hand", risk: "Risk: the stairwell is too narrow for haste" },
+      { id: "042", title: "Mark The Safe Trail", meta: "Pine Ridge / misty morning", line: "Tie bright ribbons along the lower path so the visiting school group does not wander uphill.", reward: "Reward: first pick of the picnic basket", risk: "Risk: the mist hides the fork near the ravine" },
+      { id: "043", title: "Set Out The Folding Chairs", meta: "Public Square / before debate hour", line: "Arrange sixty chairs in neat rows before the candidate's sound check begins.", reward: "Reward: the best listening spot in the square", risk: "Risk: one leg on every fourth chair wobbles" },
+      { id: "044", title: "Find The Correct Houseplant", meta: "Greenhouse Annex / bright noon", line: "Choose the one fern that belongs in the mayor's office and deliver it before the ribbon cutting.", reward: "Reward: a pot of cuttings for your window", risk: "Risk: three nearly identical ferns sit on the same bench" },
+      { id: "045", title: "Recover The Ferry Manifest", meta: "Ticket Booth / ten minutes to departure", line: "Locate the folded manifest before the harbor master refuses to let the ferry cast off.", reward: "Reward: free passage across the channel", risk: "Risk: the wind keeps slamming the booth door" },
+      { id: "046", title: "Hang The Laundry Before Rain", meta: "Courtyard Lines / gray afternoon", line: "Get every sheet onto the line and pegged down before the first hard drops arrive.", reward: "Reward: one perfectly sun-soft blanket", risk: "Risk: thunder is already rolling over the roofs" },
+      { id: "047", title: "Return The Borrowed Accordion", meta: "Dance Hall / evening warm-up", line: "Deliver the accordion back to the bandleader before the first couple steps onto the floor.", reward: "Reward: one dance with the best partner there", risk: "Risk: the strap buckle pops open if jolted" },
+      { id: "048", title: "Save The Melting Sculpture", meta: "Ice Festival Tent / midday thaw", line: "Move the carved swan into deeper shade before its neck softens beyond repair.", reward: "Reward: your initials carved into the base", risk: "Risk: the floor under the tent is already wet" },
+      { id: "049", title: "Match The Keys To The Doors", meta: "Guesthouse Office / check-in hour", line: "Sort the mixed brass keys and tag them correctly before the tour group reaches the desk.", reward: "Reward: one complimentary room for the night", risk: "Risk: room 7 and room 9 use nearly identical blanks" },
+      { id: "050", title: "Retrieve The Banner From The Rain Gutter", meta: "Festival Street / after the shower", line: "Climb up and free the soaked street banner before it tears under its own weight.", reward: "Reward: a dry scarf from the costume tent", risk: "Risk: the ladder slides on slick cobblestones" },
+      { id: "051", title: "Pack The Picnic Basket Right", meta: "Hilltop Orchard / morning", line: "Assemble the orchard picnic so the fruit, bread, and cheese arrive without bruising each other.", reward: "Reward: lunch under the pear trees", risk: "Risk: the goat near the gate steals unattended bread" },
+      { id: "052", title: "Carry Spare Candles To The Inn", meta: "Lantern Lane / blackout warning", line: "Deliver six long candles to the innkeeper before the lights fail across the block.", reward: "Reward: a room lit warm all evening", risk: "Risk: wax softens in your coat pocket" },
+      { id: "053", title: "Bring The Right Record To The DJ", meta: "Basement Club / twenty minutes to open", line: "Find the blue-labeled soul record in the wrong crate and get it to the booth before doors open.", reward: "Reward: your request played first", risk: "Risk: every crate is stacked out of order" },
+      { id: "054", title: "Catch The School Flag", meta: "Gym Roof / windy dusk", line: "Secure the half-loose school flag before the storm snaps the rope completely.", reward: "Reward: your name on the volunteer board", risk: "Risk: the roof gravel shifts underfoot" },
+      { id: "055", title: "Deliver A Clean Apron", meta: "Pasta Kitchen / dinner rush", line: "Get the spare white apron to the head cook before the sauce stain reaches the dining room.", reward: "Reward: an off-menu bowl saved for you", risk: "Risk: servers are sprinting through the narrow pass" },
+      { id: "056", title: "Trace The Gas Leak Smell", meta: "Back Alley Row / late night", line: "Find which cellar vent is leaking and alert the right tenant before anyone lights a match.", reward: "Reward: a grateful landlord's favor", risk: "Risk: the odor is strongest near three different doors" },
+      { id: "057", title: "Restore The Chess Pieces", meta: "Senior Center / quiet afternoon", line: "Recover the missing black bishop and white rook from the lounge before the rematch begins.", reward: "Reward: a lesson in three unbeatable openings", risk: "Risk: one child pocketed a piece by accident" },
+      { id: "058", title: "Deliver The Blue Scarf", meta: "Tram Stop 6 / cold morning", line: "Find the commuter in the green coat and return the blue scarf she left on the tram seat.", reward: "Reward: a hot drink and a sincere smile", risk: "Risk: three green coats are waiting in the line" },
+      { id: "059", title: "Sweep Sand From The Dance Floor", meta: "Beach Pavilion / just before sunset", line: "Clear the drifted sand from the floorboards before the tango lesson begins.", reward: "Reward: one free class under the lights", risk: "Risk: the sea breeze keeps undoing your work" },
+      { id: "060", title: "Carry The Trophy Carefully", meta: "School Hallway / awards night", line: "Bring the polished trophy case piece to the stage without leaving fingerprints on the glass.", reward: "Reward: your reflection in the winner's photo", risk: "Risk: the hallway is packed with proud families" },
+      { id: "061", title: "Move The Sleeping Dog", meta: "Bookshop Entrance / afternoon lull", line: "Coax the old shepherd off the welcome mat before the delivery driver arrives with boxed novels.", reward: "Reward: a first pick from the new arrivals", risk: "Risk: the dog only obeys to gentle music" },
+      { id: "062", title: "Ring The Bell For The Baker", meta: "Flour Mill / pre-dawn", line: "Climb to the upper landing and ring the hand bell exactly once when the first batch is ready.", reward: "Reward: cinnamon bread still too hot to hold", risk: "Risk: the mill noise drowns out hesitant timing" },
+      { id: "063", title: "Replace The Gallery Label", meta: "Modern Art Wing / before patrons enter", line: "Swap the misplaced label under the abstract painting before the morning tour begins.", reward: "Reward: a curator's nod of respect", risk: "Risk: the wrong labels all use the same card stock" },
+      { id: "064", title: "Deliver The Spare Strings", meta: "Subway Viaduct / busker hour", line: "Find the cello player under the viaduct and hand over the spare strings before her set starts.", reward: "Reward: a private song after the crowd leaves", risk: "Risk: the underpass echoes make voices useless" },
+      { id: "065", title: "Bring Salt To The Sidewalk", meta: "Temple Steps / winter morning", line: "Spread salt on the shaded side of the stone steps before the elderly visitors arrive.", reward: "Reward: a warm sweet bun from the caretaker", risk: "Risk: ice hides under the thinnest dusting of snow" },
+      { id: "066", title: "Find The Correct Teapot Lid", meta: "Tea House Pantry / quiet noon", line: "Match the painted porcelain lid to the right teapot before the reservation for six is seated.", reward: "Reward: one untouched afternoon at the window table", risk: "Risk: four blue lids differ by one brushstroke" },
+      { id: "067", title: "Paint The Last Goal Line", meta: "Community Field / two hours to kickoff", line: "Finish the final white goal line before the youth teams spill out of the buses.", reward: "Reward: the match ball after the game", risk: "Risk: the paint roller leaves streaks on damp grass" },
+      { id: "068", title: "Carry Blankets To The Pier", meta: "Outer Harbor / windy evening", line: "Deliver the folded wool blankets to the whale-watch boat before the tourists begin boarding.", reward: "Reward: a place on the bow rail", risk: "Risk: the wind tries to turn every blanket into a sail" },
+      { id: "069", title: "Recover The Recipe Journal", meta: "Family Restaurant / between lunch and dinner", line: "Find the tomato-stained recipe journal before the grandmother arrives to check the prep table.", reward: "Reward: her secret dumpling filling ratio", risk: "Risk: no one will admit who moved it last" },
+      { id: "070", title: "Bring Flowers To Platform Three", meta: "Central Station / homecoming hour", line: "Get the wrapped lilies to platform 3 before the returning violinist steps off the train.", reward: "Reward: a smile remembered for years", risk: "Risk: the train has already changed tracks once" },
+      { id: "071", title: "Fix The Projector Bulb", meta: "Lecture Hall / five minutes to start", line: "Replace the blown projector bulb before the visiting scientist begins the keynote.", reward: "Reward: a seat near the front and the full notes later", risk: "Risk: the spare bulb is wrapped in a confusing lunch napkin" },
+      { id: "072", title: "Carry Feed To The Stable", meta: "Fairground Stables / dawn mist", line: "Bring two sacks of feed to stall 8 before the show horses become impossible to calm.", reward: "Reward: one quiet ride around the ring", risk: "Risk: stall 8 and stall 6 swapped signs overnight" },
+      { id: "073", title: "Deliver The Mooncake Box", meta: "River Apartments / festival evening", line: "Carry the lacquered mooncake box to the top-floor family before the lantern lighting begins.", reward: "Reward: a slice saved from the center", risk: "Risk: the lift is broken and the stairs are narrow" },
+      { id: "074", title: "Rescue The Draft From The Puddle", meta: "Reporter Alley / after the storm", line: "Recover the editor's marked article pages before the gutter water turns the ink to blur.", reward: "Reward: one rumor confirmed as true", risk: "Risk: traffic keeps spraying the curbside" },
+      { id: "075", title: "String The Prayer Flags", meta: "Monastery Yard / brisk afternoon", line: "Tie the prayer flags in the correct order before the evening wind rises over the wall.", reward: "Reward: ten minutes of complete silence in the upper garden", risk: "Risk: the color sequence matters more than anyone explained" },
+      { id: "076", title: "Find The Spare Contact Lens", meta: "Dressing Room 4 / half hour to curtain", line: "Locate the actor's spare contact lens before he has to go on for the sword fight scene.", reward: "Reward: a prop flower from the final bow", risk: "Risk: the lens case is smaller than a button" },
+      { id: "077", title: "Carry Fresh Towels Upstairs", meta: "Bath House / late morning", line: "Bring the folded towels to the hot room before the bathing rush begins.", reward: "Reward: the quiet first soak of the day", risk: "Risk: steam makes every wooden step slick" },
+      { id: "078", title: "Recover The Pocket Watch", meta: "Tailor Shop / fitting hour", line: "Find the silver pocket watch somewhere in the changing room before the customer returns for pickup.", reward: "Reward: a custom patch sewn where you want it", risk: "Risk: the watch chain tangles in every garment bag" },
+      { id: "079", title: "Deliver The Score To The Conductor", meta: "Symphony Hall / ten minutes to downbeat", line: "Get the corrected second movement pages to the conductor before the orchestra tunes.", reward: "Reward: your name penciled into the program margin", risk: "Risk: the stage door opens only between instrument carts" },
+      { id: "080", title: "Repair The Weather Vane", meta: "Farmhouse Roof / windy noon", line: "Tighten the rooster weather vane before the storm turns it completely sideways.", reward: "Reward: first choice of the orchard harvest", risk: "Risk: the ladder top rests against loose slate" },
+      { id: "081", title: "Bring Honey To The Tea Stall", meta: "Festival Lane / just after sunset", line: "Deliver the sealed honey jar to the tea stall before the last kettle is poured.", reward: "Reward: the final cup with extra spice", risk: "Risk: the lane is shoulder to shoulder with revelers" },
+      { id: "082", title: "Clear The Snow From The Ramp", meta: "Clinic Entrance / winter dawn", line: "Shovel the side ramp clean before the first wheelchair van arrives.", reward: "Reward: the nurse remembers your kindness", risk: "Risk: ice has bonded to the bottom layer" },
+      { id: "083", title: "Recover The Last Blue Marble", meta: "Primary School Yard / recess", line: "Find the single blue marble before the game judge calls the round forfeit.", reward: "Reward: the champion's pouch for one day", risk: "Risk: the marble rolled toward the storm drain" },
+      { id: "084", title: "Carry The Bouquet Through Traffic", meta: "Registry Office / Saturday noon", line: "Get the wedding bouquet from the florist to the courthouse steps before the music starts.", reward: "Reward: a ribbon from the bouquet wrap", risk: "Risk: every crosswalk is crowded with tourists" },
+      { id: "085", title: "Replace The Ink Ribbon", meta: "Pawn Shop Office / dull afternoon", line: "Swap the typewriter ribbon before the owner finishes the appraisal forms.", reward: "Reward: a discount on one overlooked trinket", risk: "Risk: the ribbon spool stains everything it touches" },
+      { id: "086", title: "Deliver Bread To The Firehouse", meta: "Engine House / dawn", line: "Carry three loaves from the baker to the firehouse before the morning drill begins.", reward: "Reward: breakfast with the crew", risk: "Risk: the siren could sound at any second" },
+      { id: "087", title: "Find The Quietest Bench", meta: "City Garden / early evening", line: "Scout and claim the quiet bench promised to the elderly chess pair before the crowd spreads through the paths.", reward: "Reward: you may stay for the first match", risk: "Risk: every bench under shade is already contested" },
+      { id: "088", title: "Hang The Star Above The Tree", meta: "Town Hall Lobby / holiday setup", line: "Place the silver star at the top of the cedar before the choir enters for rehearsal.", reward: "Reward: a small gift box left without a tag", risk: "Risk: the top branch bends more than it should" },
+      { id: "089", title: "Return The Falconer's Glove", meta: "Castle Yard / afternoon demonstration", line: "Bring the leather glove back to the falconer before the hawk circles down for landing.", reward: "Reward: one close look at the bird on the perch", risk: "Risk: the glove still smells of fresh meat" },
+      { id: "090", title: "Set The Table For Eight", meta: "Family Courtyard / reunion evening", line: "Lay out plates, cups, and chopsticks for eight before the relatives begin arriving all at once.", reward: "Reward: first serving of the braised dish", risk: "Risk: two cousins argue over every seat placement" },
+      { id: "091", title: "Carry The Spare Cleats", meta: "Municipal Stadium / halftime", line: "Get the backup cleats to the striker before the whistle blows for the second half.", reward: "Reward: the player's signed armband", risk: "Risk: the tunnel fills fast when the teams switch ends" },
+      { id: "092", title: "Deliver The Correct Ring Box", meta: "Jeweler's Back Room / proposal hour", line: "Take the velvet ring box with the repaired clasp to the waiting customer before courage fades.", reward: "Reward: one polished silver charm", risk: "Risk: three velvet boxes sit on the tray" },
+      { id: "093", title: "Find The Missing Bridge Toll Stamp", meta: "Canal Office / mid-morning", line: "Locate the official toll stamp before the line of barge captains reaches the desk.", reward: "Reward: no toll charged on your next crossing", risk: "Risk: the clerk hid it during yesterday's inspection" },
+      { id: "094", title: "Bring Paint Water To The Mural Crew", meta: "Underpass Wall / hot afternoon", line: "Keep the mural crew supplied with clean paint water until the final skyline outline is finished.", reward: "Reward: your tiny tag hidden in the corner", risk: "Risk: the nearest tap runs slow and warm" },
+      { id: "095", title: "Rescue The Sheet Music From The Wind", meta: "Bandstand / rehearsal hour", line: "Collect the runaway pages before the conductor loses the brass section entirely.", reward: "Reward: your favorite march played in full", risk: "Risk: page numbers are smudged on half the set" },
+      { id: "096", title: "Replace The Ferry Rope", meta: "East Dock / evening tide", line: "Swap the frayed mooring rope before the night ferry pushes off against the current.", reward: "Reward: a moonlit crossing for free", risk: "Risk: the knot bites hard when wet" },
+      { id: "097", title: "Deliver The Spare Skates", meta: "Ice Rink Entrance / winter twilight", line: "Find the child with the red scarf and bring the spare skates before the lesson group takes the ice.", reward: "Reward: one perfect lap on fresh ice", risk: "Risk: rental lines snake around the lobby" },
+      { id: "098", title: "Find The Baker's Notebook", meta: "Festival Tent / crowded afternoon", line: "Recover the flour-dusted notebook before the pie contest judges ask for the official recipe list.", reward: "Reward: a boxed slice of the winning pie", risk: "Risk: every prep table is covered in identical cloths" },
+      { id: "099", title: "Carry Lantern Oil To The Keeper", meta: "Cliff Lighthouse / storm dusk", line: "Bring the sealed oil can up the final spiral stairs before the beacon hour arrives.", reward: "Reward: the view from the lantern room", risk: "Risk: wind howls through the cracked upper door" },
+      { id: "100", title: "Deliver The Last Envelope", meta: "Post Office Steps / one minute to closing", line: "Get the cream envelope stamped and into the outgoing bag before the clerk pulls the shutter down.", reward: "Reward: a letter reaches the right hands in time", risk: "Risk: the queue moves painfully slowly" }
+    ];
+
+    function pickRandomItem(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    const quest = pickRandomItem(archive);
+
+    document.getElementById("quest-meta").textContent = `Quest ${quest.id} of 100 / ${quest.meta}`;
+    document.getElementById("quest-title").textContent = quest.title;
+    document.getElementById("quest-line").textContent = quest.line;
+    document.getElementById("quest-reward").textContent = quest.reward;
+    document.getElementById("quest-risk").textContent = quest.risk;
+  </script>
+</body>
+</html>
