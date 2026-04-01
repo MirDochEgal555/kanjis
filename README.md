@@ -19,6 +19,8 @@ The app is intentionally simple: open a deck, type the answer you remember, reve
 - recent review history
 - due-now, studied-today, and total-card stats
 - mobile and desktop layout toggle on the review screen
+- forgiving answer matching for case, articles, punctuation, and simple singular or plural variations
+- optional typo tolerance for longer answers, with conservative matching rules
 - CSV import for Japanese -> Kanji and Spanish -> English decks
 - deck backup export and restore with JSON files
 
@@ -187,7 +189,7 @@ A deck backup includes:
 
 ### Next
 
-- improve answer matching for case, pluralization, and minor variations
+- improve per-card feedback with clearer progress and difficulty signals
 
 ### Planned
 

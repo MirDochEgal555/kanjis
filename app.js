@@ -3,6 +3,7 @@ const LEGACY_STORAGE_KEYS = ["kanji-learning-app-state-v1"];
 const LAYOUT_STORAGE_KEY = "kanji-learning-layout-v1";
 const SELECTION_STORAGE_KEY = "kanji-learning-selection-v1";
 const DECK_CONTENT_STORAGE_KEY = "kanji-learning-deck-content-v1";
+const ANSWER_MATCH_SETTINGS_KEY = "kanji-learning-answer-match-settings-v1";
 const BACKUP_FORMAT_VERSION = 1;
 const DEFAULT_SELECTION = {
   language: "japanese",
@@ -497,6 +498,11 @@ const elements = page === "deck"
       readingText: document.getElementById("reading-text"),
       examplesPanel: document.getElementById("examples-panel"),
       examplesList: document.getElementById("examples-list"),
+      answerVariantsPanel: document.getElementById("answer-variants-panel"),
+      answerVariantsCopy: document.getElementById("answer-variants-copy"),
+      answerVariantsList: document.getElementById("answer-variants-list"),
+      typoToleranceToggle: document.getElementById("typo-tolerance-toggle"),
+      typoToleranceCopy: document.getElementById("typo-tolerance-copy"),
       scheduleOptions: document.getElementById("schedule-options"),
       reviewCard: document.getElementById("review-card"),
       emptyState: document.getElementById("empty-state"),
@@ -567,6 +573,7 @@ let currentDeckConfig = DECK_CONFIGS[DEFAULT_DECK_KEY];
 let editorCardsState = [];
 let editorSearchTerm = "";
 let pendingBackup = null;
+let answerMatchSettings = loadAnswerMatchSettings();
 
 if (page === "selection") {
   initSelectionPage();
@@ -607,11 +614,13 @@ function initDeckPage() {
   currentSelection = selection;
   currentDeckConfig = getDeckConfig(selection);
   pendingBackup = null;
+  answerMatchSettings = loadAnswerMatchSettings();
   saveSelection(selection);
   applyDeckSelectionCopy(selection);
   state = loadState();
 
   applyLayoutMode(loadLayoutMode());
+  applyAnswerMatchSettings();
   render();
 
   elements.desktopLayoutToggle.addEventListener("click", () => {
@@ -633,7 +642,7 @@ function initDeckPage() {
 
     const card = getCardById(currentCardId);
     const answer = elements.answerInput.value.trim();
-    const isCorrect = evaluateAnswer(answer, card.meanings);
+    const answerMatch = evaluateAnswer(answer, card.meanings);
     const readingText = getReadingText(card);
 
     elements.feedbackPanel.classList.remove("hidden");
@@ -641,13 +650,43 @@ function initDeckPage() {
     elements.readingText.textContent = readingText;
     elements.readingText.classList.toggle("hidden", !readingText);
     renderExamples(card);
+    renderAnswerVariants(card);
     elements.answerEvaluation.textContent = answer
-      ? isCorrect
-        ? "Your answer matches one of the accepted meanings."
+      ? answerMatch.isCorrect
+        ? answerMatch.matchType === "typo"
+          ? `Accepted as a close match for "${answerMatch.matchedMeaning}".`
+          : "Your answer matches one of the accepted meanings."
         : `You answered "${answer}". Use the revealed answer to decide the next interval.`
       : "No answer entered. Review the meaning, then choose the next interval.";
 
-    renderScheduleOptions(card, answer, isCorrect);
+    renderScheduleOptions(card, answer, answerMatch.isCorrect);
+  });
+
+  elements.typoToleranceToggle.addEventListener("change", () => {
+    answerMatchSettings = {
+      ...answerMatchSettings,
+      typoTolerance: elements.typoToleranceToggle.checked
+    };
+    saveAnswerMatchSettings(answerMatchSettings);
+    applyAnswerMatchSettings();
+
+    if (!currentCardId || elements.feedbackPanel.classList.contains("hidden")) {
+      return;
+    }
+
+    const card = getCardById(currentCardId);
+    const answer = elements.answerInput.value.trim();
+    const answerMatch = evaluateAnswer(answer, card.meanings);
+
+    renderAnswerVariants(card);
+    elements.answerEvaluation.textContent = answer
+      ? answerMatch.isCorrect
+        ? answerMatch.matchType === "typo"
+          ? `Accepted as a close match for "${answerMatch.matchedMeaning}".`
+          : "Your answer matches one of the accepted meanings."
+        : `You answered "${answer}". Use the revealed answer to decide the next interval.`
+      : "No answer entered. Review the meaning, then choose the next interval.";
+    renderScheduleOptions(card, answer, answerMatch.isCorrect);
   });
 
   elements.resetProgress.addEventListener("click", () => {
@@ -864,6 +903,9 @@ function render() {
   elements.feedbackPanel.classList.add("hidden");
   elements.examplesPanel.classList.add("hidden");
   elements.examplesList.innerHTML = "";
+  elements.answerVariantsPanel.classList.add("hidden");
+  elements.answerVariantsList.classList.add("hidden");
+  elements.answerVariantsList.innerHTML = "";
   elements.scheduleOptions.innerHTML = "";
   elements.answerForm.reset();
 
@@ -979,26 +1021,286 @@ function getCardFront(card) {
 }
 
 function evaluateAnswer(answer, acceptedMeanings) {
-  const normalizedAnswer = normalizeText(answer);
-  const answerParts = normalizedAnswer
-    .split(/[,/]/)
+  const candidates = splitAnswerCandidates(answer);
+  const answerKeys = new Set(candidates.flatMap(getComparisonKeys));
+  const normalizedCandidates = candidates.map(normalizeText).filter(Boolean);
+
+  for (const meaning of acceptedMeanings) {
+    const comparisonKeys = getComparisonKeys(meaning);
+
+    if (comparisonKeys.some((key) => answerKeys.has(key))) {
+      return {
+        isCorrect: true,
+        matchType: "exact",
+        matchedMeaning: meaning
+      };
+    }
+
+    if (!answerMatchSettings?.typoTolerance) {
+      continue;
+    }
+
+    for (const candidate of normalizedCandidates) {
+      for (const key of comparisonKeys) {
+        if (isTypoTolerantMatch(candidate, key)) {
+          return {
+            isCorrect: true,
+            matchType: "typo",
+            matchedMeaning: meaning
+          };
+        }
+      }
+    }
+  }
+
+  return {
+    isCorrect: false,
+    matchType: "none",
+    matchedMeaning: ""
+  };
+}
+
+function splitAnswerCandidates(answer) {
+  const rawAnswer = String(answer ?? "").trim();
+
+  if (!rawAnswer) {
+    return [];
+  }
+
+  const splitParts = rawAnswer
+    .split(/[,/;|]|\bor\b/gi)
     .map((part) => part.trim())
     .filter(Boolean);
 
-  return acceptedMeanings.some((meaning) => {
-    const normalizedMeaning = normalizeText(meaning);
-    return normalizedAnswer === normalizedMeaning || answerParts.includes(normalizedMeaning);
-  });
+  return [rawAnswer, ...splitParts];
+}
+
+function getComparisonKeys(value) {
+  const normalized = normalizeText(value);
+
+  if (!normalized) {
+    return [];
+  }
+
+  const singular = singularizePhrase(normalized);
+  return [...new Set([normalized, singular])];
+}
+
+function isTypoTolerantMatch(left, right) {
+  const normalizedLeft = normalizeText(left);
+  const normalizedRight = normalizeText(right);
+
+  if (!normalizedLeft || !normalizedRight || normalizedLeft === normalizedRight) {
+    return false;
+  }
+
+  if (normalizedLeft.split(" ").length !== normalizedRight.split(" ").length) {
+    return false;
+  }
+
+  const compactLeft = normalizedLeft.replace(/\s+/g, "");
+  const compactRight = normalizedRight.replace(/\s+/g, "");
+
+  if (compactLeft.length < 5 || compactRight.length < 5) {
+    return false;
+  }
+
+  if (compactLeft[0] !== compactRight[0]) {
+    return false;
+  }
+
+  if (Math.abs(compactLeft.length - compactRight.length) > 1) {
+    return false;
+  }
+
+  return getBoundedEditDistance(normalizedLeft, normalizedRight, 1) <= 1;
+}
+
+function getBoundedEditDistance(left, right, maxDistance) {
+  const leftLength = left.length;
+  const rightLength = right.length;
+
+  if (Math.abs(leftLength - rightLength) > maxDistance) {
+    return maxDistance + 1;
+  }
+
+  const matrix = Array.from({ length: leftLength + 1 }, () => new Array(rightLength + 1).fill(0));
+
+  for (let row = 0; row <= leftLength; row += 1) {
+    matrix[row][0] = row;
+  }
+
+  for (let column = 0; column <= rightLength; column += 1) {
+    matrix[0][column] = column;
+  }
+
+  for (let row = 1; row <= leftLength; row += 1) {
+    let smallestInRow = maxDistance + 1;
+
+    for (let column = 1; column <= rightLength; column += 1) {
+      const substitutionCost = left[row - 1] === right[column - 1] ? 0 : 1;
+      let cellValue = Math.min(
+        matrix[row - 1][column] + 1,
+        matrix[row][column - 1] + 1,
+        matrix[row - 1][column - 1] + substitutionCost
+      );
+
+      if (
+        row > 1 &&
+        column > 1 &&
+        left[row - 1] === right[column - 2] &&
+        left[row - 2] === right[column - 1]
+      ) {
+        cellValue = Math.min(cellValue, matrix[row - 2][column - 2] + 1);
+      }
+
+      matrix[row][column] = cellValue;
+      smallestInRow = Math.min(smallestInRow, cellValue);
+    }
+
+    if (smallestInRow > maxDistance) {
+      return maxDistance + 1;
+    }
+  }
+
+  return matrix[leftLength][rightLength];
 }
 
 function normalizeText(value) {
-  return value
+  return String(value ?? "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .trim()
     .toLowerCase()
+    .replace(/[’']/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[-_/]/g, " ")
+    .replace(/[^a-z0-9\s]/g, " ")
     .replace(/\b(a|an|the)\s+/g, "")
-    .replace(/\s+/g, " ");
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function loadAnswerMatchSettings() {
+  try {
+    const raw = localStorage.getItem(ANSWER_MATCH_SETTINGS_KEY);
+
+    if (!raw) {
+      return { typoTolerance: false };
+    }
+
+    const parsed = JSON.parse(raw);
+    return {
+      typoTolerance: Boolean(parsed?.typoTolerance)
+    };
+  } catch (error) {
+    return { typoTolerance: false };
+  }
+}
+
+function saveAnswerMatchSettings(settings) {
+  localStorage.setItem(ANSWER_MATCH_SETTINGS_KEY, JSON.stringify({
+    typoTolerance: Boolean(settings?.typoTolerance)
+  }));
+}
+
+function applyAnswerMatchSettings() {
+  if (!elements?.typoToleranceToggle || !elements?.typoToleranceCopy) {
+    return;
+  }
+
+  const typoToleranceEnabled = Boolean(answerMatchSettings?.typoTolerance);
+  elements.typoToleranceToggle.checked = typoToleranceEnabled;
+  elements.typoToleranceCopy.textContent = typoToleranceEnabled
+    ? "One small typo is accepted for longer answers. Short answers still require an exact match."
+    : "Small typo tolerance is off. Matching still ignores case, accents, articles, punctuation, and simple singular or plural differences.";
+}
+
+function singularizePhrase(value) {
+  const words = value.split(" ").filter(Boolean);
+
+  if (!words.length) {
+    return value;
+  }
+
+  words[words.length - 1] = singularizeWord(words[words.length - 1]);
+  return words.join(" ").trim();
+}
+
+function singularizeWord(word) {
+  const irregularSingulars = {
+    people: "person",
+    men: "man",
+    women: "woman",
+    children: "child",
+    mice: "mouse",
+    geese: "goose",
+    feet: "foot",
+    teeth: "tooth"
+  };
+
+  if (irregularSingulars[word]) {
+    return irregularSingulars[word];
+  }
+
+  if (word.length <= 3) {
+    return word;
+  }
+
+  if (/(ches|shes|sses|xes|zes)$/.test(word)) {
+    return word.replace(/es$/, "");
+  }
+
+  if (/ies$/.test(word) && word.length > 4) {
+    return `${word.slice(0, -3)}y`;
+  }
+
+  if (/s$/.test(word) && !/ss$/.test(word)) {
+    return word.slice(0, -1);
+  }
+
+  return word;
+}
+
+function pluralizePhrase(value) {
+  const words = value.split(" ").filter(Boolean);
+
+  if (!words.length) {
+    return value;
+  }
+
+  words[words.length - 1] = pluralizeWord(words[words.length - 1]);
+  return words.join(" ").trim();
+}
+
+function pluralizeWord(word) {
+  const irregularPlurals = {
+    person: "people",
+    man: "men",
+    woman: "women",
+    child: "children",
+    mouse: "mice",
+    goose: "geese",
+    foot: "feet",
+    tooth: "teeth"
+  };
+
+  if (irregularPlurals[word]) {
+    return irregularPlurals[word];
+  }
+
+  if (/[sxz]$/.test(word) || /(ch|sh)$/.test(word)) {
+    return `${word}es`;
+  }
+
+  if (/[^aeiou]y$/.test(word)) {
+    return `${word.slice(0, -1)}ies`;
+  }
+
+  if (/s$/.test(word)) {
+    return word;
+  }
+
+  return `${word}s`;
 }
 
 function formatRelativeDate(timestamp) {
@@ -1057,6 +1359,55 @@ function renderExamples(card) {
   });
 
   elements.examplesPanel.classList.remove("hidden");
+}
+
+function renderAnswerVariants(card) {
+  const variants = getAutoAcceptedVariants(card.meanings);
+
+  elements.answerVariantsCopy.textContent = answerMatchSettings?.typoTolerance
+    ? "Matching ignores case, accents, articles, punctuation, simple singular or plural differences, and one small typo for longer answers."
+    : "Matching ignores case, accents, articles, punctuation, and simple singular or plural differences.";
+  elements.answerVariantsList.innerHTML = "";
+
+  if (!variants.length) {
+    elements.answerVariantsList.classList.add("hidden");
+    elements.answerVariantsPanel.classList.remove("hidden");
+    return;
+  }
+
+  variants.forEach((variant) => {
+    const item = document.createElement("li");
+    item.textContent = variant;
+    elements.answerVariantsList.appendChild(item);
+  });
+
+  elements.answerVariantsList.classList.remove("hidden");
+  elements.answerVariantsPanel.classList.remove("hidden");
+}
+
+function getAutoAcceptedVariants(meanings = []) {
+  const explicitMeanings = new Set(meanings.map((meaning) => normalizeText(meaning)).filter(Boolean));
+  const generatedVariants = new Set();
+
+  meanings.forEach((meaning) => {
+    const normalizedMeaning = normalizeText(meaning);
+
+    if (!normalizedMeaning) {
+      return;
+    }
+
+    const singular = singularizePhrase(normalizedMeaning);
+    const plural = pluralizePhrase(singular);
+    const hyphenated = singular.includes(" ") ? singular.replace(/\s+/g, "-") : "";
+
+    [singular, plural, hyphenated].forEach((variant) => {
+      if (variant && !explicitMeanings.has(variant)) {
+        generatedVariants.add(variant);
+      }
+    });
+  });
+
+  return [...generatedVariants].slice(0, 8);
 }
 
 function buildCardStateMap(deck, savedCards = {}, now = Date.now()) {

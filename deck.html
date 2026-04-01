@@ -92,12 +92,18 @@
               <p class="feedback-label">Example sentences</p>
               <ul id="examples-list" class="examples-list"></ul>
             </div>
+
+            <div id="answer-variants-panel" class="answer-variants-panel hidden">
+              <p class="feedback-label">Also accepted</p>
+              <p id="answer-variants-copy" class="answer-variants-copy"></p>
+              <ul id="answer-variants-list" class="answer-variants-list hidden"></ul>
+            </div>
           </div>
         </div>
 
         <div id="empty-state" class="empty-state hidden">
-          <h3>No cards are due right now.</h3>
-          <p>Come back later or reset progress to review the starter deck again.</p>
+          <h3 id="empty-state-title">No cards are due right now.</h3>
+          <p id="empty-state-copy">Come back later or reset progress to review the starter deck again.</p>
         </div>
       </div>
 
@@ -108,8 +114,31 @@
         </section>
 
         <section class="sidebar-card">
+          <p class="panel-label">Study mode</p>
+          <div class="mode-toggle" role="group" aria-label="Study mode">
+            <button class="mode-button is-active" type="button" data-study-mode="mixed" aria-pressed="true">Mixed</button>
+            <button class="mode-button" type="button" data-study-mode="due" aria-pressed="false">Due only</button>
+            <button class="mode-button" type="button" data-study-mode="new" aria-pressed="false">New only</button>
+          </div>
+          <p id="study-mode-copy" class="sidebar-copy">
+            Mixed shows due review cards first, then unseen cards.
+          </p>
+        </section>
+
+        <section class="sidebar-card">
           <p class="panel-label">Recent reviews</p>
           <ul id="history-list" class="history-list"></ul>
+        </section>
+
+        <section class="sidebar-card">
+          <p class="panel-label">Answer matching</p>
+          <label class="setting-toggle" for="typo-tolerance-toggle">
+            <input id="typo-tolerance-toggle" type="checkbox">
+            <span>Accept small typos</span>
+          </label>
+          <p id="typo-tolerance-copy" class="sidebar-copy">
+            When enabled, one small typo is accepted for longer answers without loosening short-answer checks too much.
+          </p>
         </section>
 
         <section id="import-section" class="sidebar-card">

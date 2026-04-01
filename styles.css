@@ -304,6 +304,11 @@ textarea {
   gap: 12px;
 }
 
+.answer-variants-panel {
+  display: grid;
+  gap: 10px;
+}
+
 .examples-list {
   margin: 0;
   padding: 0;
@@ -333,6 +338,30 @@ textarea {
 .example-en {
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+.answer-variants-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.answer-variants-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.answer-variants-list li {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(182, 73, 38, 0.08);
+  border: 1px solid rgba(182, 73, 38, 0.14);
+  color: var(--text);
+  font-size: 0.9rem;
 }
 
 .schedule-options {
@@ -401,6 +430,21 @@ textarea {
   margin: 16px 0 0;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.setting-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.setting-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
 }
 
 .history-list {
