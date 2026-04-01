@@ -4,6 +4,7 @@ const LAYOUT_STORAGE_KEY = "kanji-learning-layout-v1";
 const SELECTION_STORAGE_KEY = "kanji-learning-selection-v1";
 const DECK_CONTENT_STORAGE_KEY = "kanji-learning-deck-content-v1";
 const ANSWER_MATCH_SETTINGS_KEY = "kanji-learning-answer-match-settings-v1";
+const STUDY_MODE_STORAGE_KEY = "kanji-learning-study-mode-v1";
 const BACKUP_FORMAT_VERSION = 1;
 const DEFAULT_SELECTION = {
   language: "japanese",
@@ -19,6 +20,26 @@ const DEFAULT_INTERVALS = [
   { key: "three-days", label: "In 3 days", minutes: 60 * 24 * 3, description: "Push it a little further out." },
   { key: "week", label: "In 1 week", minutes: 60 * 24 * 7, description: "Save it for a confident review." }
 ];
+const STUDY_MODE_DETAILS = {
+  mixed: {
+    label: "Mixed",
+    description: "Mixed shows due review cards first, then unseen cards.",
+    emptyTitle: "Nothing left in the mixed queue.",
+    emptyCopy: "There are no due review cards or unseen cards left right now."
+  },
+  due: {
+    label: "Due only",
+    description: "Due only shows previously studied cards whose review time has arrived.",
+    emptyTitle: "No review cards are due right now.",
+    emptyCopy: "Switch to Mixed or New only if you want to study unseen cards."
+  },
+  new: {
+    label: "New only",
+    description: "New only shows cards you have not reviewed yet.",
+    emptyTitle: "No unseen cards are left in this deck.",
+    emptyCopy: "Switch to Mixed or Due only to keep reviewing scheduled cards."
+  }
+};
 
 const STARTER_DECK = [
   {
@@ -506,6 +527,8 @@ const elements = page === "deck"
       scheduleOptions: document.getElementById("schedule-options"),
       reviewCard: document.getElementById("review-card"),
       emptyState: document.getElementById("empty-state"),
+      emptyStateTitle: document.getElementById("empty-state-title"),
+      emptyStateCopy: document.getElementById("empty-state-copy"),
       resetProgress: document.getElementById("reset-progress"),
       historyList: document.getElementById("history-list"),
       cardPrompt: document.getElementById("card-prompt"),
@@ -529,7 +552,9 @@ const elements = page === "deck"
       selectedDeckDescription: document.getElementById("selected-deck-description"),
       answerInputLabel: document.getElementById("answer-input-label"),
       answerSubmit: document.getElementById("answer-submit"),
-      howItWorksList: document.getElementById("how-it-works-list")
+      howItWorksList: document.getElementById("how-it-works-list"),
+      studyModeButtons: [...document.querySelectorAll("[data-study-mode]")],
+      studyModeCopy: document.getElementById("study-mode-copy")
     }
   : null;
 const selectionElements = page === "selection"
@@ -574,6 +599,7 @@ let editorCardsState = [];
 let editorSearchTerm = "";
 let pendingBackup = null;
 let answerMatchSettings = loadAnswerMatchSettings();
+let studyMode = loadStudyMode();
 
 if (page === "selection") {
   initSelectionPage();
@@ -615,12 +641,14 @@ function initDeckPage() {
   currentDeckConfig = getDeckConfig(selection);
   pendingBackup = null;
   answerMatchSettings = loadAnswerMatchSettings();
+  studyMode = loadStudyMode();
   saveSelection(selection);
   applyDeckSelectionCopy(selection);
   state = loadState();
 
   applyLayoutMode(loadLayoutMode());
   applyAnswerMatchSettings();
+  applyStudyMode();
   render();
 
   elements.desktopLayoutToggle.addEventListener("click", () => {
@@ -631,6 +659,16 @@ function initDeckPage() {
   elements.mobileLayoutToggle.addEventListener("click", () => {
     applyLayoutMode("mobile");
     saveLayoutMode("mobile");
+  });
+
+  elements.studyModeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextMode = button.dataset.studyMode;
+      studyMode = sanitizeStudyMode(nextMode);
+      saveStudyMode(studyMode);
+      applyStudyMode();
+      render();
+    });
   });
 
   elements.answerForm.addEventListener("submit", (event) => {
@@ -883,7 +921,8 @@ function saveStateForSelection(selection, nextState) {
 
 function render() {
   const dueCards = getDueCards();
-  const nextCard = dueCards[0] ?? null;
+  const studyQueue = getStudyQueue();
+  const nextCard = studyQueue[0] ?? null;
 
   elements.totalCount.textContent = String(getDeck().length);
   elements.dueCount.textContent = String(dueCards.length);
@@ -894,6 +933,8 @@ function render() {
     currentCardId = null;
     elements.reviewCard.classList.add("hidden");
     elements.emptyState.classList.remove("hidden");
+    elements.emptyStateTitle.textContent = STUDY_MODE_DETAILS[studyMode].emptyTitle;
+    elements.emptyStateCopy.textContent = STUDY_MODE_DETAILS[studyMode].emptyCopy;
     return;
   }
 
@@ -983,12 +1024,44 @@ function getDueCards() {
   const now = Date.now();
 
   return getDeck()
-    .filter((card) => (state.cards[card.id]?.dueAt ?? now) <= now)
+    .filter((card) => isDueCard(card, now))
     .sort((left, right) => {
       const leftDue = state.cards[left.id]?.dueAt ?? now;
       const rightDue = state.cards[right.id]?.dueAt ?? now;
       return leftDue - rightDue;
     });
+}
+
+function getStudyQueue() {
+  const now = Date.now();
+  const deck = getDeck();
+  const dueCards = deck
+    .filter((card) => isDueCard(card, now))
+    .sort((left, right) => {
+      const leftDue = state.cards[left.id]?.dueAt ?? now;
+      const rightDue = state.cards[right.id]?.dueAt ?? now;
+      return leftDue - rightDue;
+    });
+  const newCards = deck.filter((card) => isNewCard(card));
+
+  if (studyMode === "due") {
+    return dueCards;
+  }
+
+  if (studyMode === "new") {
+    return newCards;
+  }
+
+  return [...dueCards, ...newCards];
+}
+
+function isNewCard(card) {
+  return !Number.isFinite(state.cards[card.id]?.lastReviewedAt);
+}
+
+function isDueCard(card, now = Date.now()) {
+  const cardState = state.cards[card.id];
+  return Number.isFinite(cardState?.lastReviewedAt) && (cardState?.dueAt ?? now) <= now;
 }
 
 function getStudiedTodayCount() {
@@ -1213,6 +1286,34 @@ function applyAnswerMatchSettings() {
   elements.typoToleranceCopy.textContent = typoToleranceEnabled
     ? "One small typo is accepted for longer answers. Short answers still require an exact match."
     : "Small typo tolerance is off. Matching still ignores case, accents, articles, punctuation, and simple singular or plural differences.";
+}
+
+function loadStudyMode() {
+  return sanitizeStudyMode(localStorage.getItem(STUDY_MODE_STORAGE_KEY));
+}
+
+function saveStudyMode(mode) {
+  localStorage.setItem(STUDY_MODE_STORAGE_KEY, sanitizeStudyMode(mode));
+}
+
+function sanitizeStudyMode(mode) {
+  return Object.prototype.hasOwnProperty.call(STUDY_MODE_DETAILS, mode) ? mode : "mixed";
+}
+
+function applyStudyMode() {
+  if (!elements?.studyModeButtons || !elements?.studyModeCopy) {
+    return;
+  }
+
+  const details = STUDY_MODE_DETAILS[studyMode];
+
+  elements.studyModeButtons.forEach((button) => {
+    const isActive = button.dataset.studyMode === studyMode;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  elements.studyModeCopy.textContent = details.description;
 }
 
 function singularizePhrase(value) {

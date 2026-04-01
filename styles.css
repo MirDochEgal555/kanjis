@@ -126,6 +126,30 @@ textarea {
   border: 1px solid rgba(91, 70, 46, 0.1);
 }
 
+.mode-toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.mode-button {
+  border: 1px solid rgba(91, 70, 46, 0.12);
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #fff9f1;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+.mode-button.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff7f2;
+}
+
 .toggle-button {
   border: 0;
   min-height: 42px;
@@ -883,6 +907,11 @@ textarea {
 
 .mobile-layout .layout-toggle {
   width: 100%;
+}
+
+.mobile-layout .mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
 .mobile-layout .toggle-button {

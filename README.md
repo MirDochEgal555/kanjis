@@ -19,6 +19,7 @@ The app is intentionally simple: open a deck, type the answer you remember, reve
 - recent review history
 - due-now, studied-today, and total-card stats
 - mobile and desktop layout toggle on the review screen
+- study modes for `mixed`, `due only`, and `new only`
 - forgiving answer matching for case, articles, punctuation, and simple singular or plural variations
 - optional typo tolerance for longer answers, with conservative matching rules
 - CSV import for Japanese -> Kanji and Spanish -> English decks
@@ -195,7 +196,6 @@ A deck backup includes:
 
 - undo last review
 - keyboard shortcuts for reveal and scheduling
-- more study modes such as due-only, new-only, and mixed
 - richer per-card progress data such as lapses, last seen, and next due
 - hard-card filtering and review
 
