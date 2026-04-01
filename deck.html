@@ -60,7 +60,7 @@
         </div>
 
         <div id="review-card" class="review-card">
-          <p class="kanji-glyph" id="kanji-character">æ—¥</p>
+          <p class="kanji-glyph" id="kanji-character">日</p>
           <p class="kanji-meta" id="kanji-hint">Think of the most common meaning first.</p>
 
           <form id="answer-form" class="answer-form">
@@ -114,14 +114,8 @@
 
         <section id="import-section" class="sidebar-card">
           <p class="panel-label">Import CSV</p>
-          <p class="sidebar-copy">
-            Use the columns <code>kanji</code>, <code>meanings</code>, <code>readings</code>,
-            <code>example1_jp</code>, <code>example1_en</code>, <code>example2_jp</code>, and <code>example2_en</code>.
-            Separate multiple English meanings inside the <code>meanings</code> cell with <code>|</code>.
-          </p>
-          <pre class="csv-example">kanji,meanings,readings,example1_jp,example1_en,example2_jp,example2_en
-èªž,"language|word","On: ã‚´, Kun: ã‹ãŸ.ã‚‹",æ—¥æœ¬èªžã‚’å‹‰å¼·ã—ã¦ã„ã¾ã™ã€‚,"I am studying Japanese.",å½¼ã¯ã‚„ã•ã—ã„è¨€è‘‰ã§è©±ã—ãŸã€‚,"He spoke in gentle words."
-æ£®,forest,"On: ã‚·ãƒ³, Kun: ã‚‚ã‚Š",æ£®ã®ä¸­ã¯ã¨ã¦ã‚‚é™ã‹ã ã€‚,"It is very quiet inside the forest.",æœã®æ£®ã‚’æ­©ãã®ãŒå¥½ãã§ã™ã€‚,"I like walking in the forest in the morning."</pre>
+          <p id="import-copy" class="sidebar-copy"></p>
+          <pre id="csv-example" class="csv-example"></pre>
           <form id="import-form" class="import-form">
             <label class="sr-only" for="csv-input">Paste CSV data</label>
             <textarea
@@ -139,6 +133,22 @@
             </div>
             <p id="import-feedback" class="import-feedback" aria-live="polite"></p>
           </form>
+        </section>
+
+        <section class="sidebar-card">
+          <p class="panel-label">Deck backup</p>
+          <p id="backup-copy" class="sidebar-copy">
+            Download a JSON backup of this deck's cards and review progress, or restore a backup file.
+          </p>
+          <div class="import-actions">
+            <button id="export-backup-button" class="ghost-button" type="button">Export backup</button>
+            <label class="file-input">
+              <span>Load backup</span>
+              <input id="backup-file" type="file" accept=".json,application/json">
+            </label>
+            <button id="restore-backup-button" class="primary-button" type="button">Restore backup</button>
+          </div>
+          <p id="backup-feedback" class="import-feedback" aria-live="polite"></p>
         </section>
       </aside>
     </section>

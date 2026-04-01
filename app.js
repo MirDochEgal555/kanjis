@@ -3,6 +3,7 @@ const LEGACY_STORAGE_KEYS = ["kanji-learning-app-state-v1"];
 const LAYOUT_STORAGE_KEY = "kanji-learning-layout-v1";
 const SELECTION_STORAGE_KEY = "kanji-learning-selection-v1";
 const DECK_CONTENT_STORAGE_KEY = "kanji-learning-deck-content-v1";
+const BACKUP_FORMAT_VERSION = 1;
 const DEFAULT_SELECTION = {
   language: "japanese",
   deck: "kanji",
@@ -417,7 +418,18 @@ const DECK_CONFIGS = {
     frontKey: "kanji",
     supportsReadings: true,
     starterDeck: STARTER_DECK,
-    supportsImport: true
+    supportsImport: true,
+    importConfig: {
+      frontHeader: "kanji",
+      readingsHeader: "readings",
+      example1SourceHeader: "example1_jp",
+      example1TranslationHeader: "example1_en",
+      example2SourceHeader: "example2_jp",
+      example2TranslationHeader: "example2_en",
+      example: `kanji,meanings,readings,example1_jp,example1_en,example2_jp,example2_en
+語,"language|word","On: ゴ, Kun: かた.る",日本語を勉強しています。,"I am studying Japanese.",彼はやさしい言葉で話した。,"He spoke in gentle words."
+森,forest,"On: シン, Kun: もり",森の中はとても静かだ。,"It is very quiet inside the forest.",朝の森を歩くのが好きです。,"I like walking in the forest in the morning."`
+    }
   },
   "spanish:english": {
     language: "spanish",
@@ -452,7 +464,18 @@ const DECK_CONFIGS = {
     frontKey: "front",
     supportsReadings: false,
     starterDeck: SPANISH_ENGLISH_DECK,
-    supportsImport: false
+    supportsImport: true,
+    importConfig: {
+      frontHeader: "spanish",
+      readingsHeader: null,
+      example1SourceHeader: "example1_es",
+      example1TranslationHeader: "example1_en",
+      example2SourceHeader: "example2_es",
+      example2TranslationHeader: "example2_en",
+      example: `spanish,meanings,example1_es,example1_en,example2_es,example2_en
+camino,"path|road",El camino cruza el bosque.,"The path crosses the forest.",Seguimos el camino al río.,"We followed the road to the river."
+mesa,table,La mesa está limpia.,"The table is clean.",Dejé las llaves sobre la mesa.,"I left the keys on the table."`
+    }
   }
 };
 
@@ -486,6 +509,13 @@ const elements = page === "deck"
       csvFile: document.getElementById("csv-file"),
       importFeedback: document.getElementById("import-feedback"),
       importSection: document.getElementById("import-section"),
+      importCopy: document.getElementById("import-copy"),
+      csvExample: document.getElementById("csv-example"),
+      exportBackupButton: document.getElementById("export-backup-button"),
+      backupFile: document.getElementById("backup-file"),
+      restoreBackupButton: document.getElementById("restore-backup-button"),
+      backupFeedback: document.getElementById("backup-feedback"),
+      backupCopy: document.getElementById("backup-copy"),
       editDeckLink: document.getElementById("edit-deck-link"),
       selectedLanguage: document.getElementById("selected-language"),
       selectedDeckType: document.getElementById("selected-deck-type"),
@@ -536,6 +566,7 @@ let currentSelection = { ...DEFAULT_SELECTION };
 let currentDeckConfig = DECK_CONFIGS[DEFAULT_DECK_KEY];
 let editorCardsState = [];
 let editorSearchTerm = "";
+let pendingBackup = null;
 
 if (page === "selection") {
   initSelectionPage();
@@ -575,6 +606,7 @@ function initDeckPage() {
 
   currentSelection = selection;
   currentDeckConfig = getDeckConfig(selection);
+  pendingBackup = null;
   saveSelection(selection);
   applyDeckSelectionCopy(selection);
   state = loadState();
@@ -628,6 +660,8 @@ function initDeckPage() {
     state = loadState(true);
     currentCardId = null;
     clearImportFeedback();
+    clearBackupFeedback();
+    pendingBackup = null;
 
     if (elements.csvInput) {
       elements.csvInput.value = "";
@@ -635,6 +669,10 @@ function initDeckPage() {
 
     if (elements.csvFile) {
       elements.csvFile.value = "";
+    }
+
+    if (elements.backupFile) {
+      elements.backupFile.value = "";
     }
 
     render();
@@ -669,6 +707,47 @@ function initDeckPage() {
       }
     });
   }
+
+  elements.exportBackupButton.addEventListener("click", () => {
+    try {
+      exportDeckBackup();
+      setBackupFeedback(`Downloaded a backup for ${formatDeckSummary(currentSelection)}.`);
+    } catch (error) {
+      setBackupFeedback(error.message, true);
+    }
+  });
+
+  elements.backupFile.addEventListener("change", async (event) => {
+    const [file] = event.target.files ?? [];
+    pendingBackup = null;
+
+    if (!file) {
+      clearBackupFeedback();
+      return;
+    }
+
+    try {
+      pendingBackup = parseDeckBackup(await file.text());
+      setBackupFeedback(`Loaded ${file.name}. Restore to apply the backup for ${formatDeckSummary(pendingBackup.selection)}.`);
+    } catch (error) {
+      setBackupFeedback(error.message, true);
+    }
+  });
+
+  elements.restoreBackupButton.addEventListener("click", () => {
+    if (!pendingBackup) {
+      setBackupFeedback("Load a deck backup JSON file first.", true);
+      return;
+    }
+
+    const restoredSelection = restoreDeckBackup(pendingBackup);
+    elements.backupFile.value = "";
+    pendingBackup = null;
+
+    if (getSelectionKey(restoredSelection) === getSelectionKey(currentSelection)) {
+      setBackupFeedback(`Restored the backup for ${formatDeckSummary(restoredSelection)}.`);
+    }
+  });
 }
 
 function initEditorPage() {
@@ -740,9 +819,11 @@ function loadState(forceFresh = false) {
   };
 }
 
-function sanitizeState(rawState) {
-  const importedCards = currentDeckConfig.supportsImport ? sanitizeImportedCards(rawState.importedCards) : [];
-  const deck = mergeDeckCards(getStarterDeck(), importedCards);
+function sanitizeState(rawState, selection = currentSelection, deckOverride = null) {
+  const deckConfig = getDeckConfig(selection);
+  const importedCards = deckConfig.supportsImport ? sanitizeImportedCards(rawState.importedCards, selection) : [];
+  const baseDeck = deckOverride ?? loadDeckContent(selection);
+  const deck = mergeDeckCards(baseDeck, importedCards);
   const cards = buildCardStateMap(deck, rawState.cards ?? {});
   const history = Array.isArray(rawState.history)
     ? rawState.history
@@ -755,6 +836,10 @@ function sanitizeState(rawState) {
 
 function saveState() {
   localStorage.setItem(getStateStorageKey(), JSON.stringify(state));
+}
+
+function saveStateForSelection(selection, nextState) {
+  localStorage.setItem(getStateStorageKey(selection), JSON.stringify(nextState));
 }
 
 function render() {
@@ -994,7 +1079,7 @@ function buildCardStateMap(deck, savedCards = {}, now = Date.now()) {
   );
 }
 
-function sanitizeImportedCards(rawImportedCards) {
+function sanitizeImportedCards(rawImportedCards, selection = currentSelection) {
   if (!Array.isArray(rawImportedCards)) {
     return [];
   }
@@ -1002,7 +1087,7 @@ function sanitizeImportedCards(rawImportedCards) {
   const cardsById = new Map();
 
   rawImportedCards.forEach((rawCard) => {
-    const card = sanitizeImportedCard(rawCard);
+    const card = sanitizeImportedCard(rawCard, selection);
 
     if (card) {
       cardsById.set(card.id, card);
@@ -1012,8 +1097,10 @@ function sanitizeImportedCards(rawImportedCards) {
   return [...cardsById.values()];
 }
 
-function sanitizeImportedCard(rawCard) {
-  if (!currentDeckConfig.supportsImport) {
+function sanitizeImportedCard(rawCard, selection = currentSelection) {
+  const deckConfig = getDeckConfig(selection);
+
+  if (!deckConfig.supportsImport) {
     return null;
   }
 
@@ -1021,23 +1108,32 @@ function sanitizeImportedCard(rawCard) {
     return null;
   }
 
-  const kanji = typeof rawCard.kanji === "string" ? rawCard.kanji.trim() : "";
+  const frontKey = deckConfig.frontKey;
+  const frontValue = typeof rawCard?.[frontKey] === "string"
+    ? rawCard[frontKey].trim()
+    : frontKey === "kanji" && typeof rawCard?.front === "string"
+      ? rawCard.front.trim()
+      : frontKey === "front" && typeof rawCard?.kanji === "string"
+        ? rawCard.kanji.trim()
+        : "";
   const meanings = Array.isArray(rawCard.meanings)
     ? rawCard.meanings.map((meaning) => String(meaning).trim()).filter(Boolean)
     : splitMeanings(rawCard.meanings);
-  const readings = typeof rawCard.readings === "string" ? rawCard.readings.trim() : "";
+  const readings = deckConfig.supportsReadings && typeof rawCard.readings === "string"
+    ? rawCard.readings.trim()
+    : "";
 
-  if (!kanji || !meanings.length) {
+  if (!frontValue || !meanings.length) {
     return null;
   }
 
   const id = typeof rawCard.id === "string" && rawCard.id.trim()
     ? rawCard.id.trim()
-    : createImportedCardId(kanji, meanings);
+    : createImportedCardId(frontValue, meanings, selection);
 
   return {
     id,
-    kanji,
+    [frontKey]: frontValue,
     meanings,
     readings,
     examples: sanitizeExamples(rawCard.examples)
@@ -1046,7 +1142,7 @@ function sanitizeImportedCard(rawCard) {
 
 function importCardsFromCsv(csvText) {
   if (!currentDeckConfig.supportsImport) {
-    throw new Error("CSV import is only available for the Japanese Kanji deck.");
+    throw new Error(`CSV import is not available for the ${formatDeckSummary(currentSelection)} deck.`);
   }
 
   const importedCards = parseImportedCardsFromCsv(csvText);
@@ -1093,13 +1189,15 @@ function parseImportedCardsFromCsv(csvText) {
   }
 
   const rows = parseCsv(csvText);
+  const importConfig = currentDeckConfig.importConfig;
+  const requiredHeaders = getRequiredImportHeaders(currentDeckConfig);
+  const sourceLabel = currentDeckConfig.editorExampleSourceLabel.toLowerCase();
 
   if (rows.length < 2) {
-    throw new Error("CSV import needs a header row and at least one kanji row.");
+    throw new Error(`CSV import needs a header row and at least one ${currentDeckConfig.editorFrontLabel.toLowerCase()} row.`);
   }
 
   const headers = rows[0].map(normalizeHeader);
-  const requiredHeaders = ["kanji", "meanings", "readings", "example1_jp", "example1_en", "example2_jp", "example2_en"];
   const missingHeaders = requiredHeaders.filter((header) => !headers.includes(header));
 
   if (missingHeaders.length) {
@@ -1117,16 +1215,16 @@ function parseImportedCardsFromCsv(csvText) {
     }
 
     const record = Object.fromEntries(headers.map((header, columnIndex) => [header, paddedRow[columnIndex] ?? ""]));
-    const kanji = record.kanji.trim();
+    const frontValue = record[importConfig.frontHeader]?.trim() ?? "";
     const meanings = splitMeanings(record.meanings);
-    const readings = record.readings.trim();
+    const readings = importConfig.readingsHeader ? record[importConfig.readingsHeader].trim() : "";
     const examples = sanitizeExamples([
-      { jp: record.example1_jp, en: record.example1_en },
-      { jp: record.example2_jp, en: record.example2_en }
+      { jp: record[importConfig.example1SourceHeader], en: record[importConfig.example1TranslationHeader] },
+      { jp: record[importConfig.example2SourceHeader], en: record[importConfig.example2TranslationHeader] }
     ]);
 
-    if (!kanji) {
-      throw new Error(`Row ${index + 2} is missing a kanji value.`);
+    if (!frontValue) {
+      throw new Error(`Row ${index + 2} is missing a ${currentDeckConfig.editorFrontLabel.toLowerCase()} value.`);
     }
 
     if (!meanings.length) {
@@ -1134,17 +1232,110 @@ function parseImportedCardsFromCsv(csvText) {
     }
 
     if (examples.length !== 2) {
-      throw new Error(`Row ${index + 2} must include two example sentences with Japanese and English text.`);
+      throw new Error(`Row ${index + 2} must include two example sentence pairs with ${sourceLabel} and English text.`);
     }
 
     return {
-      id: createImportedCardId(kanji, meanings),
-      kanji,
+      id: createImportedCardId(frontValue, meanings, currentSelection),
+      [currentDeckConfig.frontKey]: frontValue,
       meanings,
       readings,
       examples
     };
   });
+}
+
+function exportDeckBackup() {
+  const selection = sanitizeSelection(currentSelection);
+  const deckContent = loadDeckContent(selection);
+  const studyState = sanitizeState(loadRawStateForSelection(selection) ?? {}, selection, deckContent);
+  const backup = {
+    version: BACKUP_FORMAT_VERSION,
+    exportedAt: new Date().toISOString(),
+    selection,
+    deckContent,
+    studyState: {
+      cards: studyState.cards,
+      history: studyState.history
+    }
+  };
+  const backupUrl = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" }));
+  const link = document.createElement("a");
+
+  link.href = backupUrl;
+  link.download = buildDeckBackupFilename(selection);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(backupUrl), 0);
+}
+
+function parseDeckBackup(rawBackupText) {
+  if (!rawBackupText.trim()) {
+    throw new Error("The backup file is empty.");
+  }
+
+  let parsedBackup;
+
+  try {
+    parsedBackup = JSON.parse(rawBackupText);
+  } catch (error) {
+    throw new Error("The backup file is not valid JSON.");
+  }
+
+  if (!parsedBackup || typeof parsedBackup !== "object") {
+    throw new Error("The backup file must contain a deck backup object.");
+  }
+
+  if (parsedBackup.version !== BACKUP_FORMAT_VERSION) {
+    throw new Error(`Unsupported backup format version: ${parsedBackup.version ?? "unknown"}.`);
+  }
+
+  const selection = sanitizeSelection(parsedBackup.selection);
+  const deckContent = sanitizeDeckContent(parsedBackup.deckContent, selection);
+
+  if (!deckContent.length) {
+    throw new Error("The backup file does not contain any valid deck cards.");
+  }
+
+  const studyState = sanitizeState(parsedBackup.studyState ?? {}, selection, deckContent);
+
+  return {
+    version: BACKUP_FORMAT_VERSION,
+    selection,
+    deckContent,
+    studyState
+  };
+}
+
+function restoreDeckBackup(backup) {
+  const selection = sanitizeSelection(backup.selection);
+  const deckContent = sanitizeDeckContent(backup.deckContent, selection);
+  const studyState = sanitizeState(backup.studyState ?? {}, selection, deckContent);
+
+  saveDeckContent(selection, deckContent);
+  saveStateForSelection(selection, studyState);
+  saveSelection(selection);
+
+  if (getSelectionKey(selection) === getSelectionKey(currentSelection)) {
+    currentSelection = selection;
+    currentDeckConfig = getDeckConfig(selection);
+    applyDeckSelectionCopy(selection);
+    state = loadState();
+    clearImportFeedback();
+    render();
+    return selection;
+  }
+
+  window.location.href = getDeckPageUrl(selection);
+  return selection;
+}
+
+function buildDeckBackupFilename(selection = currentSelection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const dateStamp = new Date().toISOString().slice(0, 10);
+  return `${normalizedSelection.language}-${normalizedSelection.deck}-${normalizedSelection.set}-backup-${dateStamp}.json`;
 }
 
 function parseCsv(csvText) {
@@ -1216,8 +1407,22 @@ function splitMeanings(value) {
     .filter(Boolean);
 }
 
-function createImportedCardId(kanji, meanings) {
-  return `imported:${normalizeCardKey(kanji)}:${normalizeCardKey(meanings[0])}`;
+function getRequiredImportHeaders(deckConfig = currentDeckConfig) {
+  const importConfig = deckConfig.importConfig;
+
+  return [
+    importConfig.frontHeader,
+    "meanings",
+    importConfig.readingsHeader,
+    importConfig.example1SourceHeader,
+    importConfig.example1TranslationHeader,
+    importConfig.example2SourceHeader,
+    importConfig.example2TranslationHeader
+  ].filter(Boolean);
+}
+
+function createImportedCardId(frontValue, meanings, selection = currentSelection) {
+  return `imported:${getSelectionKey(selection)}:${normalizeCardKey(frontValue)}:${normalizeCardKey(meanings[0])}`;
 }
 
 function normalizeCardKey(value) {
@@ -1261,6 +1466,19 @@ function setImportFeedback(message, isError = false) {
 
 function clearImportFeedback() {
   setImportFeedback("", false);
+}
+
+function setBackupFeedback(message, isError = false) {
+  if (!elements?.backupFeedback) {
+    return;
+  }
+
+  elements.backupFeedback.textContent = message;
+  elements.backupFeedback.classList.toggle("is-error", isError);
+}
+
+function clearBackupFeedback() {
+  setBackupFeedback("", false);
 }
 
 function mergeDeckCards(baseDeck = [], extraCards = []) {
@@ -1376,7 +1594,7 @@ function loadImportedCardsFromStoredState(selection = currentSelection) {
     return [];
   }
 
-  return sanitizeImportedCards(rawState.importedCards);
+  return sanitizeImportedCards(rawState.importedCards, selection);
 }
 
 function clearImportedCardsFromStoredState(selection = currentSelection) {
@@ -1533,6 +1751,15 @@ function applyDeckSelectionCopy(selection) {
   if (elements.importSection) {
     elements.importSection.classList.toggle("hidden", !deckConfig.supportsImport);
   }
+
+  if (deckConfig.supportsImport && elements.importCopy && elements.csvExample) {
+    elements.importCopy.innerHTML = buildImportCopy(deckConfig);
+    elements.csvExample.textContent = deckConfig.importConfig?.example ?? "";
+  }
+
+  if (elements.backupCopy) {
+    elements.backupCopy.textContent = `Download a JSON backup of the ${formatDeckSummary(normalizedSelection)} deck's cards and review progress, or restore a backup file.`;
+  }
 }
 
 function applyEditorSelectionCopy(selection) {
@@ -1553,6 +1780,20 @@ function formatSelectionLabel(value) {
 
 function formatSetLabel(value) {
   return value === "starter" ? "Starter Set" : formatSelectionLabel(value);
+}
+
+function formatDeckSummary(selection = currentSelection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const deckConfig = getDeckConfig(normalizedSelection);
+  return `${deckConfig.languageLabel} ${deckConfig.deckLabel} ${formatSetLabel(normalizedSelection.set)}`;
+}
+
+function buildImportCopy(deckConfig = currentDeckConfig) {
+  const headers = getRequiredImportHeaders(deckConfig)
+    .map((header) => `<code>${header}</code>`)
+    .join(", ");
+
+  return `Use the columns ${headers}. Separate multiple accepted answers inside the <code>meanings</code> cell with <code>|</code>.`;
 }
 
 function renderHowItWorks(steps) {
