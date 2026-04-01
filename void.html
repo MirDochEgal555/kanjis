@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>void</title>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    body {
+      font-family: "Cascadia Code", "Consolas", monospace;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      image-rendering: pixelated;
+    }
+
+    .secret-label {
+      position: fixed;
+      left: 16px;
+      bottom: 14px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.72rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      pointer-events: none;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="spiral-canvas" aria-label="Animated pixel spiral"></canvas>
+  <p class="secret-label">void</p>
+
+  <script>
+    const canvas = document.getElementById("spiral-canvas");
+    const context = canvas.getContext("2d", { alpha: false });
+    let spiralPath = [];
+    let cellSize = 10;
+    let columns = 0;
+    let rows = 0;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function buildSpiralPath(totalColumns, totalRows) {
+      const centerColumn = Math.floor(totalColumns / 2);
+      const centerRow = Math.floor(totalRows / 2);
+      const cells = [];
+      const seen = new Set();
+      const targetCount = totalColumns * totalRows;
+      const maxSteps = targetCount * 6;
+      let x = 0;
+      let y = 0;
+      let dx = 1;
+      let dy = 0;
+      let segmentLength = 1;
+      let segmentProgress = 0;
+      let turnCount = 0;
+
+      for (let step = 0; step < maxSteps && cells.length < targetCount; step += 1) {
+        const column = centerColumn + x;
+        const row = centerRow + y;
+
+        if (column >= 0 && column < totalColumns && row >= 0 && row < totalRows) {
+          const key = `${column}:${row}`;
+
+          if (!seen.has(key)) {
+            seen.add(key);
+            cells.push({ column, row });
+          }
+        }
+
+        x += dx;
+        y += dy;
+        segmentProgress += 1;
+
+        if (segmentProgress === segmentLength) {
+          segmentProgress = 0;
+          turnCount += 1;
+
+          const nextDx = -dy;
+          const nextDy = dx;
+          dx = nextDx;
+          dy = nextDy;
+
+          if (turnCount % 2 === 0) {
+            segmentLength += 1;
+          }
+        }
+      }
+
+      return cells;
+    }
+
+    function resizeCanvas() {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const pixelRatio = window.devicePixelRatio || 1;
+
+      cellSize = clamp(Math.floor(Math.min(viewportWidth, viewportHeight) / 42), 8, 20);
+      columns = Math.ceil(viewportWidth / cellSize);
+      rows = Math.ceil(viewportHeight / cellSize);
+      offsetX = Math.floor((viewportWidth - columns * cellSize) / 2);
+      offsetY = Math.floor((viewportHeight - rows * cellSize) / 2);
+      spiralPath = buildSpiralPath(columns, rows);
+
+      canvas.width = Math.round(viewportWidth * pixelRatio);
+      canvas.height = Math.round(viewportHeight * pixelRatio);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      context.imageSmoothingEnabled = false;
+    }
+
+    function drawFrame(timestamp) {
+      const time = timestamp * 0.001;
+      context.fillStyle = "#000";
+      context.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (let index = 0; index < spiralPath.length; index += 1) {
+        const cell = spiralPath[index];
+        const wave = Math.sin(index * 0.19 - time * 5.2);
+        const drift = Math.cos(index * 0.045 - time * 1.6);
+
+        if (wave > 0.18 && drift > -0.35) {
+          context.fillStyle = "#fff";
+          context.fillRect(
+            offsetX + cell.column * cellSize,
+            offsetY + cell.row * cellSize,
+            cellSize,
+            cellSize
+          );
+        }
+      }
+
+      requestAnimationFrame(drawFrame);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    requestAnimationFrame(drawFrame);
+  </script>
+</body>
+</html>
