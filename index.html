@@ -13,8 +13,9 @@
       <div class="selection-hero-copy">
         <h1>Choose a language, pick a deck, then enter review mode.</h1>
         <p>
-          Two study paths are live now: <strong>Japanese -> Kanji</strong> and
-          <strong>Spanish -> English</strong>.
+          Four study paths are live now: <strong>Japanese -> Kanji</strong>,
+          <strong>Spanish -> English</strong>, <strong>Chinese -> English</strong>,
+          and <strong>Korean -> English</strong>.
         </p>
       </div>
       <div class="selection-action-row">
@@ -23,6 +24,9 @@
         </a>
         <a id="edit-selected-deck" class="ghost-button launch-button" href="editor.html?language=japanese&amp;deck=kanji&amp;set=starter">
           Edit vocabulary set
+        </a>
+        <a id="view-selected-stats" class="ghost-button launch-button" href="stats.html?language=japanese&amp;deck=kanji&amp;set=starter">
+          View deck stats
         </a>
       </div>
     </section>
@@ -34,24 +38,7 @@
           <h2>Choose a language</h2>
         </div>
 
-        <div id="language-options" class="option-grid" role="radiogroup" aria-label="Language selection">
-          <button class="option-card is-selected" type="button" data-selection-group="language" data-value="japanese" aria-pressed="true">
-            <span class="option-card-label">Japanese</span>
-            <span class="option-card-meta">Kanji review deck</span>
-          </button>
-          <button class="option-card" type="button" data-selection-group="language" data-value="spanish" aria-pressed="false">
-            <span class="option-card-label">Spanish</span>
-            <span class="option-card-meta">Translate into English</span>
-          </button>
-          <button class="option-card is-disabled" type="button" disabled>
-            <span class="option-card-label">Chinese</span>
-            <span class="option-card-meta">Coming later</span>
-          </button>
-          <button class="option-card is-disabled" type="button" disabled>
-            <span class="option-card-label">Korean</span>
-            <span class="option-card-meta">Coming later</span>
-          </button>
-        </div>
+        <div id="language-options" class="option-grid" role="radiogroup" aria-label="Language selection"></div>
       </article>
 
       <article class="selection-panel">
@@ -60,24 +47,7 @@
           <h2>Choose a set or level</h2>
         </div>
 
-        <div id="deck-options" class="option-grid" role="radiogroup" aria-label="Set selection">
-          <button class="option-card is-selected" type="button" data-selection-group="set" data-value="starter" aria-pressed="true">
-            <span class="option-card-label">Starter Set</span>
-            <span class="option-card-meta">Current live set</span>
-          </button>
-          <button class="option-card is-disabled" type="button" disabled>
-            <span class="option-card-label">Level 2</span>
-            <span class="option-card-meta">Coming later</span>
-          </button>
-          <button class="option-card is-disabled" type="button" disabled>
-            <span class="option-card-label">Level 3</span>
-            <span class="option-card-meta">Coming later</span>
-          </button>
-          <button class="option-card is-disabled" type="button" disabled>
-            <span class="option-card-label">Custom Set</span>
-            <span class="option-card-meta">Coming later</span>
-          </button>
-        </div>
+        <div id="deck-options" class="option-grid" role="radiogroup" aria-label="Set selection"></div>
       </article>
 
       <article class="selection-summary">

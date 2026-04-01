@@ -405,7 +405,7 @@ const SPANISH_ENGLISH_DECK = [
   }
 ];
 
-const DECK_CONFIGS = {
+const LEGACY_DECK_CONFIGS = {
   "japanese:kanji": {
     language: "japanese",
     deck: "kanji",
@@ -501,6 +501,758 @@ mesa,table,La mesa está limpia.,"The table is clean.",Dejé las llaves sobre la
   }
 };
 
+const JAPANESE_JLPT_N5_DECK = [
+  {
+    id: "eat",
+    kanji: "食",
+    meanings: ["eat", "food"],
+    readings: "On: ショク, Kun: た.べる",
+    examples: [
+      { jp: "毎朝パンを食べます。", en: "I eat bread every morning." },
+      { jp: "和食が好きです。", en: "I like Japanese food." }
+    ]
+  },
+  {
+    id: "drink",
+    kanji: "飲",
+    meanings: ["drink"],
+    readings: "On: イン, Kun: の.む",
+    examples: [
+      { jp: "水をたくさん飲んでください。", en: "Please drink plenty of water." },
+      { jp: "食後に薬を飲みます。", en: "I take medicine after meals." }
+    ]
+  },
+  {
+    id: "car",
+    kanji: "車",
+    meanings: ["car", "vehicle"],
+    readings: "On: シャ, Kun: くるま",
+    examples: [
+      { jp: "車で駅へ行きます。", en: "I go to the station by car." },
+      { jp: "電車が遅れています。", en: "The train is delayed." }
+    ]
+  },
+  {
+    id: "station",
+    kanji: "駅",
+    meanings: ["station"],
+    readings: "On: エキ",
+    examples: [
+      { jp: "駅で友だちに会います。", en: "I will meet a friend at the station." },
+      { jp: "この駅は新しいです。", en: "This station is new." }
+    ]
+  },
+  {
+    id: "friend",
+    kanji: "友",
+    meanings: ["friend"],
+    readings: "On: ユウ, Kun: とも",
+    examples: [
+      { jp: "友だちと映画を見ました。", en: "I watched a movie with my friend." },
+      { jp: "彼は長年の友です。", en: "He is a longtime friend." }
+    ]
+  },
+  {
+    id: "time",
+    kanji: "時",
+    meanings: ["time", "hour"],
+    readings: "On: ジ, Kun: とき",
+    examples: [
+      { jp: "七時に起きます。", en: "I wake up at seven o'clock." },
+      { jp: "時間がありません。", en: "I do not have time." }
+    ]
+  }
+];
+
+const JAPANESE_JLPT_N4_DECK = [
+  {
+    id: "travel",
+    kanji: "旅",
+    meanings: ["trip", "travel"],
+    readings: "On: リョ, Kun: たび",
+    examples: [
+      { jp: "来月京都へ旅します。", en: "I will travel to Kyoto next month." },
+      { jp: "旅の写真を見せてください。", en: "Please show me your trip photos." }
+    ]
+  },
+  {
+    id: "meaning",
+    kanji: "意",
+    meanings: ["meaning", "intention"],
+    readings: "On: イ",
+    examples: [
+      { jp: "この言葉の意味を教えてください。", en: "Please tell me the meaning of this word." },
+      { jp: "その意見に賛成です。", en: "I agree with that opinion." }
+    ]
+  },
+  {
+    id: "department",
+    kanji: "部",
+    meanings: ["section", "department", "club"],
+    readings: "On: ブ",
+    examples: [
+      { jp: "営業部で働いています。", en: "I work in the sales department." },
+      { jp: "学校で音楽部に入っています。", en: "I am in the music club at school." }
+    ]
+  },
+  {
+    id: "practice",
+    kanji: "練",
+    meanings: ["practice", "train"],
+    readings: "On: レン",
+    examples: [
+      { jp: "毎日漢字を練習しています。", en: "I practice kanji every day." },
+      { jp: "試合の前に十分練習した。", en: "I practiced enough before the match." }
+    ]
+  },
+  {
+    id: "continue",
+    kanji: "続",
+    meanings: ["continue"],
+    readings: "On: ゾク, Kun: つづ.く",
+    examples: [
+      { jp: "雨が三日続きました。", en: "The rain continued for three days." },
+      { jp: "勉強を続けるつもりです。", en: "I plan to continue studying." }
+    ]
+  },
+  {
+    id: "experience",
+    kanji: "経",
+    meanings: ["experience", "pass through", "manage"],
+    readings: "On: ケイ, キョウ, Kun: へ.る",
+    examples: [
+      { jp: "長い経験があります。", en: "I have long experience." },
+      { jp: "駅を経て学校へ向かう。", en: "I head to school by way of the station." }
+    ]
+  }
+];
+
+const SPANISH_TRAVEL_DECK = [
+  {
+    id: "airport",
+    front: "aeropuerto",
+    meanings: ["airport"],
+    examples: [
+      { jp: "Llegamos temprano al aeropuerto.", en: "We arrived early at the airport." },
+      { jp: "El aeropuerto está muy lejos.", en: "The airport is very far away." }
+    ]
+  },
+  {
+    id: "ticket",
+    front: "boleto",
+    meanings: ["ticket"],
+    examples: [
+      { jp: "Compré el boleto en línea.", en: "I bought the ticket online." },
+      { jp: "Guarda tu boleto para la entrada.", en: "Keep your ticket for entry." }
+    ]
+  },
+  {
+    id: "hotel",
+    front: "hotel",
+    meanings: ["hotel"],
+    examples: [
+      { jp: "Nuestro hotel está cerca del centro.", en: "Our hotel is near downtown." },
+      { jp: "El hotel tiene desayuno incluido.", en: "The hotel includes breakfast." }
+    ]
+  },
+  {
+    id: "map",
+    front: "mapa",
+    meanings: ["map"],
+    examples: [
+      { jp: "Necesito un mapa de la ciudad.", en: "I need a city map." },
+      { jp: "El mapa muestra la ruta corta.", en: "The map shows the short route." }
+    ]
+  },
+  {
+    id: "reservation",
+    front: "reserva",
+    meanings: ["reservation", "booking"],
+    examples: [
+      { jp: "Confirmé la reserva del cuarto.", en: "I confirmed the room reservation." },
+      { jp: "La reserva está a tu nombre.", en: "The booking is under your name." }
+    ]
+  },
+  {
+    id: "luggage",
+    front: "equipaje",
+    meanings: ["luggage", "baggage"],
+    examples: [
+      { jp: "Mi equipaje pesa mucho.", en: "My luggage weighs a lot." },
+      { jp: "El equipaje llegó tarde.", en: "The baggage arrived late." }
+    ]
+  }
+];
+
+const SPANISH_DAILY_LIFE_DECK = [
+  {
+    id: "breakfast",
+    front: "desayuno",
+    meanings: ["breakfast"],
+    examples: [
+      { jp: "El desayuno está listo.", en: "Breakfast is ready." },
+      { jp: "Siempre tomo café en el desayuno.", en: "I always drink coffee at breakfast." }
+    ]
+  },
+  {
+    id: "neighbor",
+    front: "vecino",
+    meanings: ["neighbor"],
+    examples: [
+      { jp: "Mi vecino es muy amable.", en: "My neighbor is very kind." },
+      { jp: "Hablé con la vecina ayer.", en: "I spoke with the neighbor yesterday." }
+    ]
+  },
+  {
+    id: "homework",
+    front: "tarea",
+    meanings: ["homework", "task"],
+    examples: [
+      { jp: "Termino la tarea por la noche.", en: "I finish the homework at night." },
+      { jp: "Tengo una tarea importante hoy.", en: "I have an important task today." }
+    ]
+  },
+  {
+    id: "kitchen",
+    front: "cocina",
+    meanings: ["kitchen"],
+    examples: [
+      { jp: "La cocina está limpia.", en: "The kitchen is clean." },
+      { jp: "Comemos en la cocina pequeña.", en: "We eat in the small kitchen." }
+    ]
+  },
+  {
+    id: "office",
+    front: "oficina",
+    meanings: ["office"],
+    examples: [
+      { jp: "La oficina abre a las ocho.", en: "The office opens at eight." },
+      { jp: "Trabajo en una oficina tranquila.", en: "I work in a quiet office." }
+    ]
+  },
+  {
+    id: "rest",
+    front: "descanso",
+    meanings: ["rest", "break"],
+    examples: [
+      { jp: "Necesito un descanso corto.", en: "I need a short break." },
+      { jp: "El descanso mejora mi concentración.", en: "Rest improves my concentration." }
+    ]
+  }
+];
+
+const CHINESE_STARTER_DECK = [
+  {
+    id: "hello",
+    front: "你好",
+    meanings: ["hello", "hi"],
+    readings: "ni hao",
+    examples: [
+      { jp: "见到老师要说你好。", en: "You should say hello when you see the teacher." },
+      { jp: "他笑着说你好。", en: "He smiled and said hello." }
+    ]
+  },
+  {
+    id: "student",
+    front: "学生",
+    meanings: ["student"],
+    readings: "xue sheng",
+    examples: [
+      { jp: "我是中文学生。", en: "I am a Chinese student." },
+      { jp: "那个学生很认真。", en: "That student is very diligent." }
+    ]
+  },
+  {
+    id: "friend",
+    front: "朋友",
+    meanings: ["friend"],
+    readings: "peng you",
+    examples: [
+      { jp: "我的朋友住在北京。", en: "My friend lives in Beijing." },
+      { jp: "她和朋友一起学习。", en: "She studies with her friend." }
+    ]
+  },
+  {
+    id: "water",
+    front: "水",
+    meanings: ["water"],
+    readings: "shui",
+    examples: [
+      { jp: "请喝一点水。", en: "Please drink some water." },
+      { jp: "杯子里有冷水。", en: "There is cold water in the cup." }
+    ]
+  },
+  {
+    id: "time",
+    front: "时间",
+    meanings: ["time"],
+    readings: "shi jian",
+    examples: [
+      { jp: "我没有很多时间。", en: "I do not have much time." },
+      { jp: "现在是什么时间？", en: "What time is it now?" }
+    ]
+  },
+  {
+    id: "train",
+    front: "火车",
+    meanings: ["train"],
+    readings: "huo che",
+    examples: [
+      { jp: "我们坐火车去上海。", en: "We are going to Shanghai by train." },
+      { jp: "火车今天很准时。", en: "The train is on time today." }
+    ]
+  }
+];
+
+const CHINESE_HSK1_DECK = [
+  {
+    id: "teacher",
+    front: "老师",
+    meanings: ["teacher"],
+    readings: "lao shi",
+    examples: [
+      { jp: "老师在教室里。", en: "The teacher is in the classroom." },
+      { jp: "我们的老师很亲切。", en: "Our teacher is very kind." }
+    ]
+  },
+  {
+    id: "school",
+    front: "学校",
+    meanings: ["school"],
+    readings: "xue xiao",
+    examples: [
+      { jp: "学校离家不远。", en: "The school is not far from home." },
+      { jp: "学校今天很安静。", en: "The school is very quiet today." }
+    ]
+  },
+  {
+    id: "like",
+    front: "喜欢",
+    meanings: ["like"],
+    readings: "xi huan",
+    examples: [
+      { jp: "我喜欢这本书。", en: "I like this book." },
+      { jp: "她喜欢学习汉字。", en: "She likes studying Chinese characters." }
+    ]
+  },
+  {
+    id: "today",
+    front: "今天",
+    meanings: ["today"],
+    readings: "jin tian",
+    examples: [
+      { jp: "今天天气很好。", en: "The weather is good today." },
+      { jp: "今天我们有课。", en: "We have class today." }
+    ]
+  },
+  {
+    id: "work",
+    front: "工作",
+    meanings: ["work", "job"],
+    readings: "gong zuo",
+    examples: [
+      { jp: "我六点下班结束工作。", en: "I finish work at six." },
+      { jp: "她找到了新工作。", en: "She found a new job." }
+    ]
+  },
+  {
+    id: "thanks",
+    front: "谢谢",
+    meanings: ["thanks", "thank you"],
+    readings: "xie xie",
+    examples: [
+      { jp: "谢谢你的帮助。", en: "Thank you for your help." },
+      { jp: "他笑着说谢谢。", en: "He smiled and said thanks." }
+    ]
+  }
+];
+
+const KOREAN_STARTER_DECK = [
+  {
+    id: "hello",
+    front: "안녕하세요",
+    meanings: ["hello"],
+    readings: "annyeonghaseyo",
+    examples: [
+      { jp: "처음 만날 때 안녕하세요라고 말해요.", en: "You say hello when meeting for the first time." },
+      { jp: "그는 밝게 안녕하세요라고 했어요.", en: "He said hello brightly." }
+    ]
+  },
+  {
+    id: "water",
+    front: "물",
+    meanings: ["water"],
+    readings: "mul",
+    examples: [
+      { jp: "찬 물을 마셔요.", en: "I drink cold water." },
+      { jp: "컵에 물이 있어요.", en: "There is water in the cup." }
+    ]
+  },
+  {
+    id: "school",
+    front: "학교",
+    meanings: ["school"],
+    readings: "hakgyo",
+    examples: [
+      { jp: "학교에 일찍 가요.", en: "I go to school early." },
+      { jp: "우리 학교는 커요.", en: "Our school is big." }
+    ]
+  },
+  {
+    id: "friend",
+    front: "친구",
+    meanings: ["friend"],
+    readings: "chingu",
+    examples: [
+      { jp: "친구와 영화를 봐요.", en: "I watch a movie with my friend." },
+      { jp: "그 친구는 친절해요.", en: "That friend is kind." }
+    ]
+  },
+  {
+    id: "time",
+    front: "시간",
+    meanings: ["time"],
+    readings: "sigan",
+    examples: [
+      { jp: "시간이 부족해요.", en: "There is not enough time." },
+      { jp: "지금 시간이 몇 시예요?", en: "What time is it now?" }
+    ]
+  },
+  {
+    id: "book",
+    front: "책",
+    meanings: ["book"],
+    readings: "chaek",
+    examples: [
+      { jp: "책을 한 권 샀어요.", en: "I bought a book." },
+      { jp: "책이 책상 위에 있어요.", en: "The book is on the desk." }
+    ]
+  }
+];
+
+const KOREAN_TOPIK1_DECK = [
+  {
+    id: "thanks",
+    front: "감사합니다",
+    meanings: ["thank you", "thanks"],
+    readings: "gamsahamnida",
+    examples: [
+      { jp: "도와주셔서 감사합니다.", en: "Thank you for helping me." },
+      { jp: "그는 정중하게 감사합니다라고 했어요.", en: "He politely said thank you." }
+    ]
+  },
+  {
+    id: "morning",
+    front: "아침",
+    meanings: ["morning"],
+    readings: "achim",
+    examples: [
+      { jp: "아침 공기가 시원해요.", en: "The morning air is cool." },
+      { jp: "아침마다 산책해요.", en: "I take a walk every morning." }
+    ]
+  },
+  {
+    id: "travel",
+    front: "여행",
+    meanings: ["trip", "travel"],
+    readings: "yeohaeng",
+    examples: [
+      { jp: "여행 계획을 세우고 있어요.", en: "I am making travel plans." },
+      { jp: "이번 여행은 짧아요.", en: "This trip is short." }
+    ]
+  },
+  {
+    id: "practice",
+    front: "연습",
+    meanings: ["practice"],
+    readings: "yeonseup",
+    examples: [
+      { jp: "발음을 매일 연습해요.", en: "I practice pronunciation every day." },
+      { jp: "연습이 실력을 키워요.", en: "Practice builds skill." }
+    ]
+  },
+  {
+    id: "company",
+    front: "회사",
+    meanings: ["company", "office"],
+    readings: "hoesa",
+    examples: [
+      { jp: "회사가 집에서 가까워요.", en: "The company is close to home." },
+      { jp: "회사에서 회의가 있어요.", en: "There is a meeting at the office." }
+    ]
+  },
+  {
+    id: "subway",
+    front: "지하철",
+    meanings: ["subway"],
+    readings: "jihacheol",
+    examples: [
+      { jp: "지하철로 출근해요.", en: "I commute by subway." },
+      { jp: "지하철역이 바로 앞에 있어요.", en: "The subway station is right in front." }
+    ]
+  }
+];
+
+const DECK_CONFIGS = {
+  "japanese:kanji": {
+    language: "japanese",
+    deck: "kanji",
+    languageLabel: "Japanese",
+    deckLabel: "Kanji",
+    selectionMeta: "Kanji recall and JLPT packs",
+    selectionDescription: "Review kanji one card at a time, with packs that scale from the starter deck into JLPT-focused study.",
+    heroTitle: "See kanji. Recall the meaning. Decide the next review.",
+    heroDescription: "A spaced repetition track for kanji meaning recall with clearer difficulty signals and set-based expansion packs.",
+    inputLabel: "Type the translation",
+    inputPlaceholder: "Type the translation",
+    submitLabel: "Reveal answer",
+    prompt: (cardFront) => `What does ${cardFront} mean?`,
+    emptyHint: "New card. Try the most common English meaning first.",
+    flowSteps: [
+      "Look at the kanji.",
+      "Type the meaning you remember.",
+      "Reveal the stored answer and progress signals.",
+      "Choose the next review time."
+    ],
+    editorTitle: "Edit the kanji set for this deck.",
+    editorDescription: "Update kanji, accepted meanings, readings, and example sentences, then save this set for review.",
+    editorFrontLabel: "Kanji",
+    editorReadingsLabel: "On / Kun readings",
+    editorExampleSourceLabel: "Japanese example",
+    editorExampleTranslationLabel: "English translation",
+    editorHelp: [
+      "Use the Kanji field for the character shown on the card.",
+      "Separate multiple accepted meanings with |.",
+      "Use the readings field for on and kun readings.",
+      "Example sentences are optional, but they make review clearer."
+    ],
+    frontKey: "kanji",
+    supportsReadings: true,
+    supportsImport: true,
+    sets: {
+      starter: {
+        label: "Starter Set",
+        meta: "Core foundational kanji",
+        description: "A compact foundation set for the first review cycle.",
+        cards: STARTER_DECK
+      },
+      "jlpt-n5": {
+        label: "JLPT N5 Pack",
+        meta: "Beginner test-ready kanji",
+        description: "Common N5 kanji for everyday verbs, time, and places.",
+        cards: JAPANESE_JLPT_N5_DECK
+      },
+      "jlpt-n4": {
+        label: "JLPT N4 Pack",
+        meta: "Next-level review set",
+        description: "A follow-on pack with more abstract or extended-use kanji.",
+        cards: JAPANESE_JLPT_N4_DECK
+      }
+    },
+    importConfig: {
+      frontHeader: "kanji",
+      readingsHeader: "readings",
+      example1SourceHeader: "example1_jp",
+      example1TranslationHeader: "example1_en",
+      example2SourceHeader: "example2_jp",
+      example2TranslationHeader: "example2_en",
+      example: `kanji,meanings,readings,example1_jp,example1_en,example2_jp,example2_en
+語,"language|word","On: ゴ, Kun: かた.る",日本語を勉強しています。,"I am studying Japanese.",彼はやさしい言葉で話した。,"He spoke in gentle words."
+森,forest,"On: シン, Kun: もり",森の中はとても静かだ。,"It is very quiet inside the forest.",朝の森を歩くのが好きです。,"I like walking in the forest in the morning."`
+    }
+  },
+  "spanish:english": {
+    language: "spanish",
+    deck: "english",
+    languageLabel: "Spanish",
+    deckLabel: "English",
+    selectionMeta: "Vocabulary recall into English",
+    selectionDescription: "See a Spanish word, type the English translation, and move between starter, travel, and daily-life packs.",
+    heroTitle: "See Spanish. Recall the English translation. Decide the next review.",
+    heroDescription: "A bilingual vocabulary track for fast Spanish-to-English recall with pack-based expansion.",
+    inputLabel: "Type the English translation",
+    inputPlaceholder: "Type the English translation",
+    submitLabel: "Reveal answer",
+    prompt: (cardFront) => `What is the English translation of ${cardFront}?`,
+    emptyHint: "New card. Start with the most common English translation.",
+    flowSteps: [
+      "Look at the Spanish word.",
+      "Type the English translation you remember.",
+      "Reveal the stored answer and progress signals.",
+      "Choose the next review time."
+    ],
+    editorTitle: "Edit the Spanish vocabulary set for this deck.",
+    editorDescription: "Update Spanish prompts, accepted English answers, and example sentences, then save this set for review.",
+    editorFrontLabel: "Spanish word",
+    editorReadingsLabel: "Notes",
+    editorExampleSourceLabel: "Spanish example",
+    editorExampleTranslationLabel: "English translation",
+    editorHelp: [
+      "Use the Spanish word field for the prompt shown on the card.",
+      "Separate multiple accepted English answers with |.",
+      "Examples are optional, but they help make context clearer."
+    ],
+    frontKey: "front",
+    supportsReadings: false,
+    supportsImport: true,
+    sets: {
+      starter: {
+        label: "Starter Set",
+        meta: "Core everyday vocabulary",
+        description: "A balanced first set for common nouns and directions.",
+        cards: SPANISH_ENGLISH_DECK
+      },
+      travel: {
+        label: "Travel Pack",
+        meta: "Airport and booking vocabulary",
+        description: "Practical travel words for booking, airports, and navigation.",
+        cards: SPANISH_TRAVEL_DECK
+      },
+      "daily-life": {
+        label: "Daily Life Pack",
+        meta: "Home, work, and routine words",
+        description: "Common vocabulary for home, tasks, and work routines.",
+        cards: SPANISH_DAILY_LIFE_DECK
+      }
+    },
+    importConfig: {
+      frontHeader: "spanish",
+      readingsHeader: null,
+      example1SourceHeader: "example1_es",
+      example1TranslationHeader: "example1_en",
+      example2SourceHeader: "example2_es",
+      example2TranslationHeader: "example2_en",
+      example: `spanish,meanings,example1_es,example1_en,example2_es,example2_en
+camino,"path|road",El camino cruza el bosque.,"The path crosses the forest.",Seguimos el camino al río.,"We followed the road to the river."
+mesa,table,La mesa está limpia.,"The table is clean.",Dejé las llaves sobre la mesa.,"I left the keys on the table."`
+    }
+  },
+  "chinese:english": {
+    language: "chinese",
+    deck: "english",
+    languageLabel: "Chinese",
+    deckLabel: "English",
+    selectionMeta: "Mandarin starter and HSK-style packs",
+    selectionDescription: "Study Mandarin prompts with English recall, including a starter track and an HSK 1 expansion pack.",
+    heroTitle: "See Chinese. Recall the English meaning. Decide the next review.",
+    heroDescription: "A Mandarin-to-English vocabulary track with pinyin support and set-based packs.",
+    inputLabel: "Type the English meaning",
+    inputPlaceholder: "Type the English meaning",
+    submitLabel: "Reveal answer",
+    prompt: (cardFront) => `What is the English meaning of ${cardFront}?`,
+    emptyHint: "New card. Use the most common English meaning first.",
+    flowSteps: [
+      "Look at the Chinese word or phrase.",
+      "Type the English meaning you remember.",
+      "Reveal the stored answer and progress signals.",
+      "Choose the next review time."
+    ],
+    editorTitle: "Edit the Chinese vocabulary set for this deck.",
+    editorDescription: "Update Chinese prompts, accepted English answers, pinyin notes, and examples for this set.",
+    editorFrontLabel: "Chinese word",
+    editorReadingsLabel: "Pinyin / notes",
+    editorExampleSourceLabel: "Chinese example",
+    editorExampleTranslationLabel: "English translation",
+    editorHelp: [
+      "Use the Chinese word field for the prompt shown on the card.",
+      "Separate multiple accepted English answers with |.",
+      "Use the pinyin field for pronunciation or quick notes.",
+      "Examples are optional, but they give the meaning more context."
+    ],
+    frontKey: "front",
+    supportsReadings: true,
+    supportsImport: true,
+    sets: {
+      starter: {
+        label: "Starter Set",
+        meta: "Foundational Mandarin words",
+        description: "A small launch set for greetings, people, and everyday objects.",
+        cards: CHINESE_STARTER_DECK
+      },
+      "hsk-1": {
+        label: "HSK 1 Pack",
+        meta: "Early exam-aligned vocabulary",
+        description: "Early HSK-style vocabulary for school, work, and polite phrases.",
+        cards: CHINESE_HSK1_DECK
+      }
+    },
+    importConfig: {
+      frontHeader: "chinese",
+      readingsHeader: "pinyin",
+      example1SourceHeader: "example1_zh",
+      example1TranslationHeader: "example1_en",
+      example2SourceHeader: "example2_zh",
+      example2TranslationHeader: "example2_en",
+      example: `chinese,meanings,pinyin,example1_zh,example1_en,example2_zh,example2_en
+你好,"hello|hi",ni hao,你好老师。,"Hello, teacher.",朋友说你好。,"My friend says hello."
+时间,time,shi jian,我没有很多时间。,"I do not have much time.",现在是什么时间？,"What time is it now?"`
+    }
+  },
+  "korean:english": {
+    language: "korean",
+    deck: "english",
+    languageLabel: "Korean",
+    deckLabel: "English",
+    selectionMeta: "Hangul starter and TOPIK-style packs",
+    selectionDescription: "Study Hangul prompts with English recall, including a starter track and a TOPIK 1 expansion pack.",
+    heroTitle: "See Korean. Recall the English meaning. Decide the next review.",
+    heroDescription: "A Korean-to-English vocabulary track with romanization support and pack-based progression.",
+    inputLabel: "Type the English meaning",
+    inputPlaceholder: "Type the English meaning",
+    submitLabel: "Reveal answer",
+    prompt: (cardFront) => `What is the English meaning of ${cardFront}?`,
+    emptyHint: "New card. Start with the most common English meaning.",
+    flowSteps: [
+      "Look at the Korean word or phrase.",
+      "Type the English meaning you remember.",
+      "Reveal the stored answer and progress signals.",
+      "Choose the next review time."
+    ],
+    editorTitle: "Edit the Korean vocabulary set for this deck.",
+    editorDescription: "Update Korean prompts, accepted English answers, romanization notes, and examples for this set.",
+    editorFrontLabel: "Korean word",
+    editorReadingsLabel: "Romanization / notes",
+    editorExampleSourceLabel: "Korean example",
+    editorExampleTranslationLabel: "English translation",
+    editorHelp: [
+      "Use the Korean word field for the prompt shown on the card.",
+      "Separate multiple accepted English answers with |.",
+      "Use the romanization field for pronunciation or quick notes.",
+      "Examples are optional, but they give the meaning more context."
+    ],
+    frontKey: "front",
+    supportsReadings: true,
+    supportsImport: true,
+    sets: {
+      starter: {
+        label: "Starter Set",
+        meta: "Foundational Korean words",
+        description: "A compact base set for greetings, school, and basic nouns.",
+        cards: KOREAN_STARTER_DECK
+      },
+      "topik-1": {
+        label: "TOPIK 1 Pack",
+        meta: "Beginner test-style vocabulary",
+        description: "A follow-on set for polite expressions, commuting, and daily study language.",
+        cards: KOREAN_TOPIK1_DECK
+      }
+    },
+    importConfig: {
+      frontHeader: "korean",
+      readingsHeader: "romanization",
+      example1SourceHeader: "example1_ko",
+      example1TranslationHeader: "example1_en",
+      example2SourceHeader: "example2_ko",
+      example2TranslationHeader: "example2_en",
+      example: `korean,meanings,romanization,example1_ko,example1_en,example2_ko,example2_en
+안녕하세요,hello,annyeonghaseyo,처음 만날 때 안녕하세요라고 말해요.,"You say hello when meeting for the first time.",그는 밝게 안녕하세요라고 했어요.,"He said hello brightly."
+친구,friend,chingu,친구와 영화를 봐요.,"I watch a movie with my friend.",그 친구는 친절해요.,"That friend is kind."`
+    }
+  }
+};
+
+const DECK_ORDER = ["japanese:kanji", "spanish:english", "chinese:english", "korean:english"];
+
 const page = document.body.dataset.page ?? "deck";
 const elements = page === "deck"
   ? {
@@ -511,12 +1263,17 @@ const elements = page === "deck"
       totalCount: document.getElementById("total-count"),
       kanjiCharacter: document.getElementById("kanji-character"),
       kanjiHint: document.getElementById("kanji-hint"),
+      cardSignalRow: document.getElementById("card-signal-row"),
       answerForm: document.getElementById("answer-form"),
       answerInput: document.getElementById("answer-input"),
       feedbackPanel: document.getElementById("feedback-panel"),
       correctAnswer: document.getElementById("correct-answer"),
       answerEvaluation: document.getElementById("answer-evaluation"),
       readingText: document.getElementById("reading-text"),
+      cardProgressPanel: document.getElementById("card-progress-panel"),
+      cardMasteryFill: document.getElementById("card-mastery-fill"),
+      cardProgressSummary: document.getElementById("card-progress-summary"),
+      cardProgressStats: document.getElementById("card-progress-stats"),
       examplesPanel: document.getElementById("examples-panel"),
       examplesList: document.getElementById("examples-list"),
       answerVariantsPanel: document.getElementById("answer-variants-panel"),
@@ -546,6 +1303,7 @@ const elements = page === "deck"
       backupFeedback: document.getElementById("backup-feedback"),
       backupCopy: document.getElementById("backup-copy"),
       editDeckLink: document.getElementById("edit-deck-link"),
+      statsDeckLink: document.getElementById("stats-deck-link"),
       selectedLanguage: document.getElementById("selected-language"),
       selectedDeckType: document.getElementById("selected-deck-type"),
       selectedDeckTitle: document.getElementById("selected-deck-title"),
@@ -561,16 +1319,19 @@ const selectionElements = page === "selection"
   ? {
       startSelectedDeck: document.getElementById("start-selected-deck"),
       editSelectedDeck: document.getElementById("edit-selected-deck"),
+      viewSelectedStats: document.getElementById("view-selected-stats"),
       selectionTitle: document.getElementById("selection-title"),
       selectionDescription: document.getElementById("selection-description"),
       summaryLanguage: document.getElementById("summary-language"),
       summarySet: document.getElementById("summary-set"),
-      optionButtons: [...document.querySelectorAll("[data-selection-group][data-value]")]
+      languageOptions: document.getElementById("language-options"),
+      deckOptions: document.getElementById("deck-options")
     }
   : null;
 const editorElements = page === "editor"
   ? {
       openDeckLink: document.getElementById("open-deck-link"),
+      editorStatsLink: document.getElementById("editor-stats-link"),
       editorLanguage: document.getElementById("editor-language"),
       editorDeckType: document.getElementById("editor-deck-type"),
       editorTitle: document.getElementById("editor-title"),
@@ -588,6 +1349,24 @@ const editorElements = page === "editor"
       editorEmptyCopy: document.getElementById("editor-empty-copy"),
       editorCards: document.getElementById("editor-cards"),
       editorCardTemplate: document.getElementById("editor-card-template")
+    }
+  : null;
+const statsElements = page === "stats"
+  ? {
+      statsOpenDeckLink: document.getElementById("stats-open-deck-link"),
+      statsEditDeckLink: document.getElementById("stats-edit-deck-link"),
+      statsLanguage: document.getElementById("stats-language"),
+      statsDeckType: document.getElementById("stats-deck-type"),
+      statsSetLabel: document.getElementById("stats-set-label"),
+      statsTitle: document.getElementById("stats-title"),
+      statsDescription: document.getElementById("stats-description"),
+      statsSummaryGrid: document.getElementById("stats-summary-grid"),
+      weeklyActivityChart: document.getElementById("weekly-activity-chart"),
+      weeklyActivityCopy: document.getElementById("weekly-activity-copy"),
+      difficultyBreakdown: document.getElementById("difficulty-breakdown"),
+      queueBreakdown: document.getElementById("queue-breakdown"),
+      hardestCardsList: document.getElementById("hardest-cards-list"),
+      masteryList: document.getElementById("mastery-list")
     }
   : null;
 
@@ -613,25 +1392,12 @@ if (page === "editor") {
   initEditorPage();
 }
 
+if (page === "stats") {
+  initStatsPage();
+}
+
 function initSelectionPage() {
-  const selection = loadSelection();
-
-  selectionElements.optionButtons.forEach((button) => {
-    const group = button.dataset.selectionGroup;
-    const value = button.dataset.value;
-    const isSelected = selection[group] === value;
-
-    button.classList.toggle("is-selected", isSelected);
-    button.setAttribute("aria-pressed", String(isSelected));
-    button.addEventListener("click", () => {
-      const nextSelection = getSelectionForChoice(group, value);
-
-      saveSelection(nextSelection);
-      updateSelectionSummary(nextSelection);
-    });
-  });
-
-  updateSelectionSummary(selection);
+  updateSelectionSummary(loadSelection());
 }
 
 function initDeckPage() {
@@ -687,15 +1453,16 @@ function initDeckPage() {
     elements.correctAnswer.textContent = card.meanings.join(" / ");
     elements.readingText.textContent = readingText;
     elements.readingText.classList.toggle("hidden", !readingText);
+    renderCardProgress(card);
     renderExamples(card);
     renderAnswerVariants(card);
     elements.answerEvaluation.textContent = answer
       ? answerMatch.isCorrect
         ? answerMatch.matchType === "typo"
-          ? `Accepted as a close match for "${answerMatch.matchedMeaning}".`
-          : "Your answer matches one of the accepted meanings."
-        : `You answered "${answer}". Use the revealed answer to decide the next interval.`
-      : "No answer entered. Review the meaning, then choose the next interval.";
+          ? `Accepted as a close match for "${answerMatch.matchedMeaning}". ${getCardProgress(card).difficultyLabel} difficulty.`
+          : `Your answer matches one of the accepted meanings. ${getCardProgress(card).difficultyLabel} difficulty.`
+        : `You answered "${answer}". This card is currently tagged ${getCardProgress(card).difficultyLabel.toLowerCase()}. Use the revealed answer to decide the next interval.`
+      : `No answer entered. This card is currently tagged ${getCardProgress(card).difficultyLabel.toLowerCase()}. Review the meaning, then choose the next interval.`;
 
     renderScheduleOptions(card, answer, answerMatch.isCorrect);
   });
@@ -720,17 +1487,17 @@ function initDeckPage() {
     elements.answerEvaluation.textContent = answer
       ? answerMatch.isCorrect
         ? answerMatch.matchType === "typo"
-          ? `Accepted as a close match for "${answerMatch.matchedMeaning}".`
-          : "Your answer matches one of the accepted meanings."
-        : `You answered "${answer}". Use the revealed answer to decide the next interval.`
-      : "No answer entered. Review the meaning, then choose the next interval.";
+          ? `Accepted as a close match for "${answerMatch.matchedMeaning}". ${getCardProgress(card).difficultyLabel} difficulty.`
+          : `Your answer matches one of the accepted meanings. ${getCardProgress(card).difficultyLabel} difficulty.`
+        : `You answered "${answer}". This card is currently tagged ${getCardProgress(card).difficultyLabel.toLowerCase()}. Use the revealed answer to decide the next interval.`
+      : `No answer entered. This card is currently tagged ${getCardProgress(card).difficultyLabel.toLowerCase()}. Review the meaning, then choose the next interval.`;
     renderScheduleOptions(card, answer, answerMatch.isCorrect);
   });
 
   elements.resetProgress.addEventListener("click", () => {
     localStorage.removeItem(getStateStorageKey());
 
-    if (getSelectionKey() === DEFAULT_DECK_KEY) {
+    if (isLegacyStarterSelection()) {
       LEGACY_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
     }
 
@@ -871,6 +1638,17 @@ function initEditorPage() {
   });
 }
 
+function initStatsPage() {
+  const selection = getSelectionFromUrl();
+
+  currentSelection = selection;
+  currentDeckConfig = getDeckConfig(selection);
+  saveSelection(selection);
+  applyStatsSelectionCopy(selection);
+  state = loadState();
+  renderStatsDashboard();
+}
+
 function loadState(forceFresh = false) {
   if (!forceFresh) {
     const raw = localStorage.getItem(getStateStorageKey()) ?? loadLegacyState(currentSelection);
@@ -892,7 +1670,8 @@ function loadState(forceFresh = false) {
   return {
     importedCards: [],
     cards: buildCardStateMap(getStarterDeck(), {}, now),
-    history: []
+    history: [],
+    activityDays: {}
   };
 }
 
@@ -907,8 +1686,9 @@ function sanitizeState(rawState, selection = currentSelection, deckOverride = nu
         .filter((entry) => entry && typeof entry === "object" && typeof entry.cardId === "string")
         .slice(0, 12)
     : [];
+  const activityDays = sanitizeActivityDays(rawState.activityDays);
 
-  return { importedCards, cards, history };
+  return { importedCards, cards, history, activityDays };
 }
 
 function saveState() {
@@ -935,6 +1715,7 @@ function render() {
     elements.emptyState.classList.remove("hidden");
     elements.emptyStateTitle.textContent = STUDY_MODE_DETAILS[studyMode].emptyTitle;
     elements.emptyStateCopy.textContent = STUDY_MODE_DETAILS[studyMode].emptyCopy;
+    elements.cardSignalRow.innerHTML = "";
     return;
   }
 
@@ -948,20 +1729,28 @@ function render() {
   elements.answerVariantsList.classList.add("hidden");
   elements.answerVariantsList.innerHTML = "";
   elements.scheduleOptions.innerHTML = "";
+  elements.cardProgressStats.innerHTML = "";
+  elements.cardProgressSummary.textContent = "";
+  elements.cardMasteryFill.style.width = "0%";
   elements.answerForm.reset();
 
   elements.kanjiCharacter.textContent = getCardFront(nextCard);
   elements.kanjiHint.textContent = buildHint(nextCard);
   elements.cardPrompt.textContent = currentDeckConfig.prompt(getCardFront(nextCard));
+  renderCardSignals(nextCard);
   elements.answerInput.focus();
 }
 
 function renderScheduleOptions(card, answer, isCorrect) {
   elements.scheduleOptions.innerHTML = "";
+  const cardProgress = getCardProgress(card);
+  const recommendedKey = getRecommendedIntervalKey(cardProgress, isCorrect);
 
   DEFAULT_INTERVALS.forEach((option) => {
     const button = elements.scheduleOptionTemplate.content.firstElementChild.cloneNode(true);
-    button.innerHTML = `<strong>${option.label}</strong><span>${option.description}</span>`;
+    const isRecommended = option.key === recommendedKey;
+    button.classList.toggle("is-recommended", isRecommended);
+    button.innerHTML = `<strong>${option.label}</strong><span>${option.description}</span>${isRecommended ? "<em>Recommended now</em>" : ""}`;
     button.addEventListener("click", () => scheduleCard(card.id, option, answer, isCorrect));
     elements.scheduleOptions.appendChild(button);
   });
@@ -1000,11 +1789,21 @@ function renderHistory() {
 
 function scheduleCard(cardId, option, answer, isCorrect) {
   const reviewedAt = Date.now();
+  const previousState = state.cards[cardId] ?? createEmptyCardState(reviewedAt);
+  const nextStreak = isCorrect ? (previousState.currentStreak ?? 0) + 1 : 0;
 
   state.cards[cardId] = {
+    ...previousState,
     dueAt: reviewedAt + option.minutes * 60 * 1000,
     lastReviewedAt: reviewedAt,
-    lastIntervalKey: option.key
+    lastSeenAt: reviewedAt,
+    lastCorrectAt: isCorrect ? reviewedAt : previousState.lastCorrectAt ?? null,
+    lastIntervalKey: option.key,
+    reviewCount: (previousState.reviewCount ?? 0) + 1,
+    correctCount: (previousState.correctCount ?? 0) + (isCorrect ? 1 : 0),
+    lapseCount: (previousState.lapseCount ?? 0) + (isCorrect ? 0 : 1),
+    currentStreak: nextStreak,
+    bestStreak: Math.max(previousState.bestStreak ?? 0, nextStreak)
   };
 
   state.history.unshift({
@@ -1015,6 +1814,7 @@ function scheduleCard(cardId, option, answer, isCorrect) {
     intervalKey: option.key
   });
   state.history = state.history.slice(0, 8);
+  recordActivity(reviewedAt, isCorrect);
 
   saveState();
   render();
@@ -1065,24 +1865,18 @@ function isDueCard(card, now = Date.now()) {
 }
 
 function getStudiedTodayCount() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const startOfDay = today.getTime();
-
-  return Object.values(state.cards).filter((cardState) => {
-    return Number.isFinite(cardState.lastReviewedAt) && cardState.lastReviewedAt >= startOfDay;
-  }).length;
+  return state.activityDays?.[getDayKey(Date.now())]?.count ?? 0;
 }
 
 function buildHint(card) {
-  const cardState = state.cards[card.id];
+  const cardProgress = getCardProgress(card);
 
-  if (!cardState?.lastIntervalKey) {
+  if (!cardProgress.reviewCount) {
     return currentDeckConfig.emptyHint;
   }
 
-  const lastInterval = DEFAULT_INTERVALS.find((option) => option.key === cardState.lastIntervalKey);
-  return `Last scheduled as "${lastInterval?.label ?? "custom"}". Recall before revealing.`;
+  const lastInterval = DEFAULT_INTERVALS.find((option) => option.key === cardProgress.lastIntervalKey);
+  return `${cardProgress.phaseLabel} card. Last scheduled as "${lastInterval?.label ?? "custom"}".`;
 }
 
 function getCardById(cardId) {
@@ -1511,22 +2305,370 @@ function getAutoAcceptedVariants(meanings = []) {
   return [...generatedVariants].slice(0, 8);
 }
 
+function createEmptyCardState(now = Date.now(), saved = {}) {
+  const dueAt = Number.isFinite(saved.dueAt) ? saved.dueAt : now;
+  const lastReviewedAt = Number.isFinite(saved.lastReviewedAt) ? saved.lastReviewedAt : null;
+  const lastSeenAt = Number.isFinite(saved.lastSeenAt) ? saved.lastSeenAt : lastReviewedAt;
+  const lastCorrectAt = Number.isFinite(saved.lastCorrectAt) ? saved.lastCorrectAt : null;
+  const lastIntervalKey = typeof saved.lastIntervalKey === "string" ? saved.lastIntervalKey : null;
+  const inferredLegacyReviewCount = Number.isFinite(lastReviewedAt) ? 1 : 0;
+  const reviewCount = Number.isFinite(saved.reviewCount) ? Math.max(0, saved.reviewCount) : inferredLegacyReviewCount;
+  const correctCount = Number.isFinite(saved.correctCount) ? Math.max(0, saved.correctCount) : inferredLegacyReviewCount;
+  const lapseCount = Number.isFinite(saved.lapseCount) ? Math.max(0, saved.lapseCount) : 0;
+  const currentStreak = Number.isFinite(saved.currentStreak)
+    ? Math.max(0, saved.currentStreak)
+    : inferredLegacyReviewCount && lastIntervalKey !== "again"
+      ? 1
+      : 0;
+  const bestStreak = Number.isFinite(saved.bestStreak) ? Math.max(0, saved.bestStreak) : currentStreak;
+
+  return {
+    dueAt,
+    lastReviewedAt,
+    lastSeenAt,
+    lastCorrectAt,
+    lastIntervalKey,
+    reviewCount,
+    correctCount,
+    lapseCount,
+    currentStreak,
+    bestStreak
+  };
+}
+
+function sanitizeActivityDays(rawActivityDays) {
+  if (!rawActivityDays || typeof rawActivityDays !== "object") {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(rawActivityDays)
+      .filter(([dayKey]) => /^\d{4}-\d{2}-\d{2}$/.test(dayKey))
+      .map(([dayKey, value]) => [
+        dayKey,
+        {
+          count: Number.isFinite(value?.count) ? Math.max(0, value.count) : 0,
+          correct: Number.isFinite(value?.correct) ? Math.max(0, value.correct) : 0
+        }
+      ])
+  );
+}
+
+function getDayKey(timestamp = Date.now()) {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function recordActivity(timestamp, isCorrect) {
+  const dayKey = getDayKey(timestamp);
+  const existing = state.activityDays?.[dayKey] ?? { count: 0, correct: 0 };
+  state.activityDays = {
+    ...state.activityDays,
+    [dayKey]: {
+      count: existing.count + 1,
+      correct: existing.correct + (isCorrect ? 1 : 0)
+    }
+  };
+}
+
+function getCardProgress(card) {
+  const cardState = state.cards[card.id] ?? createEmptyCardState();
+  const reviewCount = cardState.reviewCount ?? 0;
+  const correctCount = cardState.correctCount ?? 0;
+  const lapseCount = cardState.lapseCount ?? 0;
+  const accuracy = reviewCount ? correctCount / reviewCount : 0;
+  const masteryScore = reviewCount
+    ? Math.max(0.08, Math.min(0.98, 0.28 + (accuracy * 0.42) + (Math.min(reviewCount, 8) * 0.035) + (Math.min(cardState.currentStreak ?? 0, 4) * 0.045) - (lapseCount * 0.05)))
+    : 0;
+  const phaseLabel = reviewCount === 0
+    ? "New"
+    : lapseCount >= 3 || accuracy < 0.65
+      ? "Needs rebuild"
+      : reviewCount < 3
+        ? "Learning"
+        : masteryScore >= 0.82
+          ? "Strong"
+          : "Reviewing";
+  const difficultyLabel = reviewCount === 0
+    ? "Unrated"
+    : lapseCount >= 3 || accuracy < 0.65
+      ? "Needs focus"
+      : lapseCount >= 1 || accuracy < 0.85
+        ? "Stretch"
+        : "Steady";
+  const difficultyTone = difficultyLabel === "Needs focus"
+    ? "danger"
+    : difficultyLabel === "Stretch"
+      ? "warning"
+      : difficultyLabel === "Unrated"
+        ? "neutral"
+        : "success";
+
+  return {
+    ...cardState,
+    reviewCount,
+    correctCount,
+    lapseCount,
+    accuracy,
+    masteryScore,
+    phaseLabel,
+    difficultyLabel,
+    difficultyTone,
+    nextDueLabel: reviewCount === 0 ? "Not scheduled yet" : formatRelativeDate(cardState.dueAt),
+    lastSeenLabel: Number.isFinite(cardState.lastSeenAt) ? formatRelativeDate(cardState.lastSeenAt) : "Never",
+    accuracyLabel: reviewCount ? `${Math.round(accuracy * 100)}%` : "No data",
+    masteryLabel: reviewCount ? `${Math.round(masteryScore * 100)}%` : "0%"
+  };
+}
+
+function getRecommendedIntervalKey(cardProgress, isCorrect) {
+  if (!isCorrect) {
+    return cardProgress.lapseCount >= 2 ? "again" : "soon";
+  }
+
+  if (cardProgress.difficultyLabel === "Needs focus") {
+    return "soon";
+  }
+
+  if (cardProgress.difficultyLabel === "Stretch") {
+    return "tomorrow";
+  }
+
+  return cardProgress.reviewCount >= 5 ? "week" : "three-days";
+}
+
+function renderCardSignals(card) {
+  if (!elements?.cardSignalRow) {
+    return;
+  }
+
+  const cardProgress = getCardProgress(card);
+  const chips = [
+    { label: cardProgress.phaseLabel, tone: "neutral" },
+    { label: cardProgress.difficultyLabel, tone: cardProgress.difficultyTone },
+    { label: cardProgress.reviewCount ? `${cardProgress.lapseCount} lapse${cardProgress.lapseCount === 1 ? "" : "s"}` : "Fresh card", tone: "neutral" },
+    { label: cardProgress.reviewCount ? `Due ${cardProgress.nextDueLabel}` : "Unscheduled", tone: "neutral" }
+  ];
+
+  elements.cardSignalRow.innerHTML = chips
+    .map((chip) => `<span class="signal-chip tone-${chip.tone}">${chip.label}</span>`)
+    .join("");
+}
+
+function renderCardProgress(card) {
+  if (!elements?.cardProgressStats) {
+    return;
+  }
+
+  const cardProgress = getCardProgress(card);
+  const stats = [
+    { label: "Difficulty", value: cardProgress.difficultyLabel, tone: cardProgress.difficultyTone },
+    { label: "Reviews", value: String(cardProgress.reviewCount), tone: "neutral" },
+    { label: "Accuracy", value: cardProgress.accuracyLabel, tone: "neutral" },
+    { label: "Lapses", value: String(cardProgress.lapseCount), tone: cardProgress.lapseCount ? "warning" : "success" },
+    { label: "Last seen", value: cardProgress.lastSeenLabel, tone: "neutral" },
+    { label: "Next due", value: cardProgress.nextDueLabel, tone: "neutral" }
+  ];
+
+  elements.cardMasteryFill.style.width = `${Math.round(cardProgress.masteryScore * 100)}%`;
+  elements.cardProgressSummary.textContent = cardProgress.reviewCount
+    ? `${cardProgress.phaseLabel} card with ${cardProgress.masteryLabel} mastery and a ${cardProgress.accuracyLabel} hit rate.`
+    : "Brand-new card with no review history yet.";
+  elements.cardProgressStats.innerHTML = stats
+    .map((item) => `<article class="progress-stat tone-${item.tone}"><span>${item.label}</span><strong>${item.value}</strong></article>`)
+    .join("");
+}
+
+function renderStatsDashboard() {
+  if (!statsElements) {
+    return;
+  }
+
+  const deck = getDeck();
+  const dueNow = getDueCards().length;
+  const newCount = deck.filter((card) => isNewCard(card)).length;
+  const allProgress = deck.map((card) => ({ card, progress: getCardProgress(card) }));
+  const studiedThisWeek = getRecentActivity(7);
+  const weeklyReviews = studiedThisWeek.reduce((total, day) => total + day.count, 0);
+  const weeklyCorrect = studiedThisWeek.reduce((total, day) => total + day.correct, 0);
+  const weeklyAccuracy = weeklyReviews ? Math.round((weeklyCorrect / weeklyReviews) * 100) : 0;
+  const streaks = getStreakStats();
+  const needsFocus = allProgress.filter(({ progress }) => progress.difficultyLabel === "Needs focus").length;
+  const strongCards = allProgress.filter(({ progress }) => progress.phaseLabel === "Strong").length;
+
+  statsElements.statsSummaryGrid.innerHTML = [
+    { label: "Current streak", value: `${streaks.current} day${streaks.current === 1 ? "" : "s"}` },
+    { label: "Best streak", value: `${streaks.best} day${streaks.best === 1 ? "" : "s"}` },
+    { label: "Reviews this week", value: String(weeklyReviews) },
+    { label: "Weekly accuracy", value: `${weeklyAccuracy}%` },
+    { label: "Due now", value: String(dueNow) },
+    { label: "Needs focus", value: String(needsFocus) }
+  ]
+    .map((metric) => `<article class="status-card"><span class="status-label">${metric.label}</span><strong>${metric.value}</strong></article>`)
+    .join("");
+
+  renderWeeklyActivity(studiedThisWeek);
+  renderMetricStack(statsElements.difficultyBreakdown, [
+    { label: "Needs focus", value: String(needsFocus), tone: "danger" },
+    { label: "Stretch", value: String(allProgress.filter(({ progress }) => progress.difficultyLabel === "Stretch").length), tone: "warning" },
+    { label: "Steady", value: String(allProgress.filter(({ progress }) => progress.difficultyLabel === "Steady").length), tone: "success" },
+    { label: "Unrated", value: String(allProgress.filter(({ progress }) => progress.difficultyLabel === "Unrated").length), tone: "neutral" }
+  ]);
+  renderMetricStack(statsElements.queueBreakdown, [
+    { label: "Due now", value: String(dueNow), tone: "danger" },
+    { label: "New cards", value: String(newCount), tone: "neutral" },
+    { label: "Scheduled later", value: String(deck.length - dueNow - newCount), tone: "success" },
+    { label: "Strong cards", value: String(strongCards), tone: "success" }
+  ]);
+  renderInsightList(
+    statsElements.hardestCardsList,
+    allProgress
+      .filter(({ progress }) => progress.reviewCount > 0)
+      .sort((left, right) => compareCardDifficulty(left.progress, right.progress))
+      .slice(0, 6)
+      .map(({ card, progress }) => ({
+        title: `${getCardFront(card)} - ${card.meanings.join(" / ")}`,
+        copy: `${progress.difficultyLabel} | ${progress.lapseCount} lapse${progress.lapseCount === 1 ? "" : "s"} | ${progress.accuracyLabel} accuracy | due ${progress.nextDueLabel}`,
+        tone: progress.difficultyTone
+      })),
+    "No difficulty data yet. Review a few cards to populate this list."
+  );
+  renderInsightList(
+    statsElements.masteryList,
+    allProgress
+      .sort((left, right) => right.progress.masteryScore - left.progress.masteryScore)
+      .map(({ card, progress }) => ({
+        title: `${getCardFront(card)} - ${progress.masteryLabel} mastery`,
+        copy: `${progress.phaseLabel} | ${progress.reviewCount} review${progress.reviewCount === 1 ? "" : "s"} | last seen ${progress.lastSeenLabel}`,
+        tone: progress.difficultyTone
+      })),
+    "Mastery data will appear after the first review."
+  );
+}
+
+function renderWeeklyActivity(activity) {
+  if (!statsElements?.weeklyActivityChart) {
+    return;
+  }
+
+  const maxCount = Math.max(1, ...activity.map((day) => day.count));
+  statsElements.weeklyActivityChart.innerHTML = activity
+    .map((day) => {
+      const height = Math.max(8, Math.round((day.count / maxCount) * 100));
+      const accuracyLabel = day.count ? `${Math.round((day.correct / day.count) * 100)}%` : "0%";
+      return `<article class="activity-day">
+        <span class="activity-day-label">${day.label}</span>
+        <div class="activity-bar-shell"><span class="activity-bar" style="height:${height}%"></span></div>
+        <strong>${day.count}</strong>
+        <span class="activity-day-meta">${accuracyLabel}</span>
+      </article>`;
+    })
+    .join("");
+
+  const total = activity.reduce((sum, day) => sum + day.count, 0);
+  const correct = activity.reduce((sum, day) => sum + day.correct, 0);
+  const accuracy = total ? Math.round((correct / total) * 100) : 0;
+  statsElements.weeklyActivityCopy.textContent = total
+    ? `${total} review${total === 1 ? "" : "s"} in the last 7 days with ${accuracy}% accuracy.`
+    : "No reviews in the last 7 days yet.";
+}
+
+function renderMetricStack(container, rows) {
+  container.innerHTML = rows
+    .map((row) => `<article class="metric-row tone-${row.tone}"><span>${row.label}</span><strong>${row.value}</strong></article>`)
+    .join("");
+}
+
+function renderInsightList(container, items, emptyCopy) {
+  if (!items.length) {
+    container.innerHTML = `<p class="sidebar-copy">${emptyCopy}</p>`;
+    return;
+  }
+
+  container.innerHTML = items
+    .map((item) => `<article class="insight-item tone-${item.tone}"><strong>${item.title}</strong><p>${item.copy}</p></article>`)
+    .join("");
+}
+
+function getRecentActivity(days = 7) {
+  return Array.from({ length: days }, (_, index) => {
+    const timestamp = Date.now() - ((days - index - 1) * 24 * 60 * 60 * 1000);
+    const dayKey = getDayKey(timestamp);
+    const day = state.activityDays?.[dayKey] ?? { count: 0, correct: 0 };
+    const weekdayLabel = new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(new Date(timestamp));
+
+    return {
+      key: dayKey,
+      label: weekdayLabel,
+      count: day.count,
+      correct: day.correct
+    };
+  });
+}
+
+function getStreakStats() {
+  const activeDays = Object.entries(state.activityDays ?? {})
+    .filter(([, value]) => value.count > 0)
+    .map(([dayKey]) => dayKey)
+    .sort();
+
+  if (!activeDays.length) {
+    return { current: 0, best: 0 };
+  }
+
+  let best = 0;
+  let currentRun = 0;
+  let previousDate = null;
+
+  activeDays.forEach((dayKey) => {
+    const date = new Date(`${dayKey}T00:00:00`);
+
+    if (!previousDate) {
+      currentRun = 1;
+    } else {
+      const diffDays = Math.round((date.getTime() - previousDate.getTime()) / (24 * 60 * 60 * 1000));
+      currentRun = diffDays === 1 ? currentRun + 1 : 1;
+    }
+
+    best = Math.max(best, currentRun);
+    previousDate = date;
+  });
+
+  let current = 0;
+  let cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+
+  while (state.activityDays?.[getDayKey(cursor.getTime())]?.count > 0) {
+    current += 1;
+    cursor = new Date(cursor.getTime() - (24 * 60 * 60 * 1000));
+  }
+
+  if (!current) {
+    const yesterday = new Date(Date.now() - (24 * 60 * 60 * 1000));
+    yesterday.setHours(0, 0, 0, 0);
+    while (state.activityDays?.[getDayKey(yesterday.getTime())]?.count > 0) {
+      current += 1;
+      yesterday.setDate(yesterday.getDate() - 1);
+    }
+  }
+
+  return { current, best };
+}
+
+function compareCardDifficulty(left, right) {
+  const leftScore = (left.lapseCount * 4) + ((1 - left.accuracy) * 10) - (left.currentStreak ?? 0);
+  const rightScore = (right.lapseCount * 4) + ((1 - right.accuracy) * 10) - (right.currentStreak ?? 0);
+  return rightScore - leftScore;
+}
+
 function buildCardStateMap(deck, savedCards = {}, now = Date.now()) {
   return Object.fromEntries(
     deck.map((card) => {
-      const saved = savedCards?.[card.id] ?? {};
-      const dueAt = Number.isFinite(saved.dueAt) ? saved.dueAt : now;
-      const lastReviewedAt = Number.isFinite(saved.lastReviewedAt) ? saved.lastReviewedAt : null;
-      const lastIntervalKey = typeof saved.lastIntervalKey === "string" ? saved.lastIntervalKey : null;
-
-      return [
-        card.id,
-        {
-          dueAt,
-          lastReviewedAt,
-          lastIntervalKey
-        }
-      ];
+      const saved = createEmptyCardState(now, savedCards?.[card.id] ?? {});
+      return [card.id, saved];
     })
   );
 }
@@ -1613,11 +2755,7 @@ function importCardsFromCsv(csvText) {
     existingCards.set(card.id, card);
 
     if (!state.cards[card.id]) {
-      state.cards[card.id] = {
-        dueAt: now,
-        lastReviewedAt: null,
-        lastIntervalKey: null
-      };
+      state.cards[card.id] = createEmptyCardState(now);
     }
   });
 
@@ -1708,7 +2846,8 @@ function exportDeckBackup() {
     deckContent,
     studyState: {
       cards: studyState.cards,
-      history: studyState.history
+      history: studyState.history,
+      activityDays: studyState.activityDays
     }
   };
   const backupUrl = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" }));
@@ -1892,7 +3031,7 @@ function normalizeHeader(value) {
 }
 
 function loadLegacyState(selection = currentSelection) {
-  if (getSelectionKey(selection) !== DEFAULT_DECK_KEY) {
+  if (!isLegacyStarterSelection(selection)) {
     return null;
   }
 
@@ -1951,19 +3090,20 @@ function loadEditableDeck(selection = currentSelection) {
 
 function loadDeckContent(selection = currentSelection) {
   const storageKey = getDeckContentStorageKey(selection);
+  const fallbackDeck = getDefaultDeckCards(selection);
 
   try {
-    const raw = localStorage.getItem(storageKey);
+    const raw = localStorage.getItem(storageKey) ?? loadLegacyDeckContent(selection);
 
     if (!raw) {
-      return cloneDeckCards(getDeckConfig(selection).starterDeck);
+      return cloneDeckCards(fallbackDeck);
     }
 
     const parsed = JSON.parse(raw);
     const cards = sanitizeDeckContent(parsed, selection);
-    return cards.length ? cards : cloneDeckCards(getDeckConfig(selection).starterDeck);
+    return cards.length ? cards : cloneDeckCards(fallbackDeck);
   } catch (error) {
-    return cloneDeckCards(getDeckConfig(selection).starterDeck);
+    return cloneDeckCards(fallbackDeck);
   }
 }
 
@@ -1974,10 +3114,20 @@ function saveDeckContent(selection, cards) {
 
 function removeDeckContent(selection) {
   localStorage.removeItem(getDeckContentStorageKey(selection));
+
+  if (isLegacyStarterSelection(selection)) {
+    localStorage.removeItem(`${DECK_CONTENT_STORAGE_KEY}:${DEFAULT_DECK_KEY}`);
+  }
 }
 
 function getDeckContentStorageKey(selection = currentSelection) {
   return `${DECK_CONTENT_STORAGE_KEY}:${getSelectionKey(selection)}`;
+}
+
+function loadLegacyDeckContent(selection = currentSelection) {
+  return isLegacyStarterSelection(selection)
+    ? localStorage.getItem(`${DECK_CONTENT_STORAGE_KEY}:${DEFAULT_DECK_KEY}`)
+    : null;
 }
 
 function cloneDeckCards(cards) {
@@ -2105,19 +3255,17 @@ function saveSelection(selection) {
 }
 
 function sanitizeSelection(selection) {
-  const normalizedSet = selection?.set === "starter" ? "starter" : DEFAULT_SELECTION.set;
-
-  if (selection?.language === "spanish" && selection?.deck === "english") {
-    return {
-      language: "spanish",
-      deck: "english",
-      set: normalizedSet
-    };
-  }
+  const requestedDeckKey = `${selection?.language ?? DEFAULT_SELECTION.language}:${selection?.deck ?? DEFAULT_SELECTION.deck}`;
+  const deckConfig = DECK_CONFIGS[requestedDeckKey] ?? DECK_CONFIGS[DEFAULT_DECK_KEY];
+  const setIds = Object.keys(deckConfig.sets ?? {});
+  const fallbackSetId = setIds[0] ?? DEFAULT_SELECTION.set;
+  const normalizedSet = typeof selection?.set === "string" && deckConfig.sets?.[selection.set]
+    ? selection.set
+    : fallbackSetId;
 
   return {
-    language: "japanese",
-    deck: "kanji",
+    language: deckConfig.language,
+    deck: deckConfig.deck,
     set: normalizedSet
   };
 }
@@ -2134,44 +3282,44 @@ function getSelectionFromUrl() {
 }
 
 function getSelectionForChoice(group, value) {
-  if ((group === "language" && value === "spanish") || (group === "deck" && value === "english")) {
-    return {
-      language: "spanish",
-      deck: "english",
-      set: loadSelection().set ?? DEFAULT_SELECTION.set
-    };
+  const current = loadSelection();
+
+  if (group === "language") {
+    const deckConfig = DECK_ORDER
+      .map((deckKey) => DECK_CONFIGS[deckKey])
+      .find((config) => config.language === value)
+      ?? DECK_CONFIGS[DEFAULT_DECK_KEY];
+    return sanitizeSelection({
+      language: deckConfig.language,
+      deck: deckConfig.deck,
+      set: current.set
+    });
   }
 
   if (group === "set") {
     return sanitizeSelection({
-      ...loadSelection(),
+      ...current,
       set: value
     });
   }
 
-  return {
-    language: "japanese",
-    deck: "kanji",
-    set: loadSelection().set ?? DEFAULT_SELECTION.set
-  };
+  return sanitizeSelection(current);
 }
 
 function updateSelectionSummary(selection) {
   const normalizedSelection = sanitizeSelection(selection);
   const deckConfig = getDeckConfig(normalizedSelection);
+  const setConfig = getSetConfig(normalizedSelection);
 
-  selectionElements.optionButtons.forEach((button) => {
-    const isSelected = normalizedSelection[button.dataset.selectionGroup] === button.dataset.value;
-    button.classList.toggle("is-selected", isSelected);
-    button.setAttribute("aria-pressed", String(isSelected));
-  });
-
-  selectionElements.selectionTitle.textContent = `${deckConfig.languageLabel} ${deckConfig.deckLabel} ${formatSetLabel(normalizedSelection.set)}`;
-  selectionElements.selectionDescription.textContent = deckConfig.selectionDescription;
+  renderSelectionOptions(normalizedSelection);
+  selectionElements.selectionTitle.textContent = `${deckConfig.languageLabel} ${deckConfig.deckLabel} ${setConfig.label}`;
+  selectionElements.selectionDescription.textContent = `${deckConfig.selectionDescription} ${setConfig.description}`;
   selectionElements.summaryLanguage.textContent = deckConfig.languageLabel;
-  selectionElements.summarySet.textContent = formatSetLabel(normalizedSelection.set);
+  selectionElements.summarySet.textContent = setConfig.label;
   selectionElements.startSelectedDeck.href = getDeckPageUrl(normalizedSelection);
   selectionElements.editSelectedDeck.href = getEditorPageUrl(normalizedSelection);
+  selectionElements.viewSelectedStats.href = getStatsPageUrl(normalizedSelection);
+  saveSelection(normalizedSelection);
 }
 
 function getDeckPageUrl(selection) {
@@ -2186,18 +3334,26 @@ function getEditorPageUrl(selection) {
   return `editor.html?${params.toString()}`;
 }
 
+function getStatsPageUrl(selection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const params = new URLSearchParams(normalizedSelection);
+  return `stats.html?${params.toString()}`;
+}
+
 function applyDeckSelectionCopy(selection) {
   const normalizedSelection = sanitizeSelection(selection);
   const deckConfig = getDeckConfig(normalizedSelection);
+  const setConfig = getSetConfig(normalizedSelection);
 
   elements.selectedLanguage.textContent = deckConfig.languageLabel;
-  elements.selectedDeckType.textContent = deckConfig.deckLabel;
+  elements.selectedDeckType.textContent = `${deckConfig.deckLabel} / ${setConfig.label}`;
   elements.selectedDeckTitle.textContent = deckConfig.heroTitle;
-  elements.selectedDeckDescription.textContent = deckConfig.heroDescription;
+  elements.selectedDeckDescription.textContent = `${deckConfig.heroDescription} ${setConfig.description}`;
   elements.answerInputLabel.textContent = deckConfig.inputLabel;
   elements.answerInput.placeholder = deckConfig.inputPlaceholder;
   elements.answerSubmit.textContent = deckConfig.submitLabel;
   elements.editDeckLink.href = getEditorPageUrl(normalizedSelection);
+  elements.statsDeckLink.href = getStatsPageUrl(normalizedSelection);
   renderHowItWorks(deckConfig.flowSteps);
 
   if (elements.importSection) {
@@ -2217,27 +3373,102 @@ function applyDeckSelectionCopy(selection) {
 function applyEditorSelectionCopy(selection) {
   const normalizedSelection = sanitizeSelection(selection);
   const deckConfig = getDeckConfig(normalizedSelection);
+  const setConfig = getSetConfig(normalizedSelection);
 
   editorElements.openDeckLink.href = getDeckPageUrl(normalizedSelection);
+  editorElements.editorStatsLink.href = getStatsPageUrl(normalizedSelection);
   editorElements.editorLanguage.textContent = deckConfig.languageLabel;
-  editorElements.editorDeckType.textContent = deckConfig.deckLabel;
+  editorElements.editorDeckType.textContent = `${deckConfig.deckLabel} / ${setConfig.label}`;
   editorElements.editorTitle.textContent = deckConfig.editorTitle;
-  editorElements.editorDescription.textContent = deckConfig.editorDescription;
-  editorElements.editorPanelTitle.textContent = `${deckConfig.languageLabel} ${deckConfig.deckLabel} cards`;
+  editorElements.editorDescription.textContent = `${deckConfig.editorDescription} ${setConfig.description}`;
+  editorElements.editorPanelTitle.textContent = `${deckConfig.languageLabel} ${deckConfig.deckLabel} cards / ${setConfig.label}`;
+}
+
+function applyStatsSelectionCopy(selection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const deckConfig = getDeckConfig(normalizedSelection);
+  const setConfig = getSetConfig(normalizedSelection);
+
+  statsElements.statsOpenDeckLink.href = getDeckPageUrl(normalizedSelection);
+  statsElements.statsEditDeckLink.href = getEditorPageUrl(normalizedSelection);
+  statsElements.statsLanguage.textContent = deckConfig.languageLabel;
+  statsElements.statsDeckType.textContent = deckConfig.deckLabel;
+  statsElements.statsSetLabel.textContent = setConfig.label;
+  statsElements.statsTitle.textContent = `Track ${deckConfig.languageLabel.toLowerCase()} ${deckConfig.deckLabel.toLowerCase()} progress at the set level.`;
+  statsElements.statsDescription.textContent = `${deckConfig.selectionDescription} ${setConfig.description}`;
 }
 
 function formatSelectionLabel(value) {
   return String(value).charAt(0).toUpperCase() + String(value).slice(1);
 }
 
-function formatSetLabel(value) {
-  return value === "starter" ? "Starter Set" : formatSelectionLabel(value);
+function formatSetLabel(value, selection = currentSelection) {
+  const normalizedSelection = sanitizeSelection({ ...sanitizeSelection(selection), set: value });
+  return getSetConfig(normalizedSelection).label;
 }
 
 function formatDeckSummary(selection = currentSelection) {
   const normalizedSelection = sanitizeSelection(selection);
   const deckConfig = getDeckConfig(normalizedSelection);
-  return `${deckConfig.languageLabel} ${deckConfig.deckLabel} ${formatSetLabel(normalizedSelection.set)}`;
+  return `${deckConfig.languageLabel} ${deckConfig.deckLabel} ${formatSetLabel(normalizedSelection.set, normalizedSelection)}`;
+}
+
+function getDefaultDeckCards(selection = currentSelection) {
+  return getSetConfig(selection).cards;
+}
+
+function getSetConfig(selection = currentSelection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const deckConfig = getDeckConfig(normalizedSelection);
+  const setIds = Object.keys(deckConfig.sets ?? {});
+  const setId = deckConfig.sets?.[normalizedSelection.set] ? normalizedSelection.set : setIds[0];
+  return deckConfig.sets?.[setId] ?? { label: formatSelectionLabel(setId), meta: "", description: "", cards: [] };
+}
+
+function renderSelectionOptions(selection) {
+  selectionElements.languageOptions.innerHTML = "";
+  selectionElements.deckOptions.innerHTML = "";
+
+  DECK_ORDER.forEach((deckKey) => {
+    const config = DECK_CONFIGS[deckKey];
+    selectionElements.languageOptions.appendChild(createSelectionOptionButton({
+      group: "language",
+      value: config.language,
+      label: config.languageLabel,
+      meta: config.selectionMeta,
+      isSelected: selection.language === config.language
+    }));
+  });
+
+  Object.entries(getDeckConfig(selection).sets).forEach(([setId, setConfig]) => {
+    selectionElements.deckOptions.appendChild(createSelectionOptionButton({
+      group: "set",
+      value: setId,
+      label: setConfig.label,
+      meta: setConfig.meta,
+      isSelected: selection.set === setId
+    }));
+  });
+}
+
+function createSelectionOptionButton({ group, value, label, meta, isSelected }) {
+  const button = document.createElement("button");
+  const labelElement = document.createElement("span");
+  const metaElement = document.createElement("span");
+
+  button.type = "button";
+  button.className = "option-card";
+  button.dataset.selectionGroup = group;
+  button.dataset.value = value;
+  button.classList.toggle("is-selected", isSelected);
+  button.setAttribute("aria-pressed", String(isSelected));
+  labelElement.className = "option-card-label";
+  metaElement.className = "option-card-meta";
+  labelElement.textContent = label;
+  metaElement.textContent = meta;
+  button.append(labelElement, metaElement);
+  button.addEventListener("click", () => updateSelectionSummary(getSelectionForChoice(group, value)));
+  return button;
 }
 
 function buildImportCopy(deckConfig = currentDeckConfig) {
@@ -2408,18 +3639,28 @@ function setEditorFeedback(message, isError = false) {
   editorElements.editorFeedback.classList.toggle("is-error", isError);
 }
 
-function getSelectionKey(selection = currentSelection) {
+function getDeckPairKey(selection = currentSelection) {
   const normalizedSelection = sanitizeSelection(selection);
   return `${normalizedSelection.language}:${normalizedSelection.deck}`;
 }
 
+function getSelectionKey(selection = currentSelection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  return `${normalizedSelection.language}:${normalizedSelection.deck}:${normalizedSelection.set}`;
+}
+
 function getDeckConfig(selection = currentSelection) {
-  return DECK_CONFIGS[getSelectionKey(selection)] ?? DECK_CONFIGS[DEFAULT_DECK_KEY];
+  return DECK_CONFIGS[getDeckPairKey(selection)] ?? DECK_CONFIGS[DEFAULT_DECK_KEY];
+}
+
+function isLegacyStarterSelection(selection = currentSelection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  return getDeckPairKey(normalizedSelection) === DEFAULT_DECK_KEY && normalizedSelection.set === DEFAULT_SELECTION.set;
 }
 
 function getStateStorageKey(selection = currentSelection) {
   const selectionKey = getSelectionKey(selection);
-  return selectionKey === DEFAULT_DECK_KEY
+  return isLegacyStarterSelection(selection)
     ? STORAGE_KEY
     : `${STORAGE_KEY}:${selectionKey}`;
 }

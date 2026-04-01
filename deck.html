@@ -13,6 +13,7 @@
         <div class="topbar-links">
           <a class="back-link" href="index.html">Back to selection</a>
           <a id="edit-deck-link" class="back-link" href="editor.html?language=japanese&amp;deck=kanji&amp;set=starter">Edit vocabulary set</a>
+          <a id="stats-deck-link" class="back-link" href="stats.html?language=japanese&amp;deck=kanji&amp;set=starter">View stats</a>
         </div>
         <div class="hero-toolbar">
           <div class="layout-toggle" role="group" aria-label="Layout mode">
@@ -62,6 +63,7 @@
         <div id="review-card" class="review-card">
           <p class="kanji-glyph" id="kanji-character">日</p>
           <p class="kanji-meta" id="kanji-hint">Think of the most common meaning first.</p>
+          <div id="card-signal-row" class="card-signal-row" aria-live="polite"></div>
 
           <form id="answer-form" class="answer-form">
             <label id="answer-input-label" class="sr-only" for="answer-input">Type the translation</label>
@@ -81,6 +83,16 @@
               <h3 id="correct-answer">sun / day</h3>
               <p id="answer-evaluation" class="answer-evaluation"></p>
               <p id="reading-text" class="reading-text"></p>
+            </div>
+
+            <div id="card-progress-panel" class="card-progress-panel">
+              <div class="progress-meter">
+                <div class="progress-meter-track">
+                  <span id="card-mastery-fill" class="progress-meter-fill"></span>
+                </div>
+                <p id="card-progress-summary" class="card-progress-summary"></p>
+              </div>
+              <div id="card-progress-stats" class="card-progress-stats"></div>
             </div>
 
             <div class="schedule-panel">

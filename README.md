@@ -2,37 +2,43 @@
 
 A static browser study app for lightweight, manual spaced repetition.
 
-It currently supports two deck flows:
+It currently supports four deck flows:
 
 - Japanese -> Kanji meaning recall
 - Spanish -> English vocabulary recall
+- Chinese -> English vocabulary recall
+- Korean -> English vocabulary recall
 
 The app is intentionally simple: open a deck, type the answer you remember, reveal the stored answer, and choose when the card should come back.
 
 ## What The App Includes
 
 - deck selection screen
+- set and expansion-pack selection per language track
 - focused review screen with active recall input
 - manual scheduling after each reveal
 - local progress persistence with `localStorage`
 - per-deck vocabulary editor
 - recent review history
 - due-now, studied-today, and total-card stats
+- richer per-card progress data including lapses, last seen, next due, accuracy, and mastery signals
+- difficulty tagging and recommended interval cues per card
+- dedicated stats dashboard with streaks, weekly activity, queue health, and hardest-card views
 - mobile and desktop layout toggle on the review screen
 - study modes for `mixed`, `due only`, and `new only`
 - forgiving answer matching for case, articles, punctuation, and simple singular or plural variations
 - optional typo tolerance for longer answers, with conservative matching rules
-- CSV import for Japanese -> Kanji and Spanish -> English decks
+- CSV import for every live deck track
 - deck backup export and restore with JSON files
 
 ## Supported Decks
 
-| Language | Deck | Status | Import Support |
+| Language | Deck | Live Sets | Import Support |
 | --- | --- | --- | --- |
-| Japanese | Kanji | Live | Yes |
-| Spanish | English | Live | Yes |
-| Chinese | Future | Not yet available | No |
-| Korean | Future | Not yet available | No |
+| Japanese | Kanji | Starter, JLPT N5, JLPT N4 | Yes |
+| Spanish | English | Starter, Travel, Daily Life | Yes |
+| Chinese | English | Starter, HSK 1 | Yes |
+| Korean | English | Starter, TOPIK 1 | Yes |
 
 ## Screens And Flow
 
@@ -47,7 +53,7 @@ The app is intentionally simple: open a deck, type the answer you remember, reve
 1. See the prompt.
 2. Type the answer you remember.
 3. Reveal the stored answer.
-4. Review meanings, readings or notes, and example sentences.
+4. Review meanings, readings or notes, example sentences, and per-card progress signals.
 5. Choose the next review interval.
 
 ### 3. Vocabulary Editor
@@ -60,11 +66,22 @@ The app is intentionally simple: open a deck, type the answer you remember, reve
 - search the current set
 - reset the deck back to its defaults
 
+### 4. Stats Dashboard
+
+`stats.html` shows a larger analytics view for the selected set:
+
+- current and best streaks
+- weekly review volume and accuracy
+- queue health for due, new, scheduled, and strong cards
+- difficulty breakdown
+- hardest-card and mastery lists
+
 ## Project Structure
 
 - `index.html` - deck and language selection
 - `deck.html` - review workflow
 - `editor.html` - deck editing workflow
+- `stats.html` - analytics dashboard for the current deck and set
 - `styles.css` - visual system, responsive layout, and page styling
 - `app.js` - shared application logic, deck data, persistence, review scheduling, editor behavior, CSV import, and deck backup handling
 
@@ -104,6 +121,8 @@ That includes:
 
 - review state and due times
 - recent history
+- per-card review counts, lapses, streaks, and timing metadata
+- daily activity totals used for streaks and weekly charts
 - selected deck
 - preferred layout mode
 - edited deck content
@@ -145,7 +164,7 @@ Each card can contain:
 
 ### CSV Import
 
-CSV import is currently enabled for the Japanese -> Kanji and Spanish -> English decks.
+CSV import is enabled for every live deck track.
 
 Expected columns:
 
@@ -154,6 +173,12 @@ Japanese deck columns:
 
 Spanish deck columns:
 `spanish`, `meanings`, `example1_es`, `example1_en`, `example2_es`, `example2_en`
+
+Chinese deck columns:
+`chinese`, `meanings`, `pinyin`, `example1_zh`, `example1_en`, `example2_zh`, `example2_en`
+
+Korean deck columns:
+`korean`, `meanings`, `romanization`, `example1_ko`, `example1_en`, `example2_ko`, `example2_en`
 
 Example:
 
@@ -180,6 +205,7 @@ A deck backup includes:
 - the saved deck content for the selected deck
 - due times and review progress for that deck
 - recent review history for that deck
+- daily activity totals for that deck
 
 ## Current Notes
 
@@ -188,24 +214,16 @@ A deck backup includes:
 
 ## Roadmap
 
-### Next
-
-- improve per-card feedback with clearer progress and difficulty signals
-
 ### Planned
 
 - undo last review
 - keyboard shortcuts for reveal and scheduling
-- richer per-card progress data such as lapses, last seen, and next due
 - hard-card filtering and review
 
 ### Nice To Have
 
 - clean the remaining mojibake in static HTML placeholders and CSV example copy
 - automatic SRS scoring on top of manual scheduling
-- JLPT or level-based expansion packs
-- larger stats dashboard with streaks and weekly activity
-- additional language tracks such as Chinese and Korean
 - screenshots or short demo media in the README
 
 ## Why This Project Is Useful

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanji Learning App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="stats">
+  <main class="app-shell stats-shell">
+    <section class="hero">
+      <div class="hero-topbar">
+        <div class="topbar-links">
+          <a class="back-link" href="index.html">Back to selection</a>
+          <a id="stats-open-deck-link" class="back-link" href="deck.html?language=japanese&amp;deck=kanji&amp;set=starter">Open study deck</a>
+          <a id="stats-edit-deck-link" class="back-link" href="editor.html?language=japanese&amp;deck=kanji&amp;set=starter">Edit vocabulary set</a>
+        </div>
+      </div>
+      <p class="eyebrow">Deck Analytics</p>
+      <div class="hero-copy">
+        <div class="deck-badge-row">
+          <span id="stats-language" class="deck-badge">Japanese</span>
+          <span id="stats-deck-type" class="deck-badge">Kanji</span>
+          <span id="stats-set-label" class="deck-badge">Starter Set</span>
+        </div>
+        <h1 id="stats-title">See the streak, the queue, and the cards that still need work.</h1>
+        <p id="stats-description">
+          A larger dashboard for pacing, weekly activity, and per-card difficulty trends.
+        </p>
+      </div>
+      <div id="stats-summary-grid" class="status-grid stats-summary-grid"></div>
+    </section>
+
+    <section class="stats-layout">
+      <article class="card-panel stats-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Weekly activity</p>
+            <h2>Last 7 days</h2>
+          </div>
+        </div>
+        <div id="weekly-activity-chart" class="weekly-activity-chart"></div>
+        <p id="weekly-activity-copy" class="sidebar-copy"></p>
+      </article>
+
+      <aside class="sidebar">
+        <section class="sidebar-card">
+          <p class="panel-label">Difficulty mix</p>
+          <div id="difficulty-breakdown" class="metric-stack"></div>
+        </section>
+
+        <section class="sidebar-card">
+          <p class="panel-label">Queue health</p>
+          <div id="queue-breakdown" class="metric-stack"></div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="stats-bottom-grid">
+      <article class="card-panel stats-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Hardest cards</p>
+            <h2>Needs extra attention</h2>
+          </div>
+        </div>
+        <div id="hardest-cards-list" class="insight-list"></div>
+      </article>
+
+      <article class="card-panel stats-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Mastery spread</p>
+            <h2>Progress by card</h2>
+          </div>
+        </div>
+        <div id="mastery-list" class="insight-list"></div>
+      </article>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
