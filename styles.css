@@ -342,7 +342,6 @@ textarea {
 }
 
 .flow-list,
-.interval-list,
 .history-list {
   margin: 16px 0 0;
   padding-left: 18px;
@@ -356,26 +355,22 @@ textarea {
   line-height: 1.6;
 }
 
-.interval-list,
 .history-list {
   padding-left: 0;
   list-style: none;
 }
 
-.interval-list li,
 .history-list li {
   padding: 10px 0;
   border-bottom: 1px solid rgba(91, 70, 46, 0.12);
 }
 
-.interval-list li:last-child,
 .history-list li:last-child {
   border-bottom: 0;
   padding-bottom: 0;
 }
 
-.history-list strong,
-.interval-list strong {
+.history-list strong {
   display: block;
   color: var(--text);
   margin-bottom: 4px;
@@ -589,7 +584,6 @@ textarea {
 }
 
 .mobile-layout .flow-list,
-.mobile-layout .interval-list,
 .mobile-layout .history-list,
 .mobile-layout .sidebar-copy,
 .mobile-layout .csv-example {
@@ -597,7 +591,6 @@ textarea {
 }
 
 .mobile-layout .flow-list,
-.mobile-layout .interval-list,
 .mobile-layout .history-list {
   line-height: 1.5;
 }

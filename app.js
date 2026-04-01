@@ -284,7 +284,6 @@ const elements = {
   emptyState: document.getElementById("empty-state"),
   resetProgress: document.getElementById("reset-progress"),
   historyList: document.getElementById("history-list"),
-  intervalList: document.getElementById("interval-list"),
   cardPrompt: document.getElementById("card-prompt"),
   scheduleOptionTemplate: document.getElementById("schedule-option-template"),
   importForm: document.getElementById("import-form"),
@@ -297,7 +296,6 @@ let state = loadState();
 let currentCardId = null;
 
 applyLayoutMode(loadLayoutMode());
-renderIntervalLegend();
 render();
 
 elements.desktopLayoutToggle.addEventListener("click", () => {
@@ -454,16 +452,6 @@ function renderScheduleOptions(card, answer, isCorrect) {
     button.innerHTML = `<strong>${option.label}</strong><span>${option.description}</span>`;
     button.addEventListener("click", () => scheduleCard(card.id, option, answer, isCorrect));
     elements.scheduleOptions.appendChild(button);
-  });
-}
-
-function renderIntervalLegend() {
-  elements.intervalList.innerHTML = "";
-
-  DEFAULT_INTERVALS.forEach((option) => {
-    const item = document.createElement("li");
-    item.innerHTML = `<strong>${option.label}</strong>${option.description}`;
-    elements.intervalList.appendChild(item);
   });
 }
 
