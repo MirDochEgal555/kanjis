@@ -2,9 +2,11 @@ const STORAGE_KEY = "kanji-learning-app-state-v2";
 const LEGACY_STORAGE_KEYS = ["kanji-learning-app-state-v1"];
 const LAYOUT_STORAGE_KEY = "kanji-learning-layout-v1";
 const SELECTION_STORAGE_KEY = "kanji-learning-selection-v1";
+const DECK_CONTENT_STORAGE_KEY = "kanji-learning-deck-content-v1";
 const DEFAULT_SELECTION = {
   language: "japanese",
-  deck: "kanji"
+  deck: "kanji",
+  set: "starter"
 };
 const DEFAULT_DECK_KEY = "japanese:kanji";
 
@@ -400,6 +402,20 @@ const DECK_CONFIGS = {
       "Reveal the stored answer.",
       "Choose the next review time."
     ],
+    editorTitle: "Edit the kanji set for this deck.",
+    editorDescription: "Update kanji, accepted meanings, readings, and example sentences, then save the set for review.",
+    editorFrontLabel: "Kanji",
+    editorReadingsLabel: "On / Kun readings",
+    editorExampleSourceLabel: "Japanese example",
+    editorExampleTranslationLabel: "English translation",
+    editorHelp: [
+      "Use the Kanji field for the character shown on the card.",
+      "Separate multiple accepted meanings with |.",
+      "Use the readings field for on and kun readings.",
+      "Example sentences are optional, but they make review clearer."
+    ],
+    frontKey: "kanji",
+    supportsReadings: true,
     starterDeck: STARTER_DECK,
     supportsImport: true
   },
@@ -422,6 +438,19 @@ const DECK_CONFIGS = {
       "Reveal the stored answer.",
       "Choose the next review time."
     ],
+    editorTitle: "Edit the Spanish vocabulary set for this deck.",
+    editorDescription: "Update Spanish prompts, accepted English answers, and example sentences, then save the set for review.",
+    editorFrontLabel: "Spanish word",
+    editorReadingsLabel: "Notes",
+    editorExampleSourceLabel: "Spanish example",
+    editorExampleTranslationLabel: "English translation",
+    editorHelp: [
+      "Use the Spanish word field for the prompt shown on the card.",
+      "Separate multiple accepted English answers with |.",
+      "Examples are optional, but they help make context clearer."
+    ],
+    frontKey: "front",
+    supportsReadings: false,
     starterDeck: SPANISH_ENGLISH_DECK,
     supportsImport: false
   }
@@ -457,6 +486,7 @@ const elements = page === "deck"
       csvFile: document.getElementById("csv-file"),
       importFeedback: document.getElementById("import-feedback"),
       importSection: document.getElementById("import-section"),
+      editDeckLink: document.getElementById("edit-deck-link"),
       selectedLanguage: document.getElementById("selected-language"),
       selectedDeckType: document.getElementById("selected-deck-type"),
       selectedDeckTitle: document.getElementById("selected-deck-title"),
@@ -469,11 +499,34 @@ const elements = page === "deck"
 const selectionElements = page === "selection"
   ? {
       startSelectedDeck: document.getElementById("start-selected-deck"),
+      editSelectedDeck: document.getElementById("edit-selected-deck"),
       selectionTitle: document.getElementById("selection-title"),
       selectionDescription: document.getElementById("selection-description"),
       summaryLanguage: document.getElementById("summary-language"),
-      summaryDeck: document.getElementById("summary-deck"),
+      summarySet: document.getElementById("summary-set"),
       optionButtons: [...document.querySelectorAll("[data-selection-group][data-value]")]
+    }
+  : null;
+const editorElements = page === "editor"
+  ? {
+      openDeckLink: document.getElementById("open-deck-link"),
+      editorLanguage: document.getElementById("editor-language"),
+      editorDeckType: document.getElementById("editor-deck-type"),
+      editorTitle: document.getElementById("editor-title"),
+      editorDescription: document.getElementById("editor-description"),
+      addCardButton: document.getElementById("add-card-button"),
+      saveDeckButton: document.getElementById("save-deck-button"),
+      resetDeckButton: document.getElementById("reset-deck-button"),
+      editorFeedback: document.getElementById("editor-feedback"),
+      editorCardCount: document.getElementById("editor-card-count"),
+      editorHelpList: document.getElementById("editor-help-list"),
+      editorPanelTitle: document.getElementById("editor-panel-title"),
+      editorSearchInput: document.getElementById("editor-search-input"),
+      editorEmptyState: document.getElementById("editor-empty-state"),
+      editorEmptyTitle: document.getElementById("editor-empty-title"),
+      editorEmptyCopy: document.getElementById("editor-empty-copy"),
+      editorCards: document.getElementById("editor-cards"),
+      editorCardTemplate: document.getElementById("editor-card-template")
     }
   : null;
 
@@ -481,6 +534,8 @@ let state = null;
 let currentCardId = null;
 let currentSelection = { ...DEFAULT_SELECTION };
 let currentDeckConfig = DECK_CONFIGS[DEFAULT_DECK_KEY];
+let editorCardsState = [];
+let editorSearchTerm = "";
 
 if (page === "selection") {
   initSelectionPage();
@@ -488,6 +543,10 @@ if (page === "selection") {
 
 if (page === "deck") {
   initDeckPage();
+}
+
+if (page === "editor") {
+  initEditorPage();
 }
 
 function initSelectionPage() {
@@ -612,9 +671,53 @@ function initDeckPage() {
   }
 }
 
+function initEditorPage() {
+  const selection = getSelectionFromUrl();
+
+  currentSelection = selection;
+  currentDeckConfig = getDeckConfig(selection);
+  saveSelection(selection);
+  applyEditorSelectionCopy(selection);
+  editorCardsState = loadEditableDeck(selection);
+  renderEditorCards();
+  renderEditorHelp();
+
+  editorElements.editorSearchInput.addEventListener("input", (event) => {
+    editorSearchTerm = event.target.value.trim().toLowerCase();
+    renderEditorCards();
+  });
+
+  editorElements.addCardButton.addEventListener("click", () => {
+    editorCardsState.push(createEmptyEditorCard());
+    renderEditorCards();
+    setEditorFeedback("");
+  });
+
+  editorElements.saveDeckButton.addEventListener("click", () => {
+    try {
+      const cards = collectEditorCards();
+      saveDeckContent(selection, cards);
+      clearImportedCardsFromStoredState(selection);
+      editorCardsState = loadEditableDeck(selection);
+      renderEditorCards();
+      setEditorFeedback(`Saved ${cards.length} card(s) for this deck.`);
+    } catch (error) {
+      setEditorFeedback(error.message, true);
+    }
+  });
+
+  editorElements.resetDeckButton.addEventListener("click", () => {
+    removeDeckContent(selection);
+    clearImportedCardsFromStoredState(selection);
+    editorCardsState = loadEditableDeck(selection);
+    renderEditorCards();
+    setEditorFeedback("Reset this deck to its default vocabulary set.");
+  });
+}
+
 function loadState(forceFresh = false) {
   if (!forceFresh) {
-    const raw = localStorage.getItem(getStateStorageKey()) ?? loadLegacyState();
+    const raw = localStorage.getItem(getStateStorageKey()) ?? loadLegacyState(currentSelection);
 
     if (raw) {
       try {
@@ -639,7 +742,7 @@ function loadState(forceFresh = false) {
 
 function sanitizeState(rawState) {
   const importedCards = currentDeckConfig.supportsImport ? sanitizeImportedCards(rawState.importedCards) : [];
-  const deck = [...getStarterDeck(), ...importedCards];
+  const deck = mergeDeckCards(getStarterDeck(), importedCards);
   const cards = buildCardStateMap(deck, rawState.cards ?? {});
   const history = Array.isArray(rawState.history)
     ? rawState.history
@@ -832,11 +935,11 @@ function formatRelativeDate(timestamp) {
 }
 
 function getStarterDeck() {
-  return currentDeckConfig.starterDeck;
+  return loadDeckContent(currentSelection);
 }
 
 function getDeck() {
-  return [...getStarterDeck(), ...state.importedCards];
+  return mergeDeckCards(getStarterDeck(), state.importedCards);
 }
 
 function getReadingText(card) {
@@ -947,7 +1050,7 @@ function importCardsFromCsv(csvText) {
   }
 
   const importedCards = parseImportedCardsFromCsv(csvText);
-  const existingCards = new Map(state.importedCards.map((card) => [card.id, card]));
+  const existingCards = new Map(loadEditableDeck(currentSelection).map((card) => [card.id, card]));
   const now = Date.now();
   let added = 0;
   let updated = 0;
@@ -970,7 +1073,10 @@ function importCardsFromCsv(csvText) {
     }
   });
 
-  state.importedCards = [...existingCards.values()];
+  saveDeckContent(currentSelection, [...existingCards.values()]);
+  state.importedCards = [];
+  state.cards = buildCardStateMap(getDeck(), state.cards, now);
+  clearImportedCardsFromStoredState(currentSelection);
   saveState();
   render();
 
@@ -1128,8 +1234,8 @@ function normalizeHeader(value) {
     .toLowerCase();
 }
 
-function loadLegacyState() {
-  if (getSelectionKey() !== DEFAULT_DECK_KEY) {
+function loadLegacyState(selection = currentSelection) {
+  if (getSelectionKey(selection) !== DEFAULT_DECK_KEY) {
     return null;
   }
 
@@ -1157,6 +1263,159 @@ function clearImportFeedback() {
   setImportFeedback("", false);
 }
 
+function mergeDeckCards(baseDeck = [], extraCards = []) {
+  const cardsById = new Map();
+
+  [...baseDeck, ...extraCards].forEach((card) => {
+    if (card?.id) {
+      cardsById.set(card.id, card);
+    }
+  });
+
+  return [...cardsById.values()];
+}
+
+function loadEditableDeck(selection = currentSelection) {
+  return mergeDeckCards(loadDeckContent(selection), loadImportedCardsFromStoredState(selection));
+}
+
+function loadDeckContent(selection = currentSelection) {
+  const storageKey = getDeckContentStorageKey(selection);
+
+  try {
+    const raw = localStorage.getItem(storageKey);
+
+    if (!raw) {
+      return cloneDeckCards(getDeckConfig(selection).starterDeck);
+    }
+
+    const parsed = JSON.parse(raw);
+    const cards = sanitizeDeckContent(parsed, selection);
+    return cards.length ? cards : cloneDeckCards(getDeckConfig(selection).starterDeck);
+  } catch (error) {
+    return cloneDeckCards(getDeckConfig(selection).starterDeck);
+  }
+}
+
+function saveDeckContent(selection, cards) {
+  const sanitizedCards = sanitizeDeckContent(cards, selection);
+  localStorage.setItem(getDeckContentStorageKey(selection), JSON.stringify(sanitizedCards));
+}
+
+function removeDeckContent(selection) {
+  localStorage.removeItem(getDeckContentStorageKey(selection));
+}
+
+function getDeckContentStorageKey(selection = currentSelection) {
+  return `${DECK_CONTENT_STORAGE_KEY}:${getSelectionKey(selection)}`;
+}
+
+function cloneDeckCards(cards) {
+  return cards.map((card) => ({
+    id: card.id,
+    front: typeof card.front === "string" ? card.front : undefined,
+    kanji: typeof card.kanji === "string" ? card.kanji : undefined,
+    meanings: Array.isArray(card.meanings) ? [...card.meanings] : [],
+    readings: typeof card.readings === "string" ? card.readings : "",
+    examples: sanitizeExamples(card.examples)
+  }));
+}
+
+function sanitizeDeckContent(rawCards, selection = currentSelection) {
+  if (!Array.isArray(rawCards)) {
+    return [];
+  }
+
+  const cardsById = new Map();
+
+  rawCards.forEach((rawCard) => {
+    const card = sanitizeDeckCard(rawCard, selection);
+
+    if (card) {
+      cardsById.set(card.id, card);
+    }
+  });
+
+  return [...cardsById.values()];
+}
+
+function sanitizeDeckCard(rawCard, selection = currentSelection) {
+  const deckConfig = getDeckConfig(selection);
+  const frontKey = deckConfig.frontKey;
+  const frontValue = typeof rawCard?.[frontKey] === "string" ? rawCard[frontKey].trim() : "";
+  const meanings = Array.isArray(rawCard?.meanings)
+    ? rawCard.meanings.map((meaning) => String(meaning).trim()).filter(Boolean)
+    : splitMeanings(rawCard?.meanings);
+  const readings = deckConfig.supportsReadings && typeof rawCard?.readings === "string"
+    ? rawCard.readings.trim()
+    : "";
+
+  if (!frontValue || !meanings.length) {
+    return null;
+  }
+
+  return {
+    id: typeof rawCard?.id === "string" && rawCard.id.trim()
+      ? rawCard.id.trim()
+      : createDeckCardId(frontValue, meanings, selection),
+    [frontKey]: frontValue,
+    meanings,
+    readings,
+    examples: sanitizeExamples(rawCard?.examples)
+  };
+}
+
+function createDeckCardId(frontValue, meanings, selection = currentSelection) {
+  return `deck:${getSelectionKey(selection)}:${normalizeCardKey(frontValue)}:${normalizeCardKey(meanings[0])}`;
+}
+
+function loadImportedCardsFromStoredState(selection = currentSelection) {
+  const rawState = loadRawStateForSelection(selection);
+
+  if (!rawState?.importedCards) {
+    return [];
+  }
+
+  return sanitizeImportedCards(rawState.importedCards);
+}
+
+function clearImportedCardsFromStoredState(selection = currentSelection) {
+  const storageKey = getStateStorageKey(selection);
+  const raw = localStorage.getItem(storageKey) ?? loadLegacyState(selection);
+
+  if (!raw) {
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+
+    if (!parsed || typeof parsed !== "object") {
+      return;
+    }
+
+    parsed.importedCards = [];
+    localStorage.setItem(storageKey, JSON.stringify(parsed));
+  } catch (error) {
+    // Ignore malformed legacy state during editor cleanup.
+  }
+}
+
+function loadRawStateForSelection(selection = currentSelection) {
+  const storageKey = getStateStorageKey(selection);
+  const raw = localStorage.getItem(storageKey) ?? loadLegacyState(selection);
+
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    return null;
+  }
+}
+
 function loadSelection() {
   try {
     const raw = localStorage.getItem(SELECTION_STORAGE_KEY);
@@ -1176,16 +1435,20 @@ function saveSelection(selection) {
 }
 
 function sanitizeSelection(selection) {
+  const normalizedSet = selection?.set === "starter" ? "starter" : DEFAULT_SELECTION.set;
+
   if (selection?.language === "spanish" && selection?.deck === "english") {
     return {
       language: "spanish",
-      deck: "english"
+      deck: "english",
+      set: normalizedSet
     };
   }
 
   return {
     language: "japanese",
-    deck: "kanji"
+    deck: "kanji",
+    set: normalizedSet
   };
 }
 
@@ -1195,7 +1458,8 @@ function getSelectionFromUrl() {
 
   return sanitizeSelection({
     language: params.get("language") ?? savedSelection.language,
-    deck: params.get("deck") ?? savedSelection.deck
+    deck: params.get("deck") ?? savedSelection.deck,
+    set: params.get("set") ?? savedSelection.set
   });
 }
 
@@ -1203,13 +1467,22 @@ function getSelectionForChoice(group, value) {
   if ((group === "language" && value === "spanish") || (group === "deck" && value === "english")) {
     return {
       language: "spanish",
-      deck: "english"
+      deck: "english",
+      set: loadSelection().set ?? DEFAULT_SELECTION.set
     };
+  }
+
+  if (group === "set") {
+    return sanitizeSelection({
+      ...loadSelection(),
+      set: value
+    });
   }
 
   return {
     language: "japanese",
-    deck: "kanji"
+    deck: "kanji",
+    set: loadSelection().set ?? DEFAULT_SELECTION.set
   };
 }
 
@@ -1223,17 +1496,24 @@ function updateSelectionSummary(selection) {
     button.setAttribute("aria-pressed", String(isSelected));
   });
 
-  selectionElements.selectionTitle.textContent = `${deckConfig.languageLabel} ${deckConfig.deckLabel} Deck`;
+  selectionElements.selectionTitle.textContent = `${deckConfig.languageLabel} ${deckConfig.deckLabel} ${formatSetLabel(normalizedSelection.set)}`;
   selectionElements.selectionDescription.textContent = deckConfig.selectionDescription;
   selectionElements.summaryLanguage.textContent = deckConfig.languageLabel;
-  selectionElements.summaryDeck.textContent = deckConfig.deckLabel;
+  selectionElements.summarySet.textContent = formatSetLabel(normalizedSelection.set);
   selectionElements.startSelectedDeck.href = getDeckPageUrl(normalizedSelection);
+  selectionElements.editSelectedDeck.href = getEditorPageUrl(normalizedSelection);
 }
 
 function getDeckPageUrl(selection) {
   const normalizedSelection = sanitizeSelection(selection);
   const params = new URLSearchParams(normalizedSelection);
   return `deck.html?${params.toString()}`;
+}
+
+function getEditorPageUrl(selection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const params = new URLSearchParams(normalizedSelection);
+  return `editor.html?${params.toString()}`;
 }
 
 function applyDeckSelectionCopy(selection) {
@@ -1247,6 +1527,7 @@ function applyDeckSelectionCopy(selection) {
   elements.answerInputLabel.textContent = deckConfig.inputLabel;
   elements.answerInput.placeholder = deckConfig.inputPlaceholder;
   elements.answerSubmit.textContent = deckConfig.submitLabel;
+  elements.editDeckLink.href = getEditorPageUrl(normalizedSelection);
   renderHowItWorks(deckConfig.flowSteps);
 
   if (elements.importSection) {
@@ -1254,8 +1535,24 @@ function applyDeckSelectionCopy(selection) {
   }
 }
 
+function applyEditorSelectionCopy(selection) {
+  const normalizedSelection = sanitizeSelection(selection);
+  const deckConfig = getDeckConfig(normalizedSelection);
+
+  editorElements.openDeckLink.href = getDeckPageUrl(normalizedSelection);
+  editorElements.editorLanguage.textContent = deckConfig.languageLabel;
+  editorElements.editorDeckType.textContent = deckConfig.deckLabel;
+  editorElements.editorTitle.textContent = deckConfig.editorTitle;
+  editorElements.editorDescription.textContent = deckConfig.editorDescription;
+  editorElements.editorPanelTitle.textContent = `${deckConfig.languageLabel} ${deckConfig.deckLabel} cards`;
+}
+
 function formatSelectionLabel(value) {
   return String(value).charAt(0).toUpperCase() + String(value).slice(1);
+}
+
+function formatSetLabel(value) {
+  return value === "starter" ? "Starter Set" : formatSelectionLabel(value);
 }
 
 function renderHowItWorks(steps) {
@@ -1266,6 +1563,156 @@ function renderHowItWorks(steps) {
     item.textContent = step;
     elements.howItWorksList.appendChild(item);
   });
+}
+
+function renderEditorHelp() {
+  editorElements.editorHelpList.innerHTML = "";
+
+  currentDeckConfig.editorHelp.forEach((line) => {
+    const item = document.createElement("li");
+    item.textContent = line;
+    editorElements.editorHelpList.appendChild(item);
+  });
+}
+
+function renderEditorCards() {
+  editorElements.editorCards.innerHTML = "";
+  editorElements.editorCardCount.textContent = String(editorCardsState.length);
+  let visibleCount = 0;
+
+  editorCardsState.forEach((card, index) => {
+    const fragment = editorElements.editorCardTemplate.content.cloneNode(true);
+    const cardElement = fragment.querySelector(".editor-card");
+    const title = fragment.querySelector(".editor-card-title");
+    const removeButton = fragment.querySelector(".editor-remove-button");
+    const frontInput = fragment.querySelector('[data-editor-field="front"]');
+    const meaningsInput = fragment.querySelector('[data-editor-field="meanings"]');
+    const readingsField = fragment.querySelector("[data-editor-readings-field]");
+    const readingsInput = fragment.querySelector('[data-editor-field="readings"]');
+    const frontLabel = fragment.querySelector('[data-editor-label="front"]');
+    const readingsLabel = fragment.querySelector('[data-editor-label="readings"]');
+    const example1SourceLabel = fragment.querySelector('[data-editor-label="example1-jp"]');
+    const example1TranslationLabel = fragment.querySelector('[data-editor-label="example1-en"]');
+    const example2SourceLabel = fragment.querySelector('[data-editor-label="example2-jp"]');
+    const example2TranslationLabel = fragment.querySelector('[data-editor-label="example2-en"]');
+    const example1SourceInput = fragment.querySelector('[data-editor-field="example1-jp"]');
+    const example1TranslationInput = fragment.querySelector('[data-editor-field="example1-en"]');
+    const example2SourceInput = fragment.querySelector('[data-editor-field="example2-jp"]');
+    const example2TranslationInput = fragment.querySelector('[data-editor-field="example2-en"]');
+
+    title.textContent = getCardFront(card) || `Card ${index + 1}`;
+    frontLabel.textContent = currentDeckConfig.editorFrontLabel;
+    readingsLabel.textContent = currentDeckConfig.editorReadingsLabel;
+    example1SourceLabel.textContent = `${currentDeckConfig.editorExampleSourceLabel} 1`;
+    example1TranslationLabel.textContent = `${currentDeckConfig.editorExampleTranslationLabel} 1`;
+    example2SourceLabel.textContent = `${currentDeckConfig.editorExampleSourceLabel} 2`;
+    example2TranslationLabel.textContent = `${currentDeckConfig.editorExampleTranslationLabel} 2`;
+
+    frontInput.value = getCardFront(card);
+    frontInput.placeholder = currentDeckConfig.editorFrontLabel;
+    meaningsInput.value = card.meanings.join(" | ");
+    readingsInput.value = card.readings || "";
+    readingsField.classList.toggle("hidden", !currentDeckConfig.supportsReadings);
+
+    example1SourceInput.value = card.examples?.[0]?.jp ?? "";
+    example1TranslationInput.value = card.examples?.[0]?.en ?? "";
+    example2SourceInput.value = card.examples?.[1]?.jp ?? "";
+    example2TranslationInput.value = card.examples?.[1]?.en ?? "";
+
+    const searchBlob = [
+      getCardFront(card),
+      card.meanings.join(" "),
+      card.readings || "",
+      card.examples?.[0]?.jp ?? "",
+      card.examples?.[0]?.en ?? "",
+      card.examples?.[1]?.jp ?? "",
+      card.examples?.[1]?.en ?? ""
+    ].join(" ").toLowerCase();
+    const isMatch = !editorSearchTerm || searchBlob.includes(editorSearchTerm);
+    cardElement.classList.toggle("hidden", !isMatch);
+
+    if (isMatch) {
+      visibleCount += 1;
+    }
+
+    removeButton.addEventListener("click", () => {
+      editorCardsState.splice(index, 1);
+      renderEditorCards();
+    });
+
+    cardElement.dataset.editorIndex = String(index);
+    editorElements.editorCards.appendChild(fragment);
+  });
+
+  const isDeckEmpty = editorCardsState.length === 0;
+  const hasMatches = visibleCount > 0;
+  editorElements.editorEmptyState.classList.toggle("hidden", !isDeckEmpty && hasMatches);
+
+  if (isDeckEmpty) {
+    editorElements.editorEmptyTitle.textContent = "No cards in this set yet.";
+    editorElements.editorEmptyCopy.textContent = "Add a card to start building the vocabulary set.";
+    return;
+  }
+
+  if (!hasMatches) {
+    editorElements.editorEmptyTitle.textContent = "No cards match this search.";
+    editorElements.editorEmptyCopy.textContent = "Try a different search term or clear the filter.";
+  }
+}
+
+function collectEditorCards() {
+  const cards = [...editorElements.editorCards.querySelectorAll(".editor-card")].map((cardElement, index) => {
+    const frontValue = cardElement.querySelector('[data-editor-field="front"]').value.trim();
+    const meanings = splitMeanings(cardElement.querySelector('[data-editor-field="meanings"]').value);
+    const readings = cardElement.querySelector('[data-editor-field="readings"]').value.trim();
+    const examples = sanitizeExamples([
+      {
+        jp: cardElement.querySelector('[data-editor-field="example1-jp"]').value,
+        en: cardElement.querySelector('[data-editor-field="example1-en"]').value
+      },
+      {
+        jp: cardElement.querySelector('[data-editor-field="example2-jp"]').value,
+        en: cardElement.querySelector('[data-editor-field="example2-en"]').value
+      }
+    ]);
+
+    if (!frontValue) {
+      throw new Error(`Card ${index + 1} is missing the ${currentDeckConfig.editorFrontLabel.toLowerCase()} field.`);
+    }
+
+    if (!meanings.length) {
+      throw new Error(`Card ${index + 1} needs at least one accepted answer.`);
+    }
+
+    return sanitizeDeckCard({
+      [currentDeckConfig.frontKey]: frontValue,
+      meanings,
+      readings,
+      examples
+    });
+  });
+
+  return cards;
+}
+
+function createEmptyEditorCard() {
+  return sanitizeDeckCard({
+    [currentDeckConfig.frontKey]: ``,
+    meanings: [],
+    readings: "",
+    examples: []
+  }) ?? {
+    id: "",
+    [currentDeckConfig.frontKey]: "",
+    meanings: [],
+    readings: "",
+    examples: []
+  };
+}
+
+function setEditorFeedback(message, isError = false) {
+  editorElements.editorFeedback.textContent = message;
+  editorElements.editorFeedback.classList.toggle("is-error", isError);
 }
 
 function getSelectionKey(selection = currentSelection) {

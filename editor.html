@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanji Learning App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="editor">
+  <main class="app-shell editor-shell">
+    <section class="hero">
+      <div class="hero-topbar">
+        <div class="topbar-links">
+          <a class="back-link" href="index.html">Back to selection</a>
+          <a id="open-deck-link" class="back-link" href="deck.html?language=japanese&amp;deck=kanji&amp;set=starter">Open study deck</a>
+        </div>
+      </div>
+      <p class="eyebrow">Vocabulary Editor</p>
+      <div class="hero-copy">
+        <div class="deck-badge-row">
+          <span id="editor-language" class="deck-badge">Japanese</span>
+          <span id="editor-deck-type" class="deck-badge">Kanji</span>
+        </div>
+        <h1 id="editor-title">Edit the vocabulary set for this deck.</h1>
+        <p id="editor-description">
+          Add, update, or remove cards, then save the set for this deck.
+        </p>
+      </div>
+      <div class="editor-toolbar">
+        <button id="add-card-button" class="ghost-button" type="button">Add card</button>
+        <button id="save-deck-button" class="primary-button" type="button">Save vocabulary set</button>
+        <button id="reset-deck-button" class="ghost-button" type="button">Reset to defaults</button>
+      </div>
+      <p id="editor-feedback" class="import-feedback" aria-live="polite"></p>
+    </section>
+
+    <section class="editor-layout">
+      <aside class="sidebar">
+        <section class="sidebar-card">
+          <p class="panel-label">Set summary</p>
+          <div class="editor-stats">
+            <div class="status-card">
+              <span class="status-label">Cards in set</span>
+              <strong id="editor-card-count">0</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="sidebar-card">
+          <p class="panel-label">Field guide</p>
+          <ul id="editor-help-list" class="history-list"></ul>
+        </section>
+      </aside>
+
+      <section class="card-panel editor-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Cards</p>
+            <h2 id="editor-panel-title">Editable vocabulary list</h2>
+          </div>
+        </div>
+
+        <div class="editor-panel-toolbar">
+          <label class="editor-search">
+            <span class="sr-only">Search vocabulary cards</span>
+            <input id="editor-search-input" class="editor-input" type="search" placeholder="Search prompt or answer">
+          </label>
+        </div>
+
+        <div id="editor-empty-state" class="empty-state hidden">
+          <h3 id="editor-empty-title">No cards in this set yet.</h3>
+          <p id="editor-empty-copy">Add a card to start building the vocabulary set.</p>
+        </div>
+
+        <div id="editor-cards" class="editor-cards"></div>
+      </section>
+    </section>
+  </main>
+
+  <template id="editor-card-template">
+    <article class="editor-card">
+      <div class="editor-card-head">
+        <div>
+          <p class="panel-label">Card</p>
+          <h3 class="editor-card-title">New card</h3>
+        </div>
+        <button class="ghost-button editor-remove-button" type="button">Remove</button>
+      </div>
+
+      <div class="editor-form-grid">
+        <label class="editor-field">
+          <span class="editor-field-label" data-editor-label="front">Prompt</span>
+          <input class="editor-input" data-editor-field="front" type="text" autocomplete="off">
+        </label>
+
+        <label class="editor-field editor-field-wide">
+          <span class="editor-field-label">Accepted answers</span>
+          <input class="editor-input" data-editor-field="meanings" type="text" autocomplete="off" placeholder="answer one | answer two">
+        </label>
+
+        <label class="editor-field editor-field-wide" data-editor-readings-field>
+          <span class="editor-field-label" data-editor-label="readings">Readings / notes</span>
+          <input class="editor-input" data-editor-field="readings" type="text" autocomplete="off">
+        </label>
+
+        <label class="editor-field">
+          <span class="editor-field-label" data-editor-label="example1-jp">Example 1</span>
+          <textarea class="editor-input editor-textarea" data-editor-field="example1-jp" rows="3"></textarea>
+        </label>
+
+        <label class="editor-field">
+          <span class="editor-field-label" data-editor-label="example1-en">Translation 1</span>
+          <textarea class="editor-input editor-textarea" data-editor-field="example1-en" rows="3"></textarea>
+        </label>
+
+        <label class="editor-field">
+          <span class="editor-field-label" data-editor-label="example2-jp">Example 2</span>
+          <textarea class="editor-input editor-textarea" data-editor-field="example2-jp" rows="3"></textarea>
+        </label>
+
+        <label class="editor-field">
+          <span class="editor-field-label" data-editor-label="example2-en">Translation 2</span>
+          <textarea class="editor-input editor-textarea" data-editor-field="example2-en" rows="3"></textarea>
+        </label>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

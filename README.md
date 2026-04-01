@@ -18,6 +18,7 @@ Features included:
 
 - Japanese -> Kanji starter deck
 - Spanish -> English starter deck
+- dedicated vocabulary editor page for each deck
 - CSV import panel for adding more cards
 - active recall input for each card
 - answer reveal with accepted meanings, readings, and two example sentences
@@ -40,8 +41,9 @@ Features included:
 
 - `index.html` - language and deck selection screen
 - `deck.html` - review deck screen
+- `editor.html` - vocabulary set editor
 - `styles.css` - layout and styling
-- `app.js` - page initialization, deck selection flow, review logic, CSV import, scheduling, and persistence
+- `app.js` - page initialization, deck selection flow, editor logic, review logic, CSV import, scheduling, and persistence
 
 ## How To Run
 
@@ -83,6 +85,17 @@ npx serve .
 4. Review the accepted answer and readings.
 5. Choose the next interval.
 6. The app stores the next due time and moves to the next due card.
+
+## Editing Vocabulary Sets
+
+Use the new editor screen to add, update, or remove cards in each deck.
+
+You can open it from:
+
+- the selection screen
+- the deck screen
+
+Saved edits are stored locally in the browser per deck.
 
 ## Importing More Kanjis
 
